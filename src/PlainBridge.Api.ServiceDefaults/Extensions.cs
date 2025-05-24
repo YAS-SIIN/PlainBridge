@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
@@ -7,6 +8,8 @@ using Microsoft.Extensions.ServiceDiscovery;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+
+using PlainBridge.Api.Infrastructure.Data.Context;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -22,6 +25,8 @@ public static class Extensions
         builder.AddDefaultHealthChecks();
 
         builder.Services.AddServiceDiscovery();
+
+        builder.Services.AddInfrastructure();
 
         builder.Services.ConfigureHttpClientDefaults(http =>
         {
@@ -96,6 +101,13 @@ public static class Extensions
             .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
 
         return builder;
+    }
+
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+    {
+        services.AddDbContext<PlainBridgeDBContext>(options => options.UseInMemoryDatabase("PlainBridgeDBContext"));
+
+        return services;
     }
 
     public static WebApplication MapDefaultEndpoints(this WebApplication app)

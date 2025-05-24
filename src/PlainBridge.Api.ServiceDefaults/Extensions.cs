@@ -8,6 +8,9 @@ using Microsoft.Extensions.ServiceDiscovery;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Mediator.Net;
+using Mediator.Net.Binding;
+using Mediator.Net.MicrosoftDependencyInjection;
 
 using PlainBridge.Api.Infrastructure.Data.Context;
 
@@ -105,11 +108,11 @@ public static class Extensions
 
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        services.AddDbContext<PlainBridgeDBContext>(options => options.UseInMemoryDatabase("PlainBridgeDBContext"));
+        services.AddDbContext<MainDbContext>(options => options.UseInMemoryDatabase("PlainBridgeDBContext"));
 
         return services;
     }
-
+     
     public static WebApplication MapDefaultEndpoints(this WebApplication app)
     {
         // Adding health checks endpoints to applications in non-development environments has security implications.

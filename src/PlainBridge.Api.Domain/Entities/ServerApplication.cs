@@ -16,8 +16,7 @@ public class ServerApplication : BaseEntity<long>
 { 
     public Guid AppId { get; set; } 
     public string Name { get; set; } 
-    public int InternalPort { get; set; }
-    public RowStateEnum State { get; set; } 
+    public int InternalPort { get; set; } 
 }
 
 

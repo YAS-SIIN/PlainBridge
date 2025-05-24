@@ -5,6 +5,7 @@ using PlainBridge.Api.Domain.Entities;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using PlainBridge.Api.Domain.Enums;
 
 namespace PlainBridge.Api.Domain.Common;
 
@@ -38,6 +39,11 @@ public abstract class BaseEntity<TKey>
     /// </summary>
     [StringLength(250)]
     public string? Description { get; set; }
+
+    /// <summary>
+    /// State of the Row
+    /// </summary>
+    public RowStateEnum State { get; set; }
 }
 
 
@@ -51,8 +57,7 @@ public class BaseEntityTypeConfiguration<TEntity, TKey> : IEntityTypeConfigurati
 
         builder.Property(b => b.Id)
             .ValueGeneratedOnAdd();
-         
-
+          
         builder.Property(b => b.Description)
             .HasMaxLength(250);
     }

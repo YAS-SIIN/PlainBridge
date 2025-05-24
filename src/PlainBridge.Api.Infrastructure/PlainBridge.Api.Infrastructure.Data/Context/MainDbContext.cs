@@ -6,9 +6,9 @@ using PlainBridge.Api.Domain.Entities;
 namespace PlainBridge.Api.Infrastructure.Data.Context;
 
 
-public class PlainBridgeDBContext : DbContext
+public class MainDbContext : DbContext
 {
-    public PlainBridgeDBContext(DbContextOptions<PlainBridgeDBContext> options) : base(options)
+    public MainDbContext(DbContextOptions<MainDbContext> options) : base(options)
     {
     }
 
@@ -21,7 +21,7 @@ public class PlainBridgeDBContext : DbContext
         new ServerApplicationTypeConfiguration().Configure(modelBuilder.Entity<ServerApplication>());
         new HostApplicationTypeConfiguration().Configure(modelBuilder.Entity<HostApplication>());
 
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(PlainBridgeDBContext).Assembly); base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(MainDbContext).Assembly); base.OnModelCreating(modelBuilder);
     }
 
 

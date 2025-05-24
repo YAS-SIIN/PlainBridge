@@ -15,8 +15,7 @@ public class HostApplication : BaseEntity<long>
     public Guid AppId { get; set; } 
     public string Name { get; set; }
     public string Domain { get; set; }
-    public string InternalUrl { get; set; } 
-    public RowStateEnum State { get; set; }
+    public string InternalUrl { get; set; }  
 
  
 }

@@ -10,15 +10,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Api.ApiService"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Api.Web", "src\PlainBridge.Api.Web\PlainBridge.Api.Web.csproj", "{247A9655-5D3F-B05B-00C3-4634753D781D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Api.UnitTests", "test\PlainBridge.Api.UnitTests\PlainBridge.Api.UnitTests.csproj", "{EA664E3A-ECC0-4FB3-8152-7AD7F7F38830}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Api.UnitTests", "tests\PlainBridge.Api.UnitTests\PlainBridge.Api.UnitTests.csproj", "{EA664E3A-ECC0-4FB3-8152-7AD7F7F38830}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{F78BFF6E-5711-4394-8C2E-2BF79B2E899E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F78BFF6E-5711-4394-8C2E-2BF79B2E899E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Api.Domain", "src\PlainBridge.Api.Domain\PlainBridge.Api.Domain.csproj", "{8A92B022-70A2-4D97-B2BC-50F067FA123A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Api.Application", "src\PlainBridge.Api.Application\PlainBridge.Api.Application.csproj", "{EA3328C4-1B9E-4CEC-9D65-CE9A4889EDF5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlainBridge.Api.Infrastructure", "PlainBridge.Api.Infrastructure", "{BD514234-FCA9-4501-AA3D-C46AFA5A8809}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Api.Infrastructure.Data", "src\PlainBridge.Api.Infrastructure\PlainBridge.Api.Infrastructure.Data\PlainBridge.Api.Infrastructure.Data.csproj", "{CC77E9F3-A434-4B18-9134-5D8F7CCD6381}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +58,10 @@ Global
 		{EA3328C4-1B9E-4CEC-9D65-CE9A4889EDF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA3328C4-1B9E-4CEC-9D65-CE9A4889EDF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA3328C4-1B9E-4CEC-9D65-CE9A4889EDF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC77E9F3-A434-4B18-9134-5D8F7CCD6381}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC77E9F3-A434-4B18-9134-5D8F7CCD6381}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC77E9F3-A434-4B18-9134-5D8F7CCD6381}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC77E9F3-A434-4B18-9134-5D8F7CCD6381}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +74,8 @@ Global
 		{EA664E3A-ECC0-4FB3-8152-7AD7F7F38830} = {F78BFF6E-5711-4394-8C2E-2BF79B2E899E}
 		{8A92B022-70A2-4D97-B2BC-50F067FA123A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{EA3328C4-1B9E-4CEC-9D65-CE9A4889EDF5} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{BD514234-FCA9-4501-AA3D-C46AFA5A8809} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{CC77E9F3-A434-4B18-9134-5D8F7CCD6381} = {BD514234-FCA9-4501-AA3D-C46AFA5A8809}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4E8B8F9B-822C-426B-B920-DFA6BA23C3D1}

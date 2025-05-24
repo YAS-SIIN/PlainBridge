@@ -1,8 +1,100 @@
-﻿ 
+﻿
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
+using PlainBridge.Api.Application.DTOs;
+using PlainBridge.Api.Application.Enums;
+using PlainBridge.Api.Application.Exceptions;
+using PlainBridge.Api.Application.Extentions;
+using PlainBridge.Api.Infrastructure.Data.Context;
 
 namespace PlainBridge.Api.Application.Services.HostApplication;
 
 public class HostApplicationService
 {
+    private readonly ILogger<HostApplicationService> _logger;
+    private readonly MainDbContext _dbContext;
 
+    public HostApplicationService(ILogger<HostApplicationService> logger, MainDbContext dbContext)
+    {
+        _logger = logger;
+        _dbContext = dbContext;
+    }
+
+    public async Task<IList<HostApplicationDto>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var list = await _dbContext.HostApplications.AsNoTracking().ToListAsync(cancellationToken);
+
+        return list.Select(x => new HostApplicationDto
+        {
+            Id = x.Id,
+            AppId = x.AppId,
+            Name = x.Name,
+            Domain = x.Domain,
+            InternalUrl = x.InternalUrl
+        }).ToList();
+    }
+
+    public async Task<HostApplicationDto?> GetByIdAsync(long id, CancellationToken cancellationToken)
+    {
+        var hostApp = await _dbContext.HostApplications.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (hostApp == null)
+            throw new ApplicationException("HostApplication not found");
+
+
+        return hostApp == null ? null : new HostApplicationDto
+        {
+            Id = hostApp.Id,
+            AppId = hostApp.AppId,
+            Name = hostApp.Name,
+            Domain = hostApp.Domain,
+            InternalUrl = hostApp.InternalUrl
+        };
+    }
+
+    public async Task<Guid> CreateAsync(HostApplicationDto hostApplication, CancellationToken cancellationToken)
+    {
+        var isDomainExists = await _dbContext.HostApplications.AnyAsync(x => x.Domain == hostApplication.Domain, cancellationToken);
+        if (isDomainExists)
+            throw new ApplicationException("Domain already exists");
+
+        var app = new Domain.Entities.HostApplication
+        {
+            AppId = Guid.NewGuid(),
+            Name = hostApplication.Name,
+            Domain = hostApplication.Domain,
+            InternalUrl = hostApplication.InternalUrl
+        };
+
+        await _dbContext.HostApplications.AddAsync(app, cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return app.AppId;
+    }
+
+    public async Task DeleteAsync(long id, CancellationToken cancellationToken)
+    {
+        var app = await _dbContext.HostApplications.FindAsync(id, cancellationToken);
+        if (app == null)
+            throw new ApplicationException("HostApplication not found");
+
+        _dbContext.HostApplications.Remove(app);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task PatchAsync(HostApplicationDto hostApplication, CancellationToken cancellationToken)
+    {
+        var app = await _dbContext.HostApplications.FindAsync(hostApplication.Id, cancellationToken);
+        if (app == null)
+            throw new ApplicationException("HostApplication not found");
+
+        var isDomainExists = await _dbContext.HostApplications.AnyAsync(x => x.Domain == hostApplication.Domain && x.Id != hostApplication.Id, cancellationToken);
+        if (isDomainExists)
+            throw new ApplicationException("Domain already exists");
+        app.Domain = hostApplication.Domain;
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
 }

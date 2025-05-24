@@ -12,11 +12,14 @@ public enum ResultCodeEnum : int
     [Display(Name = "Done.")]
     Done = 101,
 
-    [Display(Name = "Data is repeated.")]
+    [Display(Name = "{0} is repeated.")]
     RepeatedData = 102,
     
-    [Display(Name = "Data is invalid.")]
+    [Display(Name = "{0} is invalid.")]
     InvalidData = 102,
+    
+    [Display(Name = "{0} is null.")]
+    NullData = 103,
 
     [Display(Name = "This data can't delete.")]
     NotDelete = 107,

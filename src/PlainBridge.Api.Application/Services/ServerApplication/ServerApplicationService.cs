@@ -8,7 +8,7 @@ using PlainBridge.Api.Infrastructure.Data.Context;
 
 namespace PlainBridge.Api.Application.Services.ServerApplication;
 
-public class ServerApplicationService
+public class ServerApplicationService : IServerApplicationService
 {
     private readonly ILogger<ServerApplicationService> _logger;
     private readonly MainDbContext _dbContext;
@@ -83,7 +83,7 @@ public class ServerApplicationService
             throw new ApplicationException("ServerApplication not found");
 
         app.InternalPort = serverApplication.InternalPort;
-        app.Name = serverApplication.Name; 
+        app.Name = serverApplication.Name;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }

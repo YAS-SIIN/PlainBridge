@@ -3,14 +3,10 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.ServiceDiscovery;
+using Microsoft.Extensions.Logging; 
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
-using Mediator.Net;
-using Mediator.Net.Binding;
-using Mediator.Net.MicrosoftDependencyInjection;
 
 using PlainBridge.Api.Infrastructure.Data.Context;
 

@@ -12,7 +12,7 @@ using PlainBridge.Api.Infrastructure.Data.Context;
 
 namespace PlainBridge.Api.Application.Services.HostApplication;
 
-public class HostApplicationService
+public class HostApplicationService : IHostApplicationService
 {
     private readonly ILogger<HostApplicationService> _logger;
     private readonly MainDbContext _dbContext;
@@ -86,7 +86,7 @@ public class HostApplicationService
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task PatchAsync(HostApplicationDto hostApplication, CancellationToken cancellationToken)
+    public async Task UpdateAsync(HostApplicationDto hostApplication, CancellationToken cancellationToken)
     {
         var app = await _dbContext.HostApplications.FindAsync(hostApplication.Id, cancellationToken);
         if (app == null)
@@ -98,7 +98,7 @@ public class HostApplicationService
         app.Domain = hostApplication.Domain;
         app.InternalUrl = hostApplication.InternalUrl;
         app.Name = hostApplication.Name;
-        app.Description = hostApplication.Description; 
+        app.Description = hostApplication.Description;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }

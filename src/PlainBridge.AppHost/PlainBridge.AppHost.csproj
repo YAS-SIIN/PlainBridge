@@ -12,13 +12,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PlainBridge.Api.ApiService\PlainBridge.Api.ApiService.csproj" />
-    <ProjectReference Include="..\PlainBridge.Api.Web\PlainBridge.Web.csproj" />
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
-    <PackageReference Include="Aspire.Hosting.Redis" Version="9.0.0" />
+    <ProjectReference Include="..\PlainBridge.Api\PlainBridge.Api.ApiService\PlainBridge.Api.ApiService.csproj" />
   </ItemGroup>
 
 </Project>

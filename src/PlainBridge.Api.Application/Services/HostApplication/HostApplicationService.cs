@@ -7,6 +7,7 @@ using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Enums;
 using PlainBridge.Api.Application.Exceptions;
 using PlainBridge.Api.Application.Extentions;
+using PlainBridge.Api.Domain.Entities;
 using PlainBridge.Api.Infrastructure.Data.Context;
 
 namespace PlainBridge.Api.Application.Services.HostApplication;
@@ -21,6 +22,7 @@ public class HostApplicationService
         _logger = logger;
         _dbContext = dbContext;
     }
+
 
     public async Task<IList<HostApplicationDto>> GetAllAsync(CancellationToken cancellationToken)
     {
@@ -94,6 +96,9 @@ public class HostApplicationService
         if (isDomainExists)
             throw new ApplicationException("Domain already exists");
         app.Domain = hostApplication.Domain;
+        app.InternalUrl = hostApplication.InternalUrl;
+        app.Name = hostApplication.Name;
+        app.Description = hostApplication.Description; 
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }

@@ -24,9 +24,7 @@ public static class Extensions
         builder.AddDefaultHealthChecks();
 
         builder.Services.AddServiceDiscovery();
-
-        builder.Services.AddInfrastructure();
-
+         
         builder.Services.ConfigureHttpClientDefaults(http =>
         {
             // Turn on resilience by default
@@ -102,7 +100,7 @@ public static class Extensions
         return builder;
     }
 
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+    public static IServiceCollection AddDatabase(this IServiceCollection services)
     {
         services.AddDbContext<MainDbContext>(options => options.UseInMemoryDatabase("PlainBridgeDBContext"));
 

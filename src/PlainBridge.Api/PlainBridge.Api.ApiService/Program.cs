@@ -1,3 +1,7 @@
+using Microsoft.Extensions.Hosting;
+
+using PlainBridge.Api.ApiService.Middlewares;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults & Aspire client integrations.
@@ -8,6 +12,10 @@ builder.Services.AddProblemDetails();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddDatabase();
+
+builder.Services.AddScoped<ExceptionHandlingMiddleware>();
 
 var app = builder.Build();
 

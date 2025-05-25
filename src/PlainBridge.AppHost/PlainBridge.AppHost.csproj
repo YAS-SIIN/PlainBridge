@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
 
@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PlainBridge.Api.ApiService\PlainBridge.Api.ApiService.csproj" />
-    <ProjectReference Include="..\PlainBridge.Api.Web\PlainBridge.Api.Web.csproj" />
+    <ProjectReference Include="..\PlainBridge.Api.Web\PlainBridge.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>

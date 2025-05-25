@@ -22,8 +22,8 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\PlainBridge.Api.Application\PlainBridge.Api.Application.csproj" />
-    <ProjectReference Include="..\..\src\PlainBridge.Api.Infrastructure\PlainBridge.Api.Infrastructure.Data\PlainBridge.Api.Infrastructure.Data.csproj" />
+    <ProjectReference Include="..\..\src\PlainBridge.Api\PlainBridge.Api.Application\PlainBridge.Api.Application.csproj" />
+    <ProjectReference Include="..\..\src\PlainBridge.Api\PlainBridge.Api.Domain\PlainBridge.Api.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

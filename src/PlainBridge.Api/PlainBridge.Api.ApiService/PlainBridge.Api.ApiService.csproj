@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PlainBridge.Api.ServiceDefaults\PlainBridge.Api.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\PlainBridge.ServiceDefaults\PlainBridge.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\PlainBridge.Api.Application\PlainBridge.Api.Application.csproj" />
+    <ProjectReference Include="..\PlainBridge.Api.ServiceDefaults\PlainBridge.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <ItemGroup>

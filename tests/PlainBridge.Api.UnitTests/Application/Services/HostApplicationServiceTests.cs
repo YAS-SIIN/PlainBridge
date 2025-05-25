@@ -52,6 +52,7 @@ public class HostApplicationServiceTests : IClassFixture<TestRunFixture>
     }
     #endregion
 
+
     #region CreateAsync
 
     [Theory]

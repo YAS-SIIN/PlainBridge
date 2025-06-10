@@ -11,7 +11,26 @@ public class ErrorHandler : IExceptionHandler
     Exception exception,
     CancellationToken cancellationToken)
     {
-        if (exception is not NotFoundException) return false;
+        switch (exception)
+        {
+            case NotFoundException:
+                httpContext.Response.StatusCode = StatusCodes.Status404NotFound; 
+                break;
+            case ArgumentNullException:
+                httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+                break;
+            case ArgumentException:
+                httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+                break;
+            case ApplicationException:
+                httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+                break;
+            case DuplicatedException:
+                httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
+                break;
+            default:
+                break;
+        }
 
         httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
         await httpContext.Response.WriteAsJsonAsync(exception.Message, cancellationToken);

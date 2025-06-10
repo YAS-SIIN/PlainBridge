@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using PlainBridge.Api.Application.DTOs;
+using PlainBridge.Api.Application.Exceptions;
 using PlainBridge.Api.Infrastructure.Data.Context;
 
 namespace PlainBridge.Api.Application.Services.ServerApplication;
@@ -36,7 +37,7 @@ public class ServerApplicationService : IServerApplicationService
     {
         var serverApp = await _dbContext.ServerApplications.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
         if (serverApp == null)
-            throw new ApplicationException("ServerApplication not found");
+            throw new NotFoundException(id);
         return new ServerApplicationDto
         {
             Id = serverApp.Id,
@@ -70,7 +71,7 @@ public class ServerApplicationService : IServerApplicationService
     {
         var app = await _dbContext.ServerApplications.FindAsync(new object[] { id }, cancellationToken);
         if (app == null)
-            throw new ApplicationException("ServerApplication not found");
+            throw new NotFoundException(id);
 
         _dbContext.ServerApplications.Remove(app);
         await _dbContext.SaveChangesAsync(cancellationToken);
@@ -80,7 +81,7 @@ public class ServerApplicationService : IServerApplicationService
     {
         var app = await _dbContext.ServerApplications.FindAsync(serverApplication.Id, cancellationToken);
         if (app == null)
-            throw new ApplicationException("ServerApplication not found");
+            throw new NotFoundException(serverApplication.Id);
 
         app.InternalPort = serverApplication.InternalPort;
         app.Name = serverApplication.Name;

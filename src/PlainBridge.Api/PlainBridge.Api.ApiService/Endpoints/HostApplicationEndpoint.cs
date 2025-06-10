@@ -7,9 +7,9 @@ namespace PlainBridge.Api.ApiService.Endpoints;
 
 public static class HostApplicationEndpoint
 {
-    public static void MapPersonEndpoint(this IEndpointRouteBuilder builder)
+    public static void MapHostApplicationEndpoint(this IEndpointRouteBuilder builder)
     {
-        var app = builder.MapGroup("persons");
+        var app = builder.MapGroup("HostApplication");
 
         // GetAllAsync
         app.MapGet("", async (IHostApplicationService hostApplicationService, CancellationToken cancellationToken) =>

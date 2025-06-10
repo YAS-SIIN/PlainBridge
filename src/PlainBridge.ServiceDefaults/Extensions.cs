@@ -23,6 +23,8 @@ public static class Extensions
 
         builder.AddDefaultHealthChecks();
 
+        builder.Services.AddEndpointsApiExplorer();
+
         builder.Services.AddServiceDiscovery();
          
         builder.Services.ConfigureHttpClientDefaults(http =>

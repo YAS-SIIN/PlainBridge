@@ -43,7 +43,7 @@ public class HostApplicationService : IHostApplicationService
         var hostApp = await _dbContext.HostApplications.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         if (hostApp == null)
-            throw new ApplicationException("HostApplication not found");
+            throw new NotFoundException(id);
 
 
         return hostApp == null ? null : new HostApplicationDto
@@ -60,7 +60,7 @@ public class HostApplicationService : IHostApplicationService
     {
         var isDomainExists = await _dbContext.HostApplications.AnyAsync(x => x.Domain == hostApplication.Domain, cancellationToken);
         if (isDomainExists)
-            throw new ApplicationException("Domain already exists");
+            throw new DuplicatedException(hostApplication.Domain);
 
         var app = new Domain.Entities.HostApplication
         {
@@ -80,7 +80,7 @@ public class HostApplicationService : IHostApplicationService
     {
         var app = await _dbContext.HostApplications.FindAsync(id, cancellationToken);
         if (app == null)
-            throw new ApplicationException("HostApplication not found");
+            throw new NotFoundException(id);
 
         _dbContext.HostApplications.Remove(app);
         await _dbContext.SaveChangesAsync(cancellationToken);
@@ -90,11 +90,11 @@ public class HostApplicationService : IHostApplicationService
     {
         var app = await _dbContext.HostApplications.FindAsync(hostApplication.Id, cancellationToken);
         if (app == null)
-            throw new ApplicationException("HostApplication not found");
+            throw new NotFoundException(hostApplication.Id);
 
         var isDomainExists = await _dbContext.HostApplications.AnyAsync(x => x.Domain == hostApplication.Domain && x.Id != hostApplication.Id, cancellationToken);
         if (isDomainExists)
-            throw new ApplicationException("Domain already exists");
+            throw new ApplicationException(hostApplication.Domain);
         app.Domain = hostApplication.Domain;
         app.InternalUrl = hostApplication.InternalUrl;
         app.Name = hostApplication.Name;

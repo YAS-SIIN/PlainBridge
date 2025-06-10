@@ -1,6 +1,12 @@
-using Microsoft.Extensions.Hosting;
+// Pseudocode:
+// 1. Configure Kestrel to support HTTP/3 in the WebApplication builder.
+// 2. Set up endpoints and services as before.
+// 3. Ensure the server listens on a protocol supporting HTTP/3 (e.g., HTTPS with ALPN).
+// 4. Optionally, set up TLS certificate for HTTP/3 (required).
+// 5. Add the Kestrel configuration in builder.WebHost.ConfigureKestrel.
 
-using PlainBridge.Api.ApiService.Middlewares;
+using PlainBridge.Api.ApiService.Endpoints;
+using PlainBridge.Api.ApiService.ErrorHandling;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,17 +15,26 @@ builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddProblemDetails();
-
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
 builder.Services.AddDatabase();
 
-builder.Services.AddScoped<ExceptionHandlingMiddleware>();
+builder.Services.AddExceptionHandler<ErrorHandler>();
+
+// Configure Kestrel to support HTTP/3
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5001, listenOptions =>
+    {
+        listenOptions.UseHttps(); // HTTP/3 requires HTTPS
+        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
+    });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.MapGroup("api/v1")
+    .MapHostApplicationEndpoint();
+
 app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())

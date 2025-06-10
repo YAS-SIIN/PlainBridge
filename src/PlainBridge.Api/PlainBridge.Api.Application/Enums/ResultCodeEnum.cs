@@ -8,9 +8,9 @@ public enum ResultCodeEnum : int
 {
     [Display(Name = "Data not found.")]
     NotFound = 100,
-
-    [Display(Name = "Done.")]
-    Done = 101,
+     
+    [Display(Name = "Error happened.")]
+    Error = 101,  
 
     [Display(Name = "{0} is repeated.")]
     RepeatedData = 102,
@@ -24,9 +24,7 @@ public enum ResultCodeEnum : int
     [Display(Name = "This data can't delete.")]
     NotDelete = 107,
 
-    [Display(Name = "Done.")]
-    Success = 200,
+    [Display(Name = "Action done successfully.")]
+    Success = 0,
 
-    [Display(Name = "Error happened.")]
-    Error = 400,  
 }

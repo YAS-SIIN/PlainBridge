@@ -8,6 +8,8 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
+using PlainBridge.Api.Application.Services.HostApplication;
+using PlainBridge.Api.Application.Services.ServerApplication;
 using PlainBridge.Api.Infrastructure.Data.Context;
 
 namespace Microsoft.Extensions.Hosting;
@@ -105,6 +107,14 @@ public static class Extensions
     public static IServiceCollection AddDatabase(this IServiceCollection services)
     {
         services.AddDbContext<MainDbContext>(options => options.UseInMemoryDatabase("PlainBridgeDBContext"));
+
+        return services;
+    }
+     
+    public static IServiceCollection AddApiServices(this IServiceCollection services)
+    {
+        services.AddScoped<IHostApplicationService, HostApplicationService>();
+        services.AddScoped<IServerApplicationService, ServerApplicationService>();
 
         return services;
     }

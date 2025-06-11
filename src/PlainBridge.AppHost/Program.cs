@@ -2,7 +2,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var cache = builder.AddRedis("cache");
 
-var apiService = builder.AddProject<Projects.PlainBridge_Api_ApiService>("apiservice");
+var apiService = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("ApiEndPoint");
 
 //builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
 //    .WithExternalHttpEndpoints()

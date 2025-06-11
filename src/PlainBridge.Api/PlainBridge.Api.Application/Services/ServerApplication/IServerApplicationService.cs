@@ -8,6 +8,6 @@ namespace PlainBridge.Api.Application.Services.ServerApplication
         Task DeleteAsync(long id, CancellationToken cancellationToken);
         Task<IList<ServerApplicationDto>> GetAllAsync(CancellationToken cancellationToken);
         Task<ServerApplicationDto> GetByIdAsync(long id, CancellationToken cancellationToken);
-        Task PatchAsync(ServerApplicationDto serverApplication, CancellationToken cancellationToken);
+        Task UpdateAsync(ServerApplicationDto serverApplication, CancellationToken cancellationToken);
     }
 }

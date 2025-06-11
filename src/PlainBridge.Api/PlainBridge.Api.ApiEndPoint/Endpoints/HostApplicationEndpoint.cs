@@ -14,84 +14,49 @@ public static class HostApplicationEndpoint
         // GetAllAsync
         app.MapGet("", async (IHostApplicationService hostApplicationService, CancellationToken cancellationToken) =>
         {
-            try
-            {
                 var data = await hostApplicationService.GetAllAsync(cancellationToken);
                 return Results.Ok(ResultDto<IList<HostApplicationDto>>.ReturnData(
                     data,
                     ResultCodeEnum.Success,
                     ResultCodeEnum.Success.ToDisplayName()
                 ));
-            }
-            catch (Exception ex)
-            { 
-                return Results.Problem(
-                    detail: ex.ToString(),
-                    title: "An error occurred while retrieving persons.",
-                    statusCode: StatusCodes.Status500InternalServerError
-                );
-            }
-        });
+        }).WithName("GetAllHostApplication");
 
 
         // GetByIdAsync
         app.MapGet("{id:long}", async (long id, IHostApplicationService hostApplicationService, CancellationToken cancellationToken) =>
         {
-            try
+            var data = await hostApplicationService.GetByIdAsync(id, cancellationToken);
+            if (data == null)
             {
-                var data = await hostApplicationService.GetByIdAsync(id, cancellationToken);
-                if (data == null)
-                {
-                    return Results.NotFound(ResultDto<HostApplicationDto>.ReturnData(
-                        null,
-                        ResultCodeEnum.NotFound,
-                        ResultCodeEnum.NotFound.ToDisplayName()
-                    ));
-                }
-                return Results.Ok(ResultDto<HostApplicationDto>.ReturnData(
-                    data,
-                    ResultCodeEnum.Success,
-                    ResultCodeEnum.Success.ToDisplayName()
+                return Results.NotFound(ResultDto<HostApplicationDto>.ReturnData(
+                    null,
+                    ResultCodeEnum.NotFound,
+                    ResultCodeEnum.NotFound.ToDisplayName()
                 ));
             }
-            catch (Exception ex)
-            {
-                return Results.Problem(
-                    detail: ex.ToString(),
-                    title: "An error occurred while retrieving the person.",
-                    statusCode: StatusCodes.Status500InternalServerError
-                );
-            }
-        });
+            return Results.Ok(ResultDto<HostApplicationDto>.ReturnData(
+                data,
+                ResultCodeEnum.Success,
+                ResultCodeEnum.Success.ToDisplayName()
+            ));
+        }).WithName("GetHostApplication");
 
 
         // CreateAsync
         app.MapPost("", async (HostApplicationDto hostApplication, IHostApplicationService hostApplicationService, CancellationToken cancellationToken) =>
         {
-            try
-            {
                 var id = await hostApplicationService.CreateAsync(hostApplication, cancellationToken);
                 return Results.Created($"/persons/{id}", ResultDto<Guid>.ReturnData(
                     id,
                     ResultCodeEnum.Success,
                     ResultCodeEnum.Success.ToDisplayName()
                 ));
-            }
-            catch (Exception ex)
-            {
-                return Results.Problem(
-                    detail: ex.ToString(),
-                    title: "An error occurred while creating the person.",
-                    statusCode: StatusCodes.Status500InternalServerError
-                );
-            }
-        });
+        }).WithName("CreateHostApplication");
 
         // UpdateAsync
         app.MapPut("{id:long}", async (long id, HostApplicationDto hostApplication, IHostApplicationService hostApplicationService, CancellationToken cancellationToken) =>
         {
-            try
-            {
                 hostApplication.Id = id;
                 await hostApplicationService.UpdateAsync(hostApplication, cancellationToken);
                 return Results.Ok(ResultDto<HostApplicationDto>.ReturnData(
@@ -99,38 +64,18 @@ public static class HostApplicationEndpoint
                     ResultCodeEnum.Success,
                     ResultCodeEnum.Success.ToDisplayName()
                 ));
-            }
-            catch (Exception ex)
-            {
-                return Results.Problem(
-                    detail: ex.ToString(),
-                    title: "An error occurred while updating the person.",
-                    statusCode: StatusCodes.Status500InternalServerError
-                );
-            }
-        });
+        }).WithName("UpdateHostApplication");
 
 
         // DeleteAsync
         app.MapDelete("{id:long}", async (long id, IHostApplicationService hostApplicationService, CancellationToken cancellationToken) =>
         {
-            try
-            {
                 await hostApplicationService.DeleteAsync(id, cancellationToken);
                 return Results.Ok(ResultDto<object>.ReturnData(
                     null,
                     ResultCodeEnum.Success,
                     ResultCodeEnum.Success.ToDisplayName()
                 ));
-            }
-            catch (Exception ex)
-            {
-                return Results.Problem(
-                    detail: ex.ToString(),
-                    title: "An error occurred while deleting the person.",
-                    statusCode: StatusCodes.Status500InternalServerError
-                );
-            }
-        });
+        }).WithName("DeleteHostApplication");
     }
 }

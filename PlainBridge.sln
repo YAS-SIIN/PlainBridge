@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.AppHost", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.ServiceDefaults", "src\PlainBridge.ServiceDefaults\PlainBridge.ServiceDefaults.csproj", "{1BD46634-49F7-5BC5-255D-5FF61E970531}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Api.ApiService", "src\PlainBridge.Api\PlainBridge.Api.ApiService\PlainBridge.Api.ApiService.csproj", "{BA567B7B-F626-A289-8143-2EC6D282416E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Api.ApiEndPoint", "src\PlainBridge.Api\PlainBridge.Api.ApiEndPoint\PlainBridge.Api.ApiEndPoint.csproj", "{BA567B7B-F626-A289-8143-2EC6D282416E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Api.UnitTests", "tests\PlainBridge.Api.UnitTests\PlainBridge.Api.UnitTests.csproj", "{EA664E3A-ECC0-4FB3-8152-7AD7F7F38830}"
 EndProject

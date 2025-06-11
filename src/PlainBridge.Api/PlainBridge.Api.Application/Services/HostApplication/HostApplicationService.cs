@@ -76,6 +76,24 @@ public class HostApplicationService : IHostApplicationService
         return app.AppId;
     }
 
+    public async Task UpdateAsync(HostApplicationDto hostApplication, CancellationToken cancellationToken)
+    {
+        var app = await _dbContext.HostApplications.FindAsync(hostApplication.Id, cancellationToken);
+        if (app == null)
+            throw new NotFoundException(hostApplication.Id);
+
+        var isDomainExists = await _dbContext.HostApplications.AnyAsync(x => x.Domain == hostApplication.Domain && x.Id != hostApplication.Id, cancellationToken);
+
+        if (isDomainExists)
+            throw new ApplicationException(hostApplication.Domain);
+        app.Domain = hostApplication.Domain;
+        app.InternalUrl = hostApplication.InternalUrl;
+        app.Name = hostApplication.Name;
+        app.Description = hostApplication.Description;
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task DeleteAsync(long id, CancellationToken cancellationToken)
     {
         var app = await _dbContext.HostApplications.FindAsync(id, cancellationToken);
@@ -86,20 +104,4 @@ public class HostApplicationService : IHostApplicationService
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(HostApplicationDto hostApplication, CancellationToken cancellationToken)
-    {
-        var app = await _dbContext.HostApplications.FindAsync(hostApplication.Id, cancellationToken);
-        if (app == null)
-            throw new NotFoundException(hostApplication.Id);
-
-        var isDomainExists = await _dbContext.HostApplications.AnyAsync(x => x.Domain == hostApplication.Domain && x.Id != hostApplication.Id, cancellationToken);
-        if (isDomainExists)
-            throw new ApplicationException(hostApplication.Domain);
-        app.Domain = hostApplication.Domain;
-        app.InternalUrl = hostApplication.InternalUrl;
-        app.Name = hostApplication.Name;
-        app.Description = hostApplication.Description;
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-    }
 }

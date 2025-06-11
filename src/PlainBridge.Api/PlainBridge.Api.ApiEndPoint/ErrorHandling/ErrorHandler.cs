@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 
+using PlainBridge.Api.Application.DTOs;
+using PlainBridge.Api.Application.Enums;
 using PlainBridge.Api.Application.Exceptions;
+using PlainBridge.Api.Application.Extentions;
 
 namespace PlainBridge.Api.ApiService.ErrorHandling;
 
@@ -33,7 +36,7 @@ public class ErrorHandler : IExceptionHandler
         }
 
         httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
-        await httpContext.Response.WriteAsJsonAsync(exception.Message, cancellationToken);
+        await httpContext.Response.WriteAsJsonAsync(ResultDto<object>.ReturnData(exception.Message, ResultCodeEnum.Error, ResultCodeEnum.Error.ToDisplayName(), exception?.InnerException?.Message ?? ""), cancellationToken);
 
         return true;
     }

@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PlainBridge.Api\PlainBridge.Api.Application\PlainBridge.Api.Application.csproj" />
     <ProjectReference Include="..\PlainBridge.Api\PlainBridge.Api.Infrastructure\PlainBridge.Api.Infrastructure.Data\PlainBridge.Api.Infrastructure.Data.csproj" />
   </ItemGroup>
 

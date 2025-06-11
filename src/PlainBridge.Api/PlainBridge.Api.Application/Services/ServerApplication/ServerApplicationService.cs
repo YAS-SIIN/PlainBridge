@@ -67,17 +67,7 @@ public class ServerApplicationService : IServerApplicationService
         return app.AppId;
     }
 
-    public async Task DeleteAsync(long id, CancellationToken cancellationToken)
-    {
-        var app = await _dbContext.ServerApplications.FindAsync(new object[] { id }, cancellationToken);
-        if (app == null)
-            throw new NotFoundException(id);
-
-        _dbContext.ServerApplications.Remove(app);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task PatchAsync(ServerApplicationDto serverApplication, CancellationToken cancellationToken)
+    public async Task UpdateAsync(ServerApplicationDto serverApplication, CancellationToken cancellationToken)
     {
         var app = await _dbContext.ServerApplications.FindAsync(serverApplication.Id, cancellationToken);
         if (app == null)
@@ -88,4 +78,15 @@ public class ServerApplicationService : IServerApplicationService
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task DeleteAsync(long id, CancellationToken cancellationToken)
+    {
+        var app = await _dbContext.ServerApplications.FindAsync(new object[] { id }, cancellationToken);
+        if (app == null)
+            throw new NotFoundException(id);
+
+        _dbContext.ServerApplications.Remove(app);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
 }

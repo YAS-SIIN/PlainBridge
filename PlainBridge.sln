@@ -26,7 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlainBridge.Api", "PlainBri
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlainBridge.Server", "PlainBridge.Server", "{22A1C1D9-4A9E-4DB7-BF7F-B1FE2F958209}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Server.Api", "src\PlainBridge.Server\PlainBridge.Server\PlainBridge.Server.Api.csproj", "{D398B45D-47A1-2B72-DE7D-E16F340140D9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Server.ApiEndPoint", "src\PlainBridge.Server\PlainBridge.Server.ApiEndPoint\PlainBridge.Server.ApiEndPoint.csproj", "{09CFD002-47B1-03BF-558B-D0CCC8F33441}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,10 +62,10 @@ Global
 		{CC77E9F3-A434-4B18-9134-5D8F7CCD6381}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC77E9F3-A434-4B18-9134-5D8F7CCD6381}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC77E9F3-A434-4B18-9134-5D8F7CCD6381}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D398B45D-47A1-2B72-DE7D-E16F340140D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D398B45D-47A1-2B72-DE7D-E16F340140D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D398B45D-47A1-2B72-DE7D-E16F340140D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D398B45D-47A1-2B72-DE7D-E16F340140D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09CFD002-47B1-03BF-558B-D0CCC8F33441}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09CFD002-47B1-03BF-558B-D0CCC8F33441}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09CFD002-47B1-03BF-558B-D0CCC8F33441}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09CFD002-47B1-03BF-558B-D0CCC8F33441}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,7 +81,7 @@ Global
 		{CC77E9F3-A434-4B18-9134-5D8F7CCD6381} = {BD514234-FCA9-4501-AA3D-C46AFA5A8809}
 		{42E89A9D-1276-4C2E-B3BB-BD9E9E3E119E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{22A1C1D9-4A9E-4DB7-BF7F-B1FE2F958209} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{D398B45D-47A1-2B72-DE7D-E16F340140D9} = {22A1C1D9-4A9E-4DB7-BF7F-B1FE2F958209}
+		{09CFD002-47B1-03BF-558B-D0CCC8F33441} = {22A1C1D9-4A9E-4DB7-BF7F-B1FE2F958209}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4E8B8F9B-822C-426B-B920-DFA6BA23C3D1}

@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PlainBridge.Api\PlainBridge.Api.ApiEndPoint\PlainBridge.Api.ApiEndPoint.csproj" />
-    <ProjectReference Include="..\PlainBridge.Server\PlainBridge.Server\PlainBridge.Server.Api.csproj" />
+    <ProjectReference Include="..\PlainBridge.Server\PlainBridge.Server.ApiEndPoint\PlainBridge.Server.ApiEndPoint.csproj" />
   </ItemGroup>
 
 </Project>

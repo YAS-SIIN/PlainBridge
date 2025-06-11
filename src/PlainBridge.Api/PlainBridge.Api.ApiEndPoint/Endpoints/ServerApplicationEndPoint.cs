@@ -64,11 +64,6 @@ public static class ServerApplicationEndPoint
                 ResultCodeEnum.Success,
                 ResultCodeEnum.Success.ToDisplayName()
             ));
-            return Results.Problem(
-                detail: "An error occurred while updating the host application.",
-                title: ex.Message.ToString(),
-                statusCode: StatusCodes.Status500InternalServerError
-            );
         }).WithName("UpdateServerApplication");
 
 

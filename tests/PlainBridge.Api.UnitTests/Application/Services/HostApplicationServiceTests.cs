@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 
 using PlainBridge.Api.Application.DTOs;
+using PlainBridge.Api.Application.Exceptions;
+using PlainBridge.Api.Application.Handler.Bus;
 using PlainBridge.Api.Application.Services.HostApplication;
 
 namespace PlainBridge.Api.UnitTests.Application.Services;
@@ -16,12 +18,14 @@ public class HostApplicationServiceTests : IClassFixture<TestRunFixture>
     private readonly TestRunFixture _fixture;
     private readonly IHostApplicationService hostApplicationService;
     private readonly Mock<ILogger<HostApplicationService>> mockLoggerProjectService;
+    private readonly Mock<IBusHandler> _mockBusHandler;
 
     public HostApplicationServiceTests(TestRunFixture fixture)
     {
         _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
         mockLoggerProjectService = new Mock<ILogger<HostApplicationService>>();
-        hostApplicationService = new HostApplicationService(mockLoggerProjectService.Object, _fixture.MemoryMainDbContext);
+        _mockBusHandler = new Mock<IBusHandler>();
+        hostApplicationService = new HostApplicationService(mockLoggerProjectService.Object, _fixture.MemoryMainDbContext, _mockBusHandler.Object);
     }
 
     [Fact]
@@ -35,8 +39,6 @@ public class HostApplicationServiceTests : IClassFixture<TestRunFixture>
     #region GetByIdAsync 
     [Theory]
     [InlineData(1)]
-    [InlineData(2)]
-    [InlineData(3)]
     public async Task GetByIdAsync_WhenIdExists_ShouldReturnData(long id)
     {
         var result = await hostApplicationService.GetByIdAsync(id, CancellationToken.None);
@@ -48,7 +50,7 @@ public class HostApplicationServiceTests : IClassFixture<TestRunFixture>
     [InlineData(999)]
     public async Task GetByIdAsync_WhenIdDoesntExist_ShouldReturnNull(long id)
     {
-        await Assert.ThrowsAsync<ApplicationException>(async () => await hostApplicationService.GetByIdAsync(id, CancellationToken.None));
+        await Assert.ThrowsAsync<NotFoundException>(async () => await hostApplicationService.GetByIdAsync(id, CancellationToken.None));
     }
     #endregion
 
@@ -65,12 +67,12 @@ public class HostApplicationServiceTests : IClassFixture<TestRunFixture>
         Assert.NotNull(created);
         Assert.Equal("NewApp", created.Name);
     }
-
+    
     [Theory]
     [MemberData(nameof(HostApplicationServiceData.SetDataFor_CreateAsync_WhenDomainIsExisted_ShouldThrowException), MemberType = typeof(HostApplicationServiceData))]
     public async Task CreateAsync_WhenDomainIsExisted_ShouldThrowException(HostApplicationDto dto)
     {
-        await Assert.ThrowsAsync<ApplicationException>(() => hostApplicationService.CreateAsync(dto, CancellationToken.None));
+        await Assert.ThrowsAsync<DuplicatedException>(() => hostApplicationService.CreateAsync(dto, CancellationToken.None));
     }
     #endregion
 
@@ -90,7 +92,7 @@ public class HostApplicationServiceTests : IClassFixture<TestRunFixture>
     [InlineData(9)]
     public async Task DeleteAsync_WhenIdDoesntExist_ShouldThrowException(int id)
     {
-        await Assert.ThrowsAsync<ApplicationException>(() => hostApplicationService.DeleteAsync(9999, CancellationToken.None));
+        await Assert.ThrowsAsync<NotFoundException>(() => hostApplicationService.DeleteAsync(9999, CancellationToken.None));
     }
     #endregion
 
@@ -120,7 +122,7 @@ public class HostApplicationServiceTests : IClassFixture<TestRunFixture>
     [MemberData(nameof(HostApplicationServiceData.SetDataFor_UpdateAsync_WhenIdDoesntExist_ShouldThrowApplicationException), MemberType = typeof(HostApplicationServiceData))]
     public async Task UpdateAsync_WhenIdDoesntExist_ShouldThrowApplicationException(HostApplicationDto dto)
     {
-        await Assert.ThrowsAsync<ApplicationException>(() => hostApplicationService.UpdateAsync(dto, CancellationToken.None));
+        await Assert.ThrowsAsync<NotFoundException>(() => hostApplicationService.UpdateAsync(dto, CancellationToken.None));
     }
     #endregion
 

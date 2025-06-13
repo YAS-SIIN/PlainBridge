@@ -54,8 +54,6 @@ public class ServerApplicationService : IServerApplicationService
 
     public async Task<Guid> CreateAsync(ServerApplicationDto serverApplication, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(serverApplication.Name))
-            throw new ArgumentNullException(nameof(serverApplication.Name));
         if (serverApplication.InternalPort < 1 || serverApplication.InternalPort > 65535)
             throw new ApplicationException("Port range is not valid");
 
@@ -88,7 +86,7 @@ public class ServerApplicationService : IServerApplicationService
 
     public async Task DeleteAsync(long id, CancellationToken cancellationToken)
     {
-        var app = await _dbContext.ServerApplications.FindAsync(new object[] { id }, cancellationToken);
+        var app = await _dbContext.ServerApplications.FindAsync(id, cancellationToken);
         if (app == null)
             throw new NotFoundException(id);
 

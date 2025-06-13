@@ -60,7 +60,7 @@ public class HostApplicationService : IHostApplicationService
     }
 
     public async Task<Guid> CreateAsync(HostApplicationDto hostApplication, CancellationToken cancellationToken)
-    {
+    { 
         var isDomainExists = await _dbContext.HostApplications.AnyAsync(x => x.Domain == hostApplication.Domain, cancellationToken);
         if (isDomainExists)
             throw new DuplicatedException(hostApplication.Domain);

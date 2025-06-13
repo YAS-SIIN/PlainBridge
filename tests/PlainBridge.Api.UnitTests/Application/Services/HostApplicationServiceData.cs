@@ -15,6 +15,15 @@ public class HostApplicationServiceData
             InternalUrl = "http://localhost:4000"
         }};
     }  
+    public static IEnumerable<object[]> CreateAsync_WhenDomaniIsEmpty_ShouldThrowException()
+    {
+        yield return new object[] { new HostApplicationDto
+        {
+            Name = "NewApp",
+            Domain = "",
+            InternalUrl = "http://localhost:4000"
+        }};
+    }  
     
     public static IEnumerable<object[]> SetDataFor_CreateAsync_WhenDomainIsExisted_ShouldThrowException()
     {
@@ -31,8 +40,8 @@ public class HostApplicationServiceData
         yield return new object[] { new HostApplicationDto
         {
             Id = 2,
-            Name = "NewApp",
-            Domain = "newdomain",
+            Name = "NewApp2",
+            Domain = "newdomain2",
             InternalUrl = "http://localhost:4000"
         }};
     }  

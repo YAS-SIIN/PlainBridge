@@ -7,6 +7,7 @@ using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Enums;
 using PlainBridge.Api.Application.Exceptions;
 using PlainBridge.Api.Application.Extentions;
+using PlainBridge.Api.Application.Handler.Bus;
 using PlainBridge.Api.Domain.Entities;
 using PlainBridge.Api.Infrastructure.Data.Context;
 
@@ -16,11 +17,13 @@ public class HostApplicationService : IHostApplicationService
 {
     private readonly ILogger<HostApplicationService> _logger;
     private readonly MainDbContext _dbContext;
+    private readonly IBusHandler _busHandler;
 
-    public HostApplicationService(ILogger<HostApplicationService> logger, MainDbContext dbContext)
+    public HostApplicationService(ILogger<HostApplicationService> logger, MainDbContext dbContext, IBusHandler busHandler)
     {
         _logger = logger;
         _dbContext = dbContext;
+        _busHandler = busHandler;
     }
 
 
@@ -72,6 +75,7 @@ public class HostApplicationService : IHostApplicationService
 
         await _dbContext.HostApplications.AddAsync(app, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await _busHandler.PublishAsync<string>("Host_Application_Created", cancellationToken);
 
         return app.AppId;
     }
@@ -92,6 +96,7 @@ public class HostApplicationService : IHostApplicationService
         app.Description = hostApplication.Description;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await _busHandler.PublishAsync<string>("Host_Application_Updated", cancellationToken);
     }
 
     public async Task DeleteAsync(long id, CancellationToken cancellationToken)
@@ -102,6 +107,7 @@ public class HostApplicationService : IHostApplicationService
 
         _dbContext.HostApplications.Remove(app);
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await _busHandler.PublishAsync<string>("Host_Application_Deleted", cancellationToken);
     }
 
 }

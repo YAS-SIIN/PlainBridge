@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Mediator.Net" Version="4.8.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.5" />
+    <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
   </ItemGroup>
 
   <ItemGroup>

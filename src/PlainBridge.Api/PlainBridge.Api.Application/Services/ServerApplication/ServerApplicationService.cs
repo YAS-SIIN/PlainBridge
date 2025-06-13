@@ -5,7 +5,10 @@ using Microsoft.Extensions.Logging;
 
 using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Exceptions;
+using PlainBridge.Api.Application.Handler.Bus;
 using PlainBridge.Api.Infrastructure.Data.Context;
+
+using RabbitMQ.Client;
 
 namespace PlainBridge.Api.Application.Services.ServerApplication;
 
@@ -13,11 +16,13 @@ public class ServerApplicationService : IServerApplicationService
 {
     private readonly ILogger<ServerApplicationService> _logger;
     private readonly MainDbContext _dbContext;
+    private readonly IBusHandler _busHandler;
 
-    public ServerApplicationService(ILogger<ServerApplicationService> logger, MainDbContext dbContext)
+    public ServerApplicationService(ILogger<ServerApplicationService> logger, MainDbContext dbContext, IBusHandler busHandler)
     {
         _logger = logger;
         _dbContext = dbContext;
+        _busHandler = busHandler;
     }
 
     public async Task<IList<ServerApplicationDto>> GetAllAsync(CancellationToken cancellationToken)
@@ -63,6 +68,7 @@ public class ServerApplicationService : IServerApplicationService
 
         await _dbContext.ServerApplications.AddAsync(app, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await _busHandler.PublishAsync<string>("Server_Application_Created", cancellationToken);
 
         return app.AppId;
     }
@@ -75,8 +81,9 @@ public class ServerApplicationService : IServerApplicationService
 
         app.InternalPort = serverApplication.InternalPort;
         app.Name = serverApplication.Name;
-
+       
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await _busHandler.PublishAsync<string>("Server_Application_Updated", cancellationToken);
     }
 
     public async Task DeleteAsync(long id, CancellationToken cancellationToken)
@@ -87,6 +94,7 @@ public class ServerApplicationService : IServerApplicationService
 
         _dbContext.ServerApplications.Remove(app);
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await _busHandler.PublishAsync<string>("Server_Application_Deleted", cancellationToken);
     }
 
 }

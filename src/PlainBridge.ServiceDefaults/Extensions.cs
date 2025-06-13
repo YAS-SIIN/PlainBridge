@@ -8,6 +8,7 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
+using PlainBridge.Api.Application.Handler.Bus;
 using PlainBridge.Api.Application.Services.HostApplication;
 using PlainBridge.Api.Application.Services.ServerApplication;
 using PlainBridge.Api.Infrastructure.Data.Context;
@@ -115,6 +116,7 @@ public static class Extensions
     {
         services.AddScoped<IHostApplicationService, HostApplicationService>();
         services.AddScoped<IServerApplicationService, ServerApplicationService>();
+        services.AddScoped<IBusHandler, BusHandler>();
 
         return services;
     }

@@ -1,75 +1,60 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿
+using PlainBridge.Api.Application.DTOs;
+using PlainBridge.SharedApplication.DTOs;
+using PlainBridge.SharedApplication.Enums;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 
-public class PlainBridgeApiClientHandler
+public class PlainBridgeApiClientHandler : IPlainBridgeApiClientHandler
 {
-    //private readonly IConfiguration _configuration;
-    //private readonly IHttpClientFactory _httpClientFactory;
-    //private readonly IIdentityService _identityService;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ApplicationSetting _applicationSetting;
 
-    //public PlainBridgeApiClientHandler(IConfiguration configuration, IHttpClientFactory httpClientFactory, IIdentityService identityService)
-    //{
-    //    _configuration = configuration;
-    //    _httpClientFactory = httpClientFactory;
-    //    _identityService = identityService;
-    //}
+    public PlainBridgeApiClientHandler(ApplicationSetting applicationSetting, IHttpClientFactory httpClientFactory)
+    {
+        _applicationSetting = applicationSetting;
+        _httpClientFactory = httpClientFactory;
+    }
 
-    //public async Task<List<Project>> GetProjectsAsync(CancellationToken cancellationToken)
-    //{
-    //    var token = await _identityService.GetTokenAsync(cancellationToken);
-    //    if (token == null) throw new ApplicationException("Token request failed");
+    public async Task<IList<HostApplicationDto>?> GetProjectsAsync(CancellationToken cancellationToken)
+    {
+        var apiClient = _httpClientFactory.CreateClient("Api");
+        var uri = new Uri($"{_applicationSetting.ApiAddress}/HostApplication"); // Fixed the Uri creation
+        var response = await apiClient.GetAsync(uri, cancellationToken); // Added cancellationToken to GetAsync
+        if (!response.IsSuccessStatusCode)
+            throw new ApplicationException("Failed to get host application");
 
-    //    if (token.IsError)
-    //        throw new ApplicationException($"Token request failed, {token.Error}");
+        var content = await response.Content.ReadAsStringAsync(cancellationToken); // Added cancellationToken to ReadAsStringAsync
+        var result = JsonSerializer.Deserialize<ResultDto<IList<HostApplicationDto>>>(content, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
-    //    var apiClient = _httpClientFactory.CreateClient(NamedHttpClients.Default);
-    //    apiClient.SetBearerToken(token.AccessToken!);
+        if (result == null)
+            throw new ApplicationException("Failed to deserialize response");
 
-    //    var baseUri = new Uri(_configuration["ZIRALINK_API_URL"]!);
-    //    var uri = new Uri(baseUri, "Project/All");
-    //    var response = await apiClient.GetAsync(uri);
-    //    if (!response.IsSuccessStatusCode)
-    //        throw new ApplicationException("Failed to get projects");
+        if (result.ResultCode != ResultCodeEnum.Success) // Fixed the condition to check for failure
+            throw new ApplicationException(result.ResultDescription);
 
-    //    var content = await response.Content.ReadAsStringAsync();
-    //    var result = JsonSerializer.Deserialize<ApiResponse<List<Project>>>(content, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-    //    if (result.Status == false)
-    //        throw new ApplicationException(result.ErrorMessage);
+        return result.Data;
+    }
 
-    //    return result.Data;
-    //}
+    public async Task<IList<ServerApplicationDto>?> GetAppProjectsAsync(CancellationToken cancellationToken)
+    {
+        var apiClient = _httpClientFactory.CreateClient("Api");
+        var uri = new Uri($"{apiClient.BaseAddress}/ServerApplication"); // Fixed the Uri creation
+        var response = await apiClient.GetAsync(uri, cancellationToken); // Added cancellationToken to GetAsync
+        if (!response.IsSuccessStatusCode)
+            throw new ApplicationException("Failed to get server application");
 
-    //public async Task<List<AppProject>> GetAppProjectsAsync(CancellationToken cancellationToken)
-    //{
-    //    var token = await _identityService.GetTokenAsync(cancellationToken);
-    //    if (token == null) throw new ApplicationException("Token request failed");
+        var content = await response.Content.ReadAsStringAsync(cancellationToken); // Added cancellationToken to ReadAsStringAsync
+        var result = JsonSerializer.Deserialize<ResultDto<IList<ServerApplicationDto>>>(content, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
-    //    if (token.IsError)
-    //        throw new ApplicationException($"Token request failed, {token.Error}");
+        if (result == null)
+            throw new ApplicationException("Failed to deserialize response");
 
-    //    var apiClient = _httpClientFactory.CreateClient(NamedHttpClients.Default);
-    //    apiClient.SetBearerToken(token.AccessToken!);
+        if (result.ResultCode != ResultCodeEnum.Success) // Fixed the condition to check for failure
+            throw new ApplicationException(result.ResultDescription);
 
-    //    var baseUri = new Uri(_configuration["ZIRALINK_API_URL"]!);
-    //    var uri = new Uri(baseUri, "AppProject/All");
-    //    var response = await apiClient.GetAsync(uri);
-    //    if (!response.IsSuccessStatusCode)
-    //        throw new ApplicationException("Failed to get app projects");
-
-    //    var content = await response.Content.ReadAsStringAsync();
-    //    var result = JsonSerializer.Deserialize<ApiResponse<List<AppProject>>>(content, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-    //    if (result.Status == false)
-    //        throw new ApplicationException(result.ErrorMessage);
-
-    //    return result.Data;
-    //}
+        return result.Data;
+    }
 }

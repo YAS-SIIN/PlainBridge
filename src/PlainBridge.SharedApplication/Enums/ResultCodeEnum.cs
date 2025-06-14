@@ -2,7 +2,7 @@
  
 using System.ComponentModel.DataAnnotations; 
 
-namespace PlainBridge.ServiceDefaults.Enums;
+namespace PlainBridge.SharedApplication.Enums;
 
 public enum ResultCodeEnum : int
 {

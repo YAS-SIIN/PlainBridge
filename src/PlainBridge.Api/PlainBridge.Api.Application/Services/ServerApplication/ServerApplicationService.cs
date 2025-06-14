@@ -4,9 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using PlainBridge.Api.Application.DTOs;
-using PlainBridge.Api.Application.Exceptions;
 using PlainBridge.Api.Application.Handler.Bus;
 using PlainBridge.Api.Infrastructure.Data.Context;
+using PlainBridge.SharedApplication.DTOs;
+using PlainBridge.SharedApplication.Exceptions;
 
 using RabbitMQ.Client;
 

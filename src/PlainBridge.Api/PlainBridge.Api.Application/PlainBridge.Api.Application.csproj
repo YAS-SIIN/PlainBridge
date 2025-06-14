@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\PlainBridge.SharedApplication\PlainBridge.SharedApplication.csproj" />
     <ProjectReference Include="..\PlainBridge.Api.Infrastructure\PlainBridge.Api.Infrastructure.Data\PlainBridge.Api.Infrastructure.Data.csproj" />
   </ItemGroup>
 

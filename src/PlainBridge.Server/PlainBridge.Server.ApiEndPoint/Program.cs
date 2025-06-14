@@ -1,13 +1,17 @@
+using Microsoft.Extensions.Options;
+using PlainBridge.Server.Application.DTOs;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
 // Add services to the container.
 
-builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+builder.Services.Configure<ApplicationSetting>(builder.Configuration);
+builder.Services.AddScoped(sp => sp.GetRequiredService<IOptions<ApplicationSetting>>().Value);
 // Configure Kestrel to support HTTP/3
 builder.WebHost.ConfigureKestrel(options =>
 {

@@ -1,6 +1,7 @@
-﻿using PlainBridge.Api.Application.Enums;
+﻿
+using PlainBridge.SharedApplication.Enums;
 
-namespace PlainBridge.Server.Application.DTOs;
+namespace PlainBridge.SharedApplication.DTOs;
 
 
 public class ResultDto<T>

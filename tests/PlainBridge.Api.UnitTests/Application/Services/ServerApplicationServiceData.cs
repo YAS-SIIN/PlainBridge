@@ -1,6 +1,7 @@
 ﻿
 
 using PlainBridge.Api.Application.DTOs;
+using PlainBridge.SharedApplication.DTOs;
 
 namespace PlainBridge.Api.UnitTests.Application.Services;
 

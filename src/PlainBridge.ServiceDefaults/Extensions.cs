@@ -8,6 +8,7 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
+using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Handler.Bus;
 using PlainBridge.Api.Application.Services.HostApplication;
 using PlainBridge.Api.Application.Services.ServerApplication;
@@ -117,10 +118,14 @@ public static class Extensions
         services.AddScoped<IHostApplicationService, HostApplicationService>();
         services.AddScoped<IServerApplicationService, ServerApplicationService>();
         services.AddScoped<IBusHandler, BusHandler>();
-
         return services;
     }
-     
+
+    public static IServiceCollection AddHttpServices(this IServiceCollection services)
+    {
+        services.AddHttpClient("Api");
+        return services;
+    }
     public static WebApplication MapDefaultEndpoints(this WebApplication app)
     {
         // Adding health checks endpoints to applications in non-development environments has security implications.

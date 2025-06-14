@@ -1,7 +1,8 @@
 ﻿
+
 using PlainBridge.Api.Domain.Enums;
 
-namespace PlainBridge.Api.Application.DTOs;
+namespace PlainBridge.SharedApplication.DTOs;
 
 public abstract record BaseDto<TKey>
 {

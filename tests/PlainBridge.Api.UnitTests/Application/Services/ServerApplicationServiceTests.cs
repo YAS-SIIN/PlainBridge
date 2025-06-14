@@ -3,11 +3,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-
-using PlainBridge.Api.Application.DTOs;
-using PlainBridge.Api.Application.Exceptions;
+ 
 using PlainBridge.Api.Application.Handler.Bus;
 using PlainBridge.Api.Application.Services.ServerApplication;
+using PlainBridge.SharedApplication.DTOs;
+using PlainBridge.SharedApplication.Exceptions;
 
 namespace PlainBridge.Api.UnitTests.Application.Services;
 

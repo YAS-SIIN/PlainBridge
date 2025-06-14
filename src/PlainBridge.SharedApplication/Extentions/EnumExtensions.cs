@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection; 
  
 
-namespace PlainBridge.Api.Application.Extentions;
+namespace PlainBridge.SharedApplication.Extentions;
 
 public static class EnumExtensions
 {

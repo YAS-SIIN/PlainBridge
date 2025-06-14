@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Xml.Linq;
 
-namespace PlainBridge.Api.Application.Exceptions;
+namespace PlainBridge.SharedApplication.Exceptions;
 
 public class CustomException : Exception
 {

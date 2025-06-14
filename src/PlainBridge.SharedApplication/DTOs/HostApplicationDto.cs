@@ -1,7 +1,7 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 
-namespace PlainBridge.Api.Application.DTOs;
+namespace PlainBridge.SharedApplication.DTOs;
 
 public record HostApplicationDto : BaseDto<long>
 {

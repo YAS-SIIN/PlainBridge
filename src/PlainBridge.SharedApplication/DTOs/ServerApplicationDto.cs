@@ -4,7 +4,7 @@ using PlainBridge.Api.Domain.Enums;
 
 using System.ComponentModel.DataAnnotations;
 
-namespace PlainBridge.Api.Application.DTOs;
+namespace PlainBridge.SharedApplication.DTOs;
 
 public record ServerApplicationDto : BaseDto<long>
 { 

@@ -13,7 +13,7 @@ builder.AddServiceDefaults();
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 builder.Services.AddDatabase();
-builder.Services.AddApiServices();
+builder.Services.AddServerProjectServices();
 
 builder.Services.AddExceptionHandler<ErrorHandler>();
 

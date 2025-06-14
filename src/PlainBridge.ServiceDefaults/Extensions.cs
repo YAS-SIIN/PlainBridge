@@ -13,6 +13,7 @@ using PlainBridge.Api.Application.Handler.Bus;
 using PlainBridge.Api.Application.Services.HostApplication;
 using PlainBridge.Api.Application.Services.ServerApplication;
 using PlainBridge.Api.Infrastructure.Data.Context;
+using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -113,11 +114,17 @@ public static class Extensions
         return services;
     }
      
-    public static IServiceCollection AddApiServices(this IServiceCollection services)
+    public static IServiceCollection AddApiProjectServices(this IServiceCollection services)
     {
         services.AddScoped<IHostApplicationService, HostApplicationService>();
         services.AddScoped<IServerApplicationService, ServerApplicationService>();
         services.AddScoped<IBusHandler, BusHandler>();
+        return services;
+    }
+    
+    public static IServiceCollection AddServerProjectServices(this IServiceCollection services)
+    {
+        services.AddScoped<IPlainBridgeApiClientHandler, PlainBridgeApiClientHandler>();
         return services;
     }
 

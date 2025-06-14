@@ -1,10 +1,9 @@
 ﻿using PlainBridge.SharedApplication.DTOs;
 
-namespace PlainBridge.Server.Application.Handler.PlainBridgeApiClient
+namespace PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
+
+public interface IPlainBridgeApiClientHandler
 {
-    public interface IPlainBridgeApiClientHandler
-    {
-        Task<IList<ServerApplicationDto>?> GetAppProjectsAsync(CancellationToken cancellationToken);
-        Task<IList<HostApplicationDto>?> GetProjectsAsync(CancellationToken cancellationToken);
-    }
+    Task<IList<HostApplicationDto>?> GetHostApplicationsAsync(CancellationToken cancellationToken);
+    Task<IList<ServerApplicationDto>?> GetServerApplicationsAsync(CancellationToken cancellationToken);
 }

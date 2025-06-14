@@ -1,6 +1,6 @@
 ﻿
 
-using PlainBridge.Api.Domain.Enums;
+using PlainBridge.SharedApplication.Enums;
 
 namespace PlainBridge.SharedApplication.DTOs;
 

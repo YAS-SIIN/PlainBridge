@@ -1,5 +1,5 @@
-﻿
-using PlainBridge.Api.Application.DTOs;
+﻿ 
+using PlainBridge.Server.Application.DTOs;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 
@@ -18,7 +18,7 @@ public class PlainBridgeApiClientHandler : IPlainBridgeApiClientHandler
         _httpClientFactory = httpClientFactory;
     }
 
-    public async Task<IList<HostApplicationDto>?> GetProjectsAsync(CancellationToken cancellationToken)
+    public async Task<IList<HostApplicationDto>?> GetHostApplicationsAsync(CancellationToken cancellationToken)
     {
         var apiClient = _httpClientFactory.CreateClient("Api");
         var uri = new Uri($"{_applicationSetting.ApiAddress}/HostApplication"); // Fixed the Uri creation
@@ -38,10 +38,10 @@ public class PlainBridgeApiClientHandler : IPlainBridgeApiClientHandler
         return result.Data;
     }
 
-    public async Task<IList<ServerApplicationDto>?> GetAppProjectsAsync(CancellationToken cancellationToken)
+    public async Task<IList<ServerApplicationDto>?> GetServerApplicationsAsync(CancellationToken cancellationToken)
     {
         var apiClient = _httpClientFactory.CreateClient("Api");
-        var uri = new Uri($"{apiClient.BaseAddress}/ServerApplication"); // Fixed the Uri creation
+        var uri = new Uri($"{_applicationSetting.ApiAddress}/ServerApplication"); // Fixed the Uri creation
         var response = await apiClient.GetAsync(uri, cancellationToken); // Added cancellationToken to GetAsync
         if (!response.IsSuccessStatusCode)
             throw new ApplicationException("Failed to get server application");
@@ -57,4 +57,5 @@ public class PlainBridgeApiClientHandler : IPlainBridgeApiClientHandler
 
         return result.Data;
     }
+     
 }

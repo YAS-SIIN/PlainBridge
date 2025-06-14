@@ -14,6 +14,7 @@ using PlainBridge.Api.Application.Services.HostApplication;
 using PlainBridge.Api.Application.Services.ServerApplication;
 using PlainBridge.Api.Infrastructure.Data.Context;
 using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
+using PlainBridge.Server.Application.Management.WebSocketManagement;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -125,6 +126,9 @@ public static class Extensions
     public static IServiceCollection AddServerProjectServices(this IServiceCollection services)
     {
         services.AddScoped<IPlainBridgeApiClientHandler, PlainBridgeApiClientHandler>();
+        services.AddScoped<PlainBridge.Server.Application.Services.ServerApplication.IServerApplicationService, PlainBridge.Server.Application.Services.ServerApplication.ServerApplicationService>();
+        services.AddScoped<PlainBridge.Server.Application.Services.HostApplication.IHostApplicationService, PlainBridge.Server.Application.Services.HostApplication.HostApplicationService>();
+        services.AddScoped<IWebSocketManagement, WebSocketManagement>();
         return services;
     }
 

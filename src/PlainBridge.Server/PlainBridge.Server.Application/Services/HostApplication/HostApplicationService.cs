@@ -4,9 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
+using PlainBridge.Server.Application.CacheManagement.Cache;
 using PlainBridge.Server.Application.DTOs;
-using PlainBridge.Server.Application.Handler.Cache;
 using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
+using PlainBridge.Server.Application.Management.Cache;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
@@ -15,13 +16,13 @@ using System;
 
 namespace PlainBridge.Server.Application.Services.HostApplication;
 
-public class HostApplicationService
+public class HostApplicationService : IHostApplicationService
 {
     private readonly ILogger<HostApplicationService> _logger;
-    private readonly IPlainBridgeApiClientHandler _plainBridgeApiClientHandler; 
-    private readonly ICache _cache; 
+    private readonly IPlainBridgeApiClientHandler _plainBridgeApiClientHandler;
+    private readonly ICacheManagement _cache;
     private readonly ApplicationSetting _applicationSetting;
-    public HostApplicationService(ILogger<HostApplicationService> logger, IPlainBridgeApiClientHandler plainBridgeApiClientHandler, ApplicationSetting applicationSetting, ICache cache)
+    public HostApplicationService(ILogger<HostApplicationService> logger, IPlainBridgeApiClientHandler plainBridgeApiClientHandler, ApplicationSetting applicationSetting, ICacheManagement cache)
     {
         _logger = logger;
         this._plainBridgeApiClientHandler = plainBridgeApiClientHandler;

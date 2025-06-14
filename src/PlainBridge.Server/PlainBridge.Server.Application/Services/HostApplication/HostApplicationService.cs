@@ -9,6 +9,7 @@ using PlainBridge.Server.Application.Handler.Cache;
 using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
+using PlainBridge.SharedApplication.Exceptions;
 
 using System;
 
@@ -34,15 +35,15 @@ public class HostApplicationService
         if (string.IsNullOrEmpty(host))
             throw new ArgumentNullException(nameof(host));
 
-        if (!_cache.TryGetHostApplication(host, out HostApplicationDto project)) throw new ApplicationException("Project not found");
-        return project;
+        if (!_cache.TryGetHostApplication(host, out HostApplicationDto hostApplication)) throw new NotFoundException("Host application not found");
+        return hostApplication;
     }
 
     public async Task UpdateHostApplicationAsync(CancellationToken cancellationToken)
     {
         var hostApplications = await _plainBridgeApiClientHandler.GetHostApplicationsAsync(CancellationToken.None);
 
-        var projectDictionary = new Dictionary<string, HostApplicationDto>();
+        var hostApplicationsDictionary = new Dictionary<string, HostApplicationDto>();
         foreach (var project in hostApplications.Where(x => x.State == RowStateEnum.Active))
             _cache.SetHostApplication(project.GetProjectHost(_applicationSetting.DefaultDomain), project);
     }

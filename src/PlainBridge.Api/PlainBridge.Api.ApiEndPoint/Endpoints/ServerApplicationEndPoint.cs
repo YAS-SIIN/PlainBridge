@@ -1,7 +1,8 @@
 ﻿using PlainBridge.Api.Application.DTOs;
-using PlainBridge.Api.Application.Enums;
-using PlainBridge.Api.Application.Extentions;
 using PlainBridge.Api.Application.Services.ServerApplication;
+using PlainBridge.SharedApplication.DTOs;
+using PlainBridge.SharedApplication.Enums;
+using PlainBridge.SharedApplication.Extentions;
 
 namespace PlainBridge.Api.ApiEndPoint.Endpoints;
 

@@ -12,18 +12,8 @@ using PlainBridge.SharedApplication.Exceptions;
 
 namespace PlainBridge.Api.Application.Services.HostApplication;
 
-public class HostApplicationService : IHostApplicationService
-{
-    private readonly ILogger<HostApplicationService> _logger;
-    private readonly MainDbContext _dbContext;
-    private readonly IBusHandler _busHandler;
-
-    public HostApplicationService(ILogger<HostApplicationService> logger, MainDbContext dbContext, IBusHandler busHandler)
-    {
-        _logger = logger;
-        _dbContext = dbContext;
-        _busHandler = busHandler;
-    }
+public class HostApplicationService(ILogger<HostApplicationService> _logger, MainDbContext _dbContext, IBusHandler _busHandler) : IHostApplicationService
+{ 
 
 
     public async Task<IList<HostApplicationDto>> GetAllAsync(CancellationToken cancellationToken)

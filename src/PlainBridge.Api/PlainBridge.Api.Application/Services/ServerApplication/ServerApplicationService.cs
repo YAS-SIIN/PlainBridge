@@ -14,19 +14,9 @@ using RabbitMQ.Client;
 
 namespace PlainBridge.Api.Application.Services.ServerApplication;
 
-public class ServerApplicationService : IServerApplicationService
+public class ServerApplicationService(ILogger<ServerApplicationService> _logger, MainDbContext _dbContext, IBusHandler _busHandler) : IServerApplicationService
 {
-    private readonly ILogger<ServerApplicationService> _logger;
-    private readonly MainDbContext _dbContext;
-    private readonly IBusHandler _busHandler;
-
-    public ServerApplicationService(ILogger<ServerApplicationService> logger, MainDbContext dbContext, IBusHandler busHandler)
-    {
-        _logger = logger;
-        _dbContext = dbContext;
-        _busHandler = busHandler;
-    }
-
+    
     public async Task<IList<ServerApplicationDto>> GetAllAsync(CancellationToken cancellationToken)
     {
         var serverApplication = await _dbContext.ServerApplications.AsNoTracking().ToListAsync(cancellationToken);

@@ -7,15 +7,8 @@ using System.Threading.Tasks;
 
 namespace PlainBridge.Api.Application.Handler.Bus;
 
-public class BusHandler : IBusHandler
+public class BusHandler(ILogger<BusHandler> _logger, IConnection _connection) : IBusHandler
 {
-    private readonly ILogger<BusHandler> _logger;
-    private readonly IConnection _connection;
-    public BusHandler(ILogger<BusHandler> logger, IConnection connection)
-    {
-        _connection = connection ?? throw new ArgumentNullException(nameof(connection));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
     public async Task PublishAsync<T>(T message, CancellationToken cancellationToken) where T : class
     {
         if (message == null) throw new ArgumentNullException(nameof(message));

@@ -15,20 +15,8 @@ using System.Text.Json;
 namespace PlainBridge.Server.Application.Services.HttpRequestProxy;
 
 
-public class HttpRequestProxyService : IHttpRequestProxyService
-{
-    private readonly ILogger<HttpRequestProxyService> _logger;
-    private readonly IApiExternalBusService _apiExternalBusService;
-    private readonly IConnection _connection;
-    private readonly ResponseCompletionSourcesManagement _responseCompletionSourcesManagement;
-
-    public HttpRequestProxyService(ILogger<HttpRequestProxyService> logger, IApiExternalBusService apiExternalBusService, IConnection connection, ResponseCompletionSourcesManagement responseCompletionSourcesManagement)
-    {
-        _logger = logger;
-        _apiExternalBusService = apiExternalBusService;
-        _connection = connection;
-        _responseCompletionSourcesManagement = responseCompletionSourcesManagement;
-    }
+public class HttpRequestProxyService(ILogger<HttpRequestProxyService> _logger, IApiExternalBusService _apiExternalBusService, IConnection _connection, ResponseCompletionSourcesManagement _responseCompletionSourcesManagement) : IHttpRequestProxyService
+{ 
 
     public async Task InitializeConsumerAsync(CancellationToken cancellationToken)
     {

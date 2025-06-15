@@ -13,20 +13,9 @@ using System.Text;
 
 namespace PlainBridge.Server.Application.Services.ApiExternalBus;
 
-public class ApiExternalBusService : IApiExternalBusService
+public class ApiExternalBusService(ILogger<ApiExternalBusService> _logger, IConnection _connection, IHostApplicationService _hostApplicationService, IServerApplicationService _serverApplicationService) : IApiExternalBusService
 {
-    private readonly ILogger<ApiExternalBusService> _logger;
-    private readonly IConnection _connection;
-    private readonly IHostApplicationService _hostApplicationService;
-    private readonly IServerApplicationService _serverApplicationService;
-
-    public ApiExternalBusService(ILogger<ApiExternalBusService> logger, IConnection connection, IHostApplicationService hostApplicationService, IServerApplicationService serverApplicationService)
-    {
-        _logger = logger;
-        _connection = connection;
-        _hostApplicationService = hostApplicationService;
-        _serverApplicationService = serverApplicationService;
-    }
+   
 
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {

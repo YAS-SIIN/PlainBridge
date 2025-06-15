@@ -10,16 +10,8 @@ using System.Net.WebSockets;
 
 namespace PlainBridge.Server.Application.Management.Cache;
 
-public class CacheManagement : ICacheManagement
-{
-    private readonly ILogger<CacheManagement> _logger;
-    private readonly IMemoryCache _memoryCache;
-
-    public CacheManagement(ILogger<CacheManagement> logger, IMemoryCache memoryCache)
-    {
-        _logger = logger;
-        _memoryCache = memoryCache;
-    }
+public class CacheManagement(ILogger<CacheManagement> _logger, IMemoryCache _memoryCache) : ICacheManagement
+{ 
 
     public HostApplicationDto SetHostApplication(string host, HostApplicationDto value) => _memoryCache.Set($"hostApplication:{host}", value);
     public bool TryGetHostApplication(string host, out HostApplicationDto value) => _memoryCache.TryGetValue($"hostApplication:{host}", out value);

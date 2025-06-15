@@ -7,17 +7,9 @@ using System.Text.Json;
 
 namespace PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 
-public class PlainBridgeApiClientHandler : IPlainBridgeApiClientHandler
+public class PlainBridgeApiClientHandler(ApplicationSetting _applicationSetting, IHttpClientFactory _httpClientFactory) : IPlainBridgeApiClientHandler
 {
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly ApplicationSetting _applicationSetting;
-
-    public PlainBridgeApiClientHandler(ApplicationSetting applicationSetting, IHttpClientFactory httpClientFactory)
-    {
-        _applicationSetting = applicationSetting;
-        _httpClientFactory = httpClientFactory;
-    }
-
+ 
     public async Task<IList<HostApplicationDto>?> GetHostApplicationsAsync(CancellationToken cancellationToken)
     {
         var apiClient = _httpClientFactory.CreateClient("Api");

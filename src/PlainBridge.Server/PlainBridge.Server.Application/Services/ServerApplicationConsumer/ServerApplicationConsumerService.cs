@@ -10,18 +10,9 @@ using System.Text;
 
 namespace PlainBridge.Server.Application.Services.AppProjectConsumer;
 
-public class ServerApplicationConsumerService : IServerApplicationConsumerService
+public class ServerApplicationConsumerService(ILogger<ServerApplicationConsumerService> _logger, ICacheManagement _cacheManagement, IConnection _connection) : IServerApplicationConsumerService
 {
-    private readonly ILogger<ServerApplicationConsumerService> _logger;
-    private readonly ICacheManagement _cacheManagement;
-    private readonly IConnection _connection;
-    public ServerApplicationConsumerService(ILogger<ServerApplicationConsumerService> logger, ICacheManagement cacheManagement, IConnection connection)
-    {
-        _logger = logger;
-        _cacheManagement = cacheManagement;
-        _connection = connection;
-    }
-
+ 
 
     public async Task InitializeConsumerAsync()
     {
@@ -68,14 +59,14 @@ public class ServerApplicationConsumerService : IServerApplicationConsumerServic
                 return;
             }
 
-            var destinationQueue = $"client_shared_port_network_packets"; // Fixed spelling error: changed "sharedport" to "shared_port"
+            var destinationQueue = $"client_shared_port_network_packets";
             await channel.QueueDeclareAsync(destinationQueue, false, false, false, null);
 
 
 
             props.Headers["user_port"] = userPort;
             props.Headers["user_connection_id"] = userConnectionId;
-            props.Headers["shared_port"] = destinationAppProject.InternalPort; // Fixed spelling error: changed "sharedport_port" to "shared_port"
+            props.Headers["shared_port"] = destinationAppProject.InternalPort;
 
             await channel.BasicPublishAsync(string.Empty, destinationQueue, false, props, body);
             await channel.BasicAckAsync(ea.DeliveryTag, false);
@@ -115,11 +106,11 @@ public class ServerApplicationConsumerService : IServerApplicationConsumerServic
                 return;
             }
 
-            var destinationQueue = $"client_user_port_network_packets"; // Fixed spelling error: changed "userport" to "user_port"
+            var destinationQueue = $"client_user_port_network_packets";
             await channel.QueueDeclareAsync(destinationQueue, false, false, false, null);
 
             props.Headers["user_port"] = userPort;
-            props.Headers["user_connection_id"] = userConnectionId; // Fixed spelling error: changed "user_connectionid" to "user_connection_id"
+            props.Headers["user_connection_id"] = userConnectionId;
 
             await channel.BasicPublishAsync(string.Empty, destinationQueue, false, props, body);
             await channel.BasicAckAsync(ea.DeliveryTag, false);

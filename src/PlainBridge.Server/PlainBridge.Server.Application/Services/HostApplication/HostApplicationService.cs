@@ -12,20 +12,8 @@ using System;
 
 namespace PlainBridge.Server.Application.Services.HostApplication;
 
-public class HostApplicationService : IHostApplicationService
-{
-    private readonly ILogger<HostApplicationService> _logger;
-    private readonly IPlainBridgeApiClientHandler _plainBridgeApiClientHandler;
-    private readonly ICacheManagement _cache;
-    private readonly ApplicationSetting _applicationSetting;
-    public HostApplicationService(ILogger<HostApplicationService> logger, IPlainBridgeApiClientHandler plainBridgeApiClientHandler, ApplicationSetting applicationSetting, ICacheManagement cache)
-    {
-        _logger = logger;
-        this._plainBridgeApiClientHandler = plainBridgeApiClientHandler;
-        _applicationSetting = applicationSetting;
-        _cache = cache;
-    }
-
+public class HostApplicationService(ILogger<HostApplicationService> _logger, IPlainBridgeApiClientHandler _plainBridgeApiClientHandler, ApplicationSetting _applicationSetting, ICacheManagement _cache) : IHostApplicationService
+{ 
 
     public HostApplicationDto GetByHost(string host)
     {

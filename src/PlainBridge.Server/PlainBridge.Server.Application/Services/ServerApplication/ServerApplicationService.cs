@@ -11,21 +11,9 @@ using PlainBridge.SharedApplication.Enums;
 using System;
 namespace PlainBridge.Server.Application.Services.ServerApplication;
 
-public class ServerApplicationService : IServerApplicationService
+public class ServerApplicationService(ILogger<ServerApplicationService> _logger, IPlainBridgeApiClientHandler _plainBridgeApiClientHandler, ApplicationSetting applicationSetting, ICacheManagement _cache) : IServerApplicationService
 {
-    private readonly ILogger<ServerApplicationService> _logger;
-
-    private readonly IPlainBridgeApiClientHandler _plainBridgeApiClientHandler;
-    private readonly ICacheManagement _cache;
-    private readonly ApplicationSetting _applicationSetting;
-    public ServerApplicationService(ILogger<ServerApplicationService> logger, IPlainBridgeApiClientHandler plainBridgeApiClientHandler, ApplicationSetting applicationSetting, ICacheManagement cache)
-    {
-        _logger = logger;
-        this._plainBridgeApiClientHandler = plainBridgeApiClientHandler;
-        _applicationSetting = applicationSetting;
-        _cache = cache;
-    }
-
+   
 
     public async Task UpdateServerApplicationAsync(CancellationToken cancellationToken)
     {

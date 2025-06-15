@@ -16,9 +16,9 @@ namespace PlainBridge.Api.Application.Services.ServerApplication;
 
 public class ServerApplicationService(ILogger<ServerApplicationService> _logger, MainDbContext _dbContext, IBusHandler _busHandler) : IServerApplicationService
 {
-    
     public async Task<IList<ServerApplicationDto>> GetAllAsync(CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Getting all server applications.");
         var serverApplication = await _dbContext.ServerApplications.AsNoTracking().ToListAsync(cancellationToken);
 
         return serverApplication.Select(x => new ServerApplicationDto
@@ -32,9 +32,13 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
 
     public async Task<ServerApplicationDto> GetByIdAsync(long id, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Getting server application by Id: {Id}", id);
         var serverApp = await _dbContext.ServerApplications.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
         if (serverApp == null)
+        {
+            _logger.LogWarning("Server application with Id: {Id} not found.", id);
             throw new NotFoundException(id);
+        }
         return new ServerApplicationDto
         {
             Id = serverApp.Id,
@@ -46,16 +50,22 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
 
     public async Task<Guid> CreateAsync(ServerApplicationDto serverApplication, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Creating server application with Name: {Name}", serverApplication.Name);
         if (serverApplication.InternalPort < 1 || serverApplication.InternalPort > 65535)
+        {
+            _logger.LogError("Port range is not valid: {Port}", serverApplication.InternalPort);
             throw new ApplicationException("Port range is not valid");
+        }
 
         if (serverApplication.ServerApplicationType == ServerApplicationTypeEnum.UsePort && (!serverApplication.ServerApplicationViewId.HasValue || serverApplication.ServerApplicationViewId == Guid.Empty))
         {
+            _logger.LogError("ServerApplicationViewId is required for UsePort type.");
             throw new ArgumentNullException(nameof(ServerApplicationDto.ServerApplicationViewId));
         }
 
         if (serverApplication.ServerApplicationType == ServerApplicationTypeEnum.UsePort && !_dbContext.ServerApplications.Any(x => x.AppId == serverApplication.ServerApplicationViewId))
         {
+            _logger.LogError("Referenced ServerApplicationViewId not found: {ViewId}", serverApplication.ServerApplicationViewId);
             throw new NotFoundException(nameof(serverApplication), new List<KeyValuePair<string, object>> { new KeyValuePair<string, object>(nameof(ServerApplicationDto.ServerApplicationViewId), serverApplication.ServerApplicationViewId.Value) });
         }
 
@@ -72,15 +82,17 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
         await _dbContext.SaveChangesAsync(cancellationToken);
         await _busHandler.PublishAsync<string>("Server_Application_Created", cancellationToken);
 
+        _logger.LogInformation("Server application created with AppId: {AppId}", app.AppId);
         return app.AppId;
     }
 
     public async Task UpdateAsync(ServerApplicationDto serverApplication, CancellationToken cancellationToken)
-    { 
+    {
+        _logger.LogInformation("Updating server application with Id: {Id}", serverApplication.Id);
         var app = await _dbContext.ServerApplications.FindAsync(serverApplication.Id, cancellationToken);
         if (app == null)
         {
-
+            _logger.LogWarning("Server application with Id: {Id} not found for update.", serverApplication.Id);
             throw new NotFoundException(nameof(ServerApplication), new List<KeyValuePair<string, object>> { new KeyValuePair<string, object>(nameof(ServerApplicationDto.Id), serverApplication.Id) });
         }
 
@@ -89,17 +101,22 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         await _busHandler.PublishAsync<string>("Server_Application_Updated", cancellationToken);
+        _logger.LogInformation("Server application with Id: {Id} updated.", serverApplication.Id);
     }
 
     public async Task DeleteAsync(long id, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Deleting server application with Id: {Id}", id);
         var app = await _dbContext.ServerApplications.FindAsync(id, cancellationToken);
         if (app == null)
+        {
+            _logger.LogWarning("Server application with Id: {Id} not found for deletion.", id);
             throw new NotFoundException(id);
+        }
 
         _dbContext.ServerApplications.Remove(app);
         await _dbContext.SaveChangesAsync(cancellationToken);
         await _busHandler.PublishAsync<string>("Server_Application_Deleted", cancellationToken);
+        _logger.LogInformation("Server application with Id: {Id} deleted.", id);
     }
-
 }

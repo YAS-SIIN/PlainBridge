@@ -20,13 +20,14 @@ public class HttpRequestProxyService
     private readonly ILogger<HttpRequestProxyService> _logger;
     private readonly IApiExternalBusService _apiExternalBusService;
     private readonly IConnection _connection;
-    private readonly ResponseCompletionSourcesManagement _responseCompletionSourcesHandler;
+    private readonly ResponseCompletionSourcesManagement _responseCompletionSourcesManagement;
 
-    public HttpRequestProxyService(IApiExternalBusService apiExternalBusService, IConnection connection, ResponseCompletionSourcesManagement responseCompletionSourcesHandler)
+    public HttpRequestProxyService(ILogger<HttpRequestProxyService> logger, IApiExternalBusService apiExternalBusService, IConnection connection, ResponseCompletionSourcesManagement responseCompletionSourcesManagement)
     {
+        _logger = logger;
         _apiExternalBusService = apiExternalBusService;
         _connection = connection;
-        _responseCompletionSourcesHandler = responseCompletionSourcesHandler;
+        _responseCompletionSourcesManagement = responseCompletionSourcesManagement;
     }
 
     public async Task InitializeConsumerAsync(CancellationToken cancellationToken)
@@ -90,6 +91,6 @@ public class HttpRequestProxyService
         // This is just a placeholder method to illustrate the concept
 
         // Example implementation using a dictionary
-        return _responseCompletionSourcesHandler.Sources.TryRemove(requestID, out responseCompletionSource);
+        return _responseCompletionSourcesManagement.Sources.TryRemove(requestID, out responseCompletionSource);
     }
 }

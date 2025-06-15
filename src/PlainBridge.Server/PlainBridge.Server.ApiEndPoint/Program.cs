@@ -9,6 +9,7 @@ builder.AddServiceDefaults();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddServerProjectServices();
 
 builder.Services.Configure<ApplicationSetting>(builder.Configuration);
 builder.Services.AddScoped(sp => sp.GetRequiredService<IOptions<ApplicationSetting>>().Value);

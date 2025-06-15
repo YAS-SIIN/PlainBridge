@@ -8,7 +8,7 @@ namespace PlainBridge.SharedApplication.DTOs;
 
 public record ServerApplicationDto : BaseDto<long>
 { 
-    public Guid AppId { get; set; }
+    public Guid? AppId { get; set; }
 
     [Required]
     [StringLength(150)]

@@ -15,7 +15,7 @@ using System.Text.Json;
 namespace PlainBridge.Server.Application.Services.HttpRequestProxy;
 
 
-public class HttpRequestProxyService
+public class HttpRequestProxyService : IHttpRequestProxyService
 {
     private readonly ILogger<HttpRequestProxyService> _logger;
     private readonly IApiExternalBusService _apiExternalBusService;
@@ -45,11 +45,11 @@ public class HttpRequestProxyService
         autoDelete: false,
             arguments: null);
 
-       await  channel.QueueDeclareAsync(queue: queueName,
-                 durable: false,
-                 exclusive: false,
-                 autoDelete: false,
-                 arguments: null);
+        await channel.QueueDeclareAsync(queue: queueName,
+                  durable: false,
+                  exclusive: false,
+                  autoDelete: false,
+                  arguments: null);
 
         await channel.QueueBindAsync(queue: queueName,
            exchange: exchangeName,

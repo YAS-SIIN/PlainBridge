@@ -1,10 +1,6 @@
-﻿
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿ 
 using Microsoft.Extensions.Logging;
-
-using PlainBridge.Server.Application.CacheManagement.Cache;
+ 
 using PlainBridge.Server.Application.DTOs;
 using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 using PlainBridge.Server.Application.Management.Cache;

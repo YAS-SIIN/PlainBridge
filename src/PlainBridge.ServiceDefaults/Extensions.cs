@@ -18,6 +18,8 @@ using PlainBridge.Server.Application.Management.Cache;
 using PlainBridge.Server.Application.Management.ResponseCompletionSources;
 using PlainBridge.Server.Application.Management.WebSocketManagement;
 using PlainBridge.Server.Application.Services.ApiExternalBus;
+using PlainBridge.Server.Application.Services.AppProjectConsumer;
+using PlainBridge.Server.Application.Services.HttpRequestProxy;
 using PlainBridge.Server.Application.Services.ServerBus;
 
 namespace Microsoft.Extensions.Hosting;
@@ -136,6 +138,8 @@ public static class Extensions
         services.AddScoped<ICacheManagement, CacheManagement>();
         services.AddScoped<IApiExternalBusService, ApiExternalBusService>();
         services.AddScoped<IServerBusService, ServerBusService>();
+        services.AddScoped<IAppProjectConsumerService, AppProjectConsumerService>();
+        services.AddScoped<IHttpRequestProxyService, HttpRequestProxyService>();
         services.AddScoped<ResponseCompletionSourcesManagement>();
         return services;
     }

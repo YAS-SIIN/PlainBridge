@@ -19,4 +19,8 @@
     <ProjectReference Include="..\PlainBridge.Server.Application\PlainBridge.Server.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Middlewares\" />
+  </ItemGroup>
+
 </Project>

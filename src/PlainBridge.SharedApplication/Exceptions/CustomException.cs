@@ -1,4 +1,5 @@
-﻿using PlainBridge.Api.Application.Enums;
+﻿ 
+using PlainBridge.SharedApplication.Enums;
 
 using System;
 using System.Diagnostics;

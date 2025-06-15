@@ -6,6 +6,7 @@ using Moq;
  
 using PlainBridge.Api.Application.Handler.Bus;
 using PlainBridge.Api.Application.Services.ServerApplication;
+using PlainBridge.Api.Domain.Entities;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Exceptions;
 
@@ -58,20 +59,41 @@ public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
     [MemberData(nameof(ServerApplicationServiceData.SetDataFor_CreateAsync_WhenEveryThingIsOk_ShouldBeSucceeded), MemberType = typeof(ServerApplicationServiceData))]
     public async Task CreateAsync_WhenEveryThingIsOk_ShouldBeSucceeded(ServerApplicationDto dto)
     {
+        if (dto.ServerApplicationType == SharedApplication.Enums.ServerApplicationTypeEnum.UsePort)
+        {
+            var serverApplication = await _fixture.MemoryMainDbContext.ServerApplications.FirstOrDefaultAsync();
+            dto.ServerApplicationViewId = serverApplication.AppId;
+        }
+
         var guid = await serverApplicationService.CreateAsync(dto, CancellationToken.None);
         Assert.NotEqual(Guid.Empty, guid);
 
         var created = await _fixture.MemoryMainDbContext.ServerApplications.FirstOrDefaultAsync(x => x.AppId == guid);
         Assert.NotNull(created);
-        Assert.Equal("NewApp", created.Name);
+        Assert.Equal(dto.Name, created.Name);
+        Assert.Equal(dto.InternalPort, created.InternalPort);
     }
 
+     
     [Theory]
     [MemberData(nameof(ServerApplicationServiceData.SetDataFor_CreateAsync_WhenInternalPortIsNotValid_ShouldThrowException), MemberType = typeof(ServerApplicationServiceData))]
     public async Task CreateAsync_WhenInternalPortIsNotValid_ShouldThrowException(ServerApplicationDto dto)
     {
-        await Assert.ThrowsAsync<ApplicationException>(() => serverApplicationService.CreateAsync(dto, CancellationToken.None));
+        var res = await Assert.ThrowsAsync<ApplicationException>(() => serverApplicationService.CreateAsync(dto, CancellationToken.None));
+        Assert.NotNull(res);
+        Assert.Equal("Port range is not valid", res.Message);
     }
+    
+    [Theory]
+    [MemberData(nameof(ServerApplicationServiceData.SetDataFor_CreateAsync_WhenServerApplicationViewIdIsEmpty_ShouldThrowException), MemberType = typeof(ServerApplicationServiceData))]
+    public async Task CreateAsync_WhenServerApplicationViewIdIsEmpty_ShouldThrowException(ServerApplicationDto dto)
+    {
+        var res = await Assert.ThrowsAsync<ArgumentNullException>(() => serverApplicationService.CreateAsync(dto, CancellationToken.None));
+        Assert.NotNull(res);
+        Assert.Equal(nameof(ServerApplicationDto.ServerApplicationViewId), res.ParamName);
+    }
+
+
     #endregion
 
     #region DeleteAsync
@@ -80,7 +102,6 @@ public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
     [InlineData(3)]
     public async Task DeleteAsync_WhenEveryThingIsOk_ShouldBeSucceeded(int id)
     {
-
         await serverApplicationService.DeleteAsync(id, CancellationToken.None);
         var deleted = await _fixture.MemoryMainDbContext.ServerApplications.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         Assert.Null(deleted);
@@ -90,7 +111,8 @@ public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
     [InlineData(9999)]
     public async Task DeleteAsync_WhenIdDoesntExist_ShouldThrowException(int id)
     {
-        await Assert.ThrowsAsync<NotFoundException>(() => serverApplicationService.DeleteAsync(id, CancellationToken.None));
+        var res = await Assert.ThrowsAsync<NotFoundException>(() => serverApplicationService.DeleteAsync(id, CancellationToken.None));
+        Assert.NotNull(res);
     }
     #endregion
 
@@ -113,15 +135,27 @@ public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
     [MemberData(nameof(ServerApplicationServiceData.SetDataFor_UpdateAsync_WhenIdDoesntExist_ShouldThrowException), MemberType = typeof(ServerApplicationServiceData))]
     public async Task UpdateAsync_WhenIdDoesntExist_ShouldThrowException(ServerApplicationDto dto)
     {
-        await Assert.ThrowsAsync<NotFoundException>(() => serverApplicationService.UpdateAsync(dto, CancellationToken.None));
+       var res = await Assert.ThrowsAsync<NotFoundException>(() => serverApplicationService.UpdateAsync(dto, CancellationToken.None));
+        Assert.NotNull(res);
     }
 
     [Theory]
     [MemberData(nameof(ServerApplicationServiceData.SetDataFor_UpdateAsync_WhenIdDoesntExist_ShouldThrowApplicationException), MemberType = typeof(ServerApplicationServiceData))]
     public async Task UpdateAsync_WhenIdDoesntExist_ShouldThrowApplicationException(ServerApplicationDto dto)
     {
-        await Assert.ThrowsAsync<NotFoundException>(() => serverApplicationService.UpdateAsync(dto, CancellationToken.None));
+        var res = await Assert.ThrowsAsync<NotFoundException>(() => serverApplicationService.UpdateAsync(dto, CancellationToken.None));
+        Assert.NotNull(res);
     }
+
+    [Theory]
+    [MemberData(nameof(ServerApplicationServiceData.SetDataFor_UpdateAsync_WhenServerApplicationViewIdIsEmpty_ShouldThrowException), MemberType = typeof(ServerApplicationServiceData))]
+    public async Task UpdateAsync_WhenServerApplicationViewIdIsEmpty_ShouldThrowException(ServerApplicationDto dto)
+    {
+        var res = await Assert.ThrowsAsync<ArgumentNullException>(() => serverApplicationService.UpdateAsync(dto, CancellationToken.None));
+        Assert.NotNull(res);
+        Assert.Equal(nameof(ServerApplicationDto.ServerApplicationViewId), res.ParamName);
+    }
+
     #endregion
 
 }

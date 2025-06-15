@@ -15,8 +15,10 @@ namespace PlainBridge.Api.Domain.Entities;
 public class ServerApplication : BaseEntity<long>
 { 
     public Guid AppId { get; set; } 
+    public Guid? ServerApplicationViewId { get; set; } 
     public string Name { get; set; } 
     public int InternalPort { get; set; } 
+    public ServerApplicationTypeEnum ServerApplicationType { get; set; } 
 }
 
 

@@ -1,8 +1,20 @@
 
 using PlainBridge.Api.Domain.Common;
 
-namespace PlainBridge.SharedApplication.Exceptions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
-public class NotFoundException(object data)
-    : Exception($"data for {data} not found");
+namespace PlainBridge.SharedApplication.Exceptions;
  
+public class NotFoundException : Exception
+{
+    public NotFoundException(object key)
+    {
+        Data.Add("key", key);
+    }
+
+    public NotFoundException(string key, List<KeyValuePair<string, object>> metadata) : base(key)
+    {
+        foreach (var kvp in metadata)
+            Data.Add(kvp.Key, kvp.Value);
+    }
+}

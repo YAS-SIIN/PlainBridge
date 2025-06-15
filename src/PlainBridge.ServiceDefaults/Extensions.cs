@@ -138,7 +138,7 @@ public static class Extensions
         services.AddScoped<ICacheManagement, CacheManagement>();
         services.AddScoped<IApiExternalBusService, ApiExternalBusService>();
         services.AddScoped<IServerBusService, ServerBusService>();
-        services.AddScoped<IAppProjectConsumerService, AppProjectConsumerService>();
+        services.AddScoped<IServerApplicationConsumerService, ServerApplicationConsumerService>();
         services.AddScoped<IHttpRequestProxyService, HttpRequestProxyService>();
         services.AddScoped<ResponseCompletionSourcesManagement>();
         return services;

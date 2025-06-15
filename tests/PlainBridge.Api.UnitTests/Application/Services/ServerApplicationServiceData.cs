@@ -11,8 +11,17 @@ public class ServerApplicationServiceData
     {
         yield return new object[] { new ServerApplicationDto
         {
-            Name = "NewApp", 
-            InternalPort = 4000
+            Name = "NewApp1", 
+            InternalPort = 4001,
+            ServerApplicationType = SharedApplication.Enums.ServerApplicationTypeEnum.SharePort,
+            ServerApplicationViewId = Guid.NewGuid()
+        }};
+        yield return new object[] { new ServerApplicationDto
+        {
+            Name = "NewApp2",
+            InternalPort = 4002,
+            ServerApplicationType = SharedApplication.Enums.ServerApplicationTypeEnum.UsePort,
+            ServerApplicationViewId = Guid.NewGuid()
         }};
     }  
     
@@ -21,7 +30,19 @@ public class ServerApplicationServiceData
         yield return new object[] { new ServerApplicationDto
         {
             Name = "NewApp",
-            InternalPort = 99999
+            InternalPort = 99999,
+            ServerApplicationType = SharedApplication.Enums.ServerApplicationTypeEnum.SharePort,
+            ServerApplicationViewId = Guid.NewGuid()
+        }};
+    }  
+    
+    public static IEnumerable<object[]> SetDataFor_CreateAsync_WhenServerApplicationViewIdIsEmpty_ShouldThrowException()
+    {
+        yield return new object[] { new ServerApplicationDto
+        {
+            Name = "NewApp",
+            InternalPort = 4000,
+            ServerApplicationType = SharedApplication.Enums.ServerApplicationTypeEnum.UsePort,
         }};
     }  
     
@@ -30,7 +51,9 @@ public class ServerApplicationServiceData
         yield return new object[] { new ServerApplicationDto
         {
             Id = 2,
-            InternalPort = 4000
+            InternalPort = 4000,
+            ServerApplicationType = SharedApplication.Enums.ServerApplicationTypeEnum.SharePort,
+            ServerApplicationViewId = Guid.NewGuid()
         }};
     }  
      
@@ -49,6 +72,16 @@ public class ServerApplicationServiceData
         {
             Id = 999,
             InternalPort = 4000
+        }};
+    }  
+     
+    public static IEnumerable<object[]> SetDataFor_UpdateAsync_WhenServerApplicationViewIdIsEmpty_ShouldThrowException()
+    {
+        yield return new object[] { new ServerApplicationDto
+        {
+            Id = 999,
+            InternalPort = 4000,
+            ServerApplicationType = SharedApplication.Enums.ServerApplicationTypeEnum.UsePort,
         }};
     }  
 

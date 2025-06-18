@@ -21,7 +21,23 @@ var apiService = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-e
 //    .WithReference(apiService)
 //    .WaitFor(apiService);
 
-builder.AddProject<Projects.PlainBridge_Server_ApiEndPoint>("server-api-endpoint");
+builder.AddProject<Projects.PlainBridge_Server_ApiEndPoint>("server-endpoint"); 
+
+//builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
+//    .WithExternalHttpEndpoints()
+//    .WithReference(cache)
+//    .WaitFor(cache)
+//    .WithReference(apiService)
+//    .WaitFor(apiService);
+ 
+//builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
+//    .WithExternalHttpEndpoints()
+//    .WithReference(cache)
+//    .WaitFor(cache)
+//    .WithReference(apiService)
+//    .WaitFor(apiService);
+
+builder.AddProject<Projects.PlainBridge_IdentityServer_EndPoint>("identityserver-endpoint");
 
 //builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
 //    .WithExternalHttpEndpoints()

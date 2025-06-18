@@ -4,7 +4,7 @@ using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Extentions;
 
-namespace PlainBridge.Api.ApiService.Endpoints;
+namespace PlainBridge.Api.ApiEndPoint.Endpoints;
 
 public static class HostApplicationEndpoint
 {

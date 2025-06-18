@@ -1,8 +1,7 @@
  
 
 using PlainBridge.Api.ApiEndPoint.Endpoints;
-using PlainBridge.Api.ApiService.Endpoints;
-using PlainBridge.Api.ApiService.ErrorHandling;
+using PlainBridge.Api.ApiEndPoint.ErrorHandling;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +11,7 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
-builder.Services.AddDatabase();
+builder.Services.AddApiProjectDatabase();
 builder.Services.AddServerProjectServices();
 
 builder.Services.AddExceptionHandler<ErrorHandler>();

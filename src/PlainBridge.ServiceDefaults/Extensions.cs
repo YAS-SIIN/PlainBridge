@@ -114,9 +114,16 @@ public static class Extensions
         return builder;
     }
 
-    public static IServiceCollection AddDatabase(this IServiceCollection services)
+    public static IServiceCollection AddApiProjectDatabase(this IServiceCollection services)
     {
-        services.AddDbContext<MainDbContext>(options => options.UseInMemoryDatabase("PlainBridgeDBContext"));
+        services.AddDbContext<MainDbContext>(options => options.UseInMemoryDatabase("PlainBridgeApiDBContext"));
+
+        return services;
+    }
+     
+    public static IServiceCollection AddIDSProjectDatabase(this IServiceCollection services)
+    {
+        services.AddDbContext<MainDbContext>(options => options.UseInMemoryDatabase("PlainBridgeIDSDBContext"));
 
         return services;
     }
@@ -149,6 +156,7 @@ public static class Extensions
         services.AddHttpClient("Api");
         return services;
     }
+
     public static WebApplication MapDefaultEndpoints(this WebApplication app)
     {
         // Adding health checks endpoints to applications in non-development environments has security implications.

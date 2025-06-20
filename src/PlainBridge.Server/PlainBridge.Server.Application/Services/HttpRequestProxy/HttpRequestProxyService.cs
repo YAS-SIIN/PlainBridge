@@ -25,30 +25,33 @@ public class HttpRequestProxyService(ILogger<HttpRequestProxyService> _logger, I
         var queueName = "response_bus";
         var exchangeName = "response";
 
-        using var channel = await _connection.CreateChannelAsync();
+        using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
         await channel.ExchangeDeclareAsync(exchange: exchangeName,
             type: "direct",
             durable: false,
         autoDelete: false,
-            arguments: null);
+            arguments: null, 
+            cancellationToken: cancellationToken);
 
         await channel.QueueDeclareAsync(queue: queueName,
                   durable: false,
                   exclusive: false,
                   autoDelete: false,
-                  arguments: null);
+                  arguments: null, 
+                  cancellationToken: cancellationToken);
 
         await channel.QueueBindAsync(queue: queueName,
            exchange: exchangeName,
            routingKey: "",
-           arguments: null);
+           arguments: null, 
+           cancellationToken: cancellationToken);
 
         // Start consuming responses
         var consumer = new AsyncEventingBasicConsumer(channel);
         consumer.ReceivedAsync += async (model, ea) =>
         {
-            await channel.BasicAckAsync(ea.DeliveryTag, false);
+            await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
 
             try
             {

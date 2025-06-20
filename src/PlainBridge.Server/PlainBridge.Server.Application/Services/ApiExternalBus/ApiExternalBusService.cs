@@ -20,17 +20,18 @@ public class ApiExternalBusService(ILogger<ApiExternalBusService> _logger, IConn
         var queueName = $"api_to_server_external_bus";
         _logger.LogInformation("Initializing ApiExternalBusService and declaring queue: {QueueName}", queueName);
 
-        using var channel = await _connection.CreateChannelAsync();
+        using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
         await channel.QueueDeclareAsync(queue: queueName,
             durable: false,
             exclusive: false,
             autoDelete: false,
-            arguments: null);
+            arguments: null, 
+            cancellationToken: cancellationToken);
 
         var external_bus_consumer = new AsyncEventingBasicConsumer(channel);
         external_bus_consumer.ReceivedAsync += async (model, ea) =>
         {
-            await channel.BasicAckAsync(ea.DeliveryTag, false);
+            await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
             var message = Encoding.UTF8.GetString(ea.Body.ToArray());
             _logger.LogInformation("Received message from external bus: {Message}", message);
 
@@ -71,6 +72,6 @@ public class ApiExternalBusService(ILogger<ApiExternalBusService> _logger, IConn
         await _serverApplicationService.UpdateServerApplicationAsync(cancellationToken);
 
         _logger.LogInformation("Starting to consume messages from queue: {QueueName}", queueName);
-        await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: external_bus_consumer);
+        await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: external_bus_consumer, cancellationToken);
     }
 }

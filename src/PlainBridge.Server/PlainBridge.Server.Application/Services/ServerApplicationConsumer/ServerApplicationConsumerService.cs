@@ -14,17 +14,17 @@ public class ServerApplicationConsumerService(ILogger<ServerApplicationConsumerS
 {
  
 
-    public async Task InitializeConsumerAsync()
+    public async Task InitializeConsumerAsync(CancellationToken cancellationToken)
     {
-        await InitializeRequestConsumerAsync();
-        await InitializeResponseConsumerAsync();
+        await InitializeRequestConsumerAsync(cancellationToken);
+        await InitializeResponseConsumerAsync(cancellationToken);
     }
 
-    private async Task InitializeRequestConsumerAsync()
+    private async Task InitializeRequestConsumerAsync(CancellationToken cancellationToken)
     {
         var queueName = "server_network_requests";
-        using var channel = await _connection.CreateChannelAsync();
-        await channel.QueueDeclareAsync(queueName, false, false, false, null);
+        using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
+        await channel.QueueDeclareAsync(queueName, false, false, false, null, cancellationToken: cancellationToken);
 
         var consumer = new AsyncEventingBasicConsumer(channel);
         consumer.ReceivedAsync += async (model, ea) =>
@@ -43,24 +43,24 @@ public class ServerApplicationConsumerService(ILogger<ServerApplicationConsumerS
 
             if (!_cacheManagement.TryGetServerApplication(userPort, out var appProject))
             {
-                await channel.BasicAckAsync(ea.DeliveryTag, false);
+                await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
                 return;
             }
 
             if (!appProject.ServerApplicationViewId.HasValue)
             {
-                await channel.BasicAckAsync(ea.DeliveryTag, false);
+                await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
                 return;
             }
 
             if (!_cacheManagement.TryGetServerApplication(appProject.ServerApplicationViewId.Value, out var destinationAppProject))
             {
-                await channel.BasicAckAsync(ea.DeliveryTag, false);
+                await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
                 return;
             }
 
             var destinationQueue = $"client_shared_port_network_packets";
-            await channel.QueueDeclareAsync(destinationQueue, false, false, false, null);
+            await channel.QueueDeclareAsync(destinationQueue, false, false, false, null, cancellationToken: cancellationToken);
 
 
 
@@ -68,19 +68,19 @@ public class ServerApplicationConsumerService(ILogger<ServerApplicationConsumerS
             props.Headers["user_connection_id"] = userConnectionId;
             props.Headers["shared_port"] = destinationAppProject.InternalPort;
 
-            await channel.BasicPublishAsync(string.Empty, destinationQueue, false, props, body);
-            await channel.BasicAckAsync(ea.DeliveryTag, false);
+            await channel.BasicPublishAsync(string.Empty, destinationQueue, false, props, body, cancellationToken);
+            await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
         };
 
-        await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer);
+        await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer, cancellationToken: cancellationToken);
     }
 
-    private async Task InitializeResponseConsumerAsync()
+    private async Task InitializeResponseConsumerAsync(CancellationToken cancellationToken)
     {
         var queueName = "server_network_responses";
-        using var channel = await _connection.CreateChannelAsync();
+        using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
-        await channel.QueueDeclareAsync(queueName, false, false, false, null);
+        await channel.QueueDeclareAsync(queueName, false, false, false, null, cancellationToken: cancellationToken);
 
         var consumer = new AsyncEventingBasicConsumer(channel);
         consumer.ReceivedAsync += async (model, ea) =>
@@ -102,21 +102,21 @@ public class ServerApplicationConsumerService(ILogger<ServerApplicationConsumerS
 
             if (!_cacheManagement.TryGetServerApplication(userPort, out var appProject))
             {
-                await channel.BasicAckAsync(ea.DeliveryTag, false);
+                await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
                 return;
             }
 
             var destinationQueue = $"client_user_port_network_packets";
-            await channel.QueueDeclareAsync(destinationQueue, false, false, false, null);
+            await channel.QueueDeclareAsync(destinationQueue, false, false, false, null, cancellationToken: cancellationToken);
 
             props.Headers["user_port"] = userPort;
             props.Headers["user_connection_id"] = userConnectionId;
 
-            await channel.BasicPublishAsync(string.Empty, destinationQueue, false, props, body);
-            await channel.BasicAckAsync(ea.DeliveryTag, false);
+            await channel.BasicPublishAsync(string.Empty, destinationQueue, false, props, body, cancellationToken: cancellationToken);
+            await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
         };
 
-        await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer);
+        await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer, cancellationToken: cancellationToken);
     }
 
 }

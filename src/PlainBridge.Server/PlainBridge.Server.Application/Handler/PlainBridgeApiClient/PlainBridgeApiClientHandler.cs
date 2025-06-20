@@ -1,5 +1,8 @@
-﻿ 
+﻿
+using Microsoft.Extensions.Logging;
+
 using PlainBridge.Server.Application.DTOs;
+using PlainBridge.Server.Application.Management.Cache;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 
@@ -7,7 +10,7 @@ using System.Text.Json;
 
 namespace PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 
-public class PlainBridgeApiClientHandler(ApplicationSetting _applicationSetting, IHttpClientFactory _httpClientFactory) : IPlainBridgeApiClientHandler
+public class PlainBridgeApiClientHandler(ILogger<PlainBridgeApiClientHandler> _logger, ApplicationSetting _applicationSetting, IHttpClientFactory _httpClientFactory) : IPlainBridgeApiClientHandler
 {
  
     public async Task<IList<HostApplicationDto>?> GetHostApplicationsAsync(CancellationToken cancellationToken)

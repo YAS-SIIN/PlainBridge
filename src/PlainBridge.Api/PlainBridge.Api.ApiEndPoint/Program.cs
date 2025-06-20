@@ -11,9 +11,10 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
+ 
 builder.Services.AddApiProjectDatabase();
-builder.Services.AddServerProjectServices();
-
+builder.Services.AddApiProjectServices();
+builder.AddRabbitMQClient(connectionName: "messaging");
 builder.Services.AddExceptionHandler<ErrorHandler>();
 
 // Configure Kestrel to support HTTP/3

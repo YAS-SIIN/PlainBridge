@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using PlainBridge.Server.Application.DTOs;
+using PlainBridge.Server.Application.Management.WebSocketManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,11 +9,14 @@ builder.AddServiceDefaults();
 // Add services to the container.
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-builder.Services.AddServerProjectServices();
-
+ builder.Services.AddOpenApi();
 builder.Services.Configure<ApplicationSetting>(builder.Configuration);
 builder.Services.AddScoped(sp => sp.GetRequiredService<IOptions<ApplicationSetting>>().Value);
+builder.Services.AddHttpServices();
+builder.Services.AddMemoryCache();
+builder.AddRabbitMQClient(connectionName: "messaging");
+builder.Services.AddServerProjectServices();
+
 // Configure Kestrel to support HTTP/3
 builder.WebHost.ConfigureKestrel(options =>
 {
@@ -25,6 +29,8 @@ builder.WebHost.ConfigureKestrel(options =>
 
 var app = builder.Build();
 
+//app.Services.GetRequiredService<IWebSocketManagement>().();
+
 app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
@@ -33,10 +39,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseWebSockets();
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
+ 
 await app.RunAsync();

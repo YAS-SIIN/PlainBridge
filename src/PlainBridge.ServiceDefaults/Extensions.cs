@@ -21,6 +21,7 @@ using PlainBridge.Server.Application.Services.ApiExternalBus;
 using PlainBridge.Server.Application.Services.AppProjectConsumer;
 using PlainBridge.Server.Application.Services.HttpRequestProxy;
 using PlainBridge.Server.Application.Services.ServerBus;
+using PlainBridge.Server.Application.Services.WebSocket;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -133,6 +134,7 @@ public static class Extensions
         services.AddScoped<IHostApplicationService, HostApplicationService>();
         services.AddScoped<IServerApplicationService, ServerApplicationService>();
         services.AddScoped<IBusHandler, BusHandler>();
+         
         return services;
     }
     
@@ -141,12 +143,13 @@ public static class Extensions
         services.AddScoped<IPlainBridgeApiClientHandler, PlainBridgeApiClientHandler>();
         services.AddScoped<PlainBridge.Server.Application.Services.ServerApplication.IServerApplicationService, PlainBridge.Server.Application.Services.ServerApplication.ServerApplicationService>();
         services.AddScoped<PlainBridge.Server.Application.Services.HostApplication.IHostApplicationService, PlainBridge.Server.Application.Services.HostApplication.HostApplicationService>();
-        services.AddScoped<IWebSocketManagement, WebSocketManagement>();
         services.AddScoped<ICacheManagement, CacheManagement>();
         services.AddScoped<IApiExternalBusService, ApiExternalBusService>();
         services.AddScoped<IServerBusService, ServerBusService>();
         services.AddScoped<IServerApplicationConsumerService, ServerApplicationConsumerService>();
         services.AddScoped<IHttpRequestProxyService, HttpRequestProxyService>();
+        services.AddScoped<IWebSocketService, 
+            WebSocketService>();
         services.AddScoped<ResponseCompletionSourcesManagement>();
         return services;
     }

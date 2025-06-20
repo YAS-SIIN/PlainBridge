@@ -14,7 +14,7 @@ public class ServerBusService(ILogger<ServerBusService> _logger, IConnection _co
     public async Task InitializeConsumerAsync(CancellationToken cancellationToken)
     {
         var queueName = "server_bus";
-        using var channel = await _connection.CreateChannelAsync();
+        using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
 
         var consumer = new AsyncEventingBasicConsumer(channel);
@@ -26,18 +26,18 @@ public class ServerBusService(ILogger<ServerBusService> _logger, IConnection _co
             var clientExchangeName = "client_bus";
             var clientQueueName = $"client_bus";
 
-            await channel.ExchangeDeclareAsync(clientExchangeName, "direct", false, false, null);
-            await channel.QueueDeclareAsync(clientQueueName, false, false, false, null);
-            await channel.QueueBindAsync(clientQueueName, clientExchangeName, null);
+            await channel.ExchangeDeclareAsync(clientExchangeName, "direct", false, false, null, cancellationToken: cancellationToken);
+            await channel.QueueDeclareAsync(clientQueueName, false, false, false, null, cancellationToken: cancellationToken);
+            await channel.QueueBindAsync(clientQueueName, clientExchangeName, null, cancellationToken: cancellationToken);
 
             var serverApplications = await _plainBridgeApiClientHandler.GetServerApplicationsAsync(cancellationToken);
 
             var responseBody = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(serverApplications));
-            await channel.BasicPublishAsync(clientExchangeName, null, responseBody);
+            await channel.BasicPublishAsync(clientExchangeName, null, responseBody, cancellationToken: cancellationToken);
 
-            await channel.BasicAckAsync(ea.DeliveryTag, false);
+            await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
         };
 
-        await channel.BasicConsumeAsync(queueName, false, consumer);
+        await channel.BasicConsumeAsync(queueName, false, consumer, cancellationToken: cancellationToken);
     }
 }

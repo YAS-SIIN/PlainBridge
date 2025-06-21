@@ -25,14 +25,14 @@ public static class TestUsers
                 new TestUser
                 {
                     SubjectId = "1",
-                    Username = "alice",
-                    Password = "alice",
+                    Username = "Yasin",
+                    Password = "Yasin",
                     Claims =
                     {
-                        new Claim(JwtClaimTypes.Name, "Alice Smith"),
-                        new Claim(JwtClaimTypes.GivenName, "Alice"),
-                        new Claim(JwtClaimTypes.FamilyName, "Smith"),
-                        new Claim(JwtClaimTypes.Email, "AliceSmith@example.com"),
+                        new Claim(JwtClaimTypes.Name, "Yasin Asadnezhad"),
+                        new Claim(JwtClaimTypes.GivenName, "Yasin"),
+                        new Claim(JwtClaimTypes.FamilyName, "Asadnezhad"),
+                        new Claim(JwtClaimTypes.Email, "YasinAsadnezhad@example.com"),
                         new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
                         new Claim(JwtClaimTypes.WebSite, "http://alice.example.com"),
                         new Claim(JwtClaimTypes.Address, JsonSerializer.Serialize(address), IdentityServerConstants.ClaimValueTypes.Json)
@@ -41,13 +41,13 @@ public static class TestUsers
                 new TestUser
                 {
                     SubjectId = "2",
-                    Username = "bob",
-                    Password = "bob",
+                    Username = "Sadeq",
+                    Password = "Asadnezhad",
                     Claims =
                     {
-                        new Claim(JwtClaimTypes.Name, "Bob Smith"),
-                        new Claim(JwtClaimTypes.GivenName, "Bob"),
-                        new Claim(JwtClaimTypes.FamilyName, "Smith"),
+                        new Claim(JwtClaimTypes.Name, "Sadeq Asadnezhad"),
+                        new Claim(JwtClaimTypes.GivenName, "Sadeq"),
+                        new Claim(JwtClaimTypes.FamilyName, "Asadnezhad"),
                         new Claim(JwtClaimTypes.Email, "BobSmith@example.com"),
                         new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
                         new Claim(JwtClaimTypes.WebSite, "http://bob.example.com"),

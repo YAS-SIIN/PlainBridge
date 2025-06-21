@@ -6,6 +6,7 @@ using Duende.IdentityServer.Licensing;
 using Duende.IdentityServer.Test;
 
 using PlainBridge.IdentityServer.EndPoint;
+using PlainBridge.IdentityServer.EndPoint.ErrorHandling;
 
 using Serilog;
 
@@ -76,6 +77,7 @@ try
             listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
         });
     });
+    builder.Services.AddExceptionHandler<ErrorHandler>();
 
     var app = builder.Build();
 
@@ -105,7 +107,7 @@ try
     app.MapRazorPages()
         .RequireAuthorization();
 
-    app.Run();
+    await app.RunAsync();
 }
 catch (Exception ex) when (ex is not HostAbortedException)
 {

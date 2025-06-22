@@ -14,10 +14,10 @@ namespace PlainBridge.Api.Application.Services.HostApplication;
 
 public class HostApplicationService(ILogger<HostApplicationService> _logger, MainDbContext _dbContext, IBusHandler _busHandler) : IHostApplicationService
 {
-    public async Task<IList<HostApplicationDto>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<IList<HostApplicationDto>> GetAllAsync(long userId, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Getting all host applications.");
-        var list = await _dbContext.HostApplications.AsNoTracking().ToListAsync(cancellationToken);
+        var list = await _dbContext.HostApplications.AsNoTracking().Where(x => x.UserId == userId).ToListAsync(cancellationToken);
 
         _logger.LogInformation("Retrieved {Count} host applications.", list.Count);
         return list.Select(x => new HostApplicationDto

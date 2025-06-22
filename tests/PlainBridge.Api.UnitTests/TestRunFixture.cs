@@ -1,14 +1,14 @@
 ﻿
 
+using Castle.Core.Resource;
+
 using Microsoft.EntityFrameworkCore;
 
+using PlainBridge.Api.Domain.Entities;
 using PlainBridge.Api.Infrastructure.Data.Context;
 
-using System;
-using System.Threading.Tasks;
 
 namespace PlainBridge.Api.UnitTests;
-
 
 
 public class TestRunFixture : IAsyncLifetime
@@ -39,18 +39,43 @@ public class TestRunFixture : IAsyncLifetime
     public async Task SeedDataAsync()
     {
 
+        List<User> userList = new List<User>();
+        int countUser = 3;
+        var userExistences = await MemoryMainDbContext.Users.AnyAsync();
+        if (!userExistences)
+        {
+            // Add new customer
 
-        if (!MemoryMainDbContext.HostApplications.Any())
+            for (int i = 1; i <= countUser; i++)
+            {
+                userList.Add(new User
+                {
+                    AppId = Guid.NewGuid(),
+                    Username = $"TestUser{i}",
+                    Email = $"TestUser{i}@PlainBridge.Com",
+                    PhoneNumber = $"0912111222{i}",
+                    Name = $"TestName{i}",
+                    Family = $"User{i}",
+                    ExternalId = i.ToString()
+                });
+            }
+            MemoryMainDbContext.Users.AddRange(userList);
+
+        }
+
+        var hostApplicationExistences = await MemoryMainDbContext.HostApplications.AnyAsync();
+        if (!hostApplicationExistences)
         {
             // Add new project  
-            for (int i = 1; i <= 3; i++)
+            for (int i = 1; i <= userList.Count; i++)
             {
-                MemoryMainDbContext.HostApplications.Add(
-                   new Domain.Entities.HostApplication
+               await  MemoryMainDbContext.HostApplications.AddAsync(
+                   new HostApplication
                    {
                        AppId = Guid.NewGuid(),
                        Name = $"TestTitle{i}",
                        Domain = $"TestDomain{i}",
+                       User = userList[i - 1],
                        InternalUrl = $"http://localhost:300{i}",
                        CreateDateTime = DateTime.Now,
                        UpdateDateTime = DateTime.Now,
@@ -60,17 +85,19 @@ public class TestRunFixture : IAsyncLifetime
             }
         }
 
-        if (!MemoryMainDbContext.ServerApplications.Any())
+        var serverApplicationExistences = await MemoryMainDbContext.ServerApplications.AnyAsync();
+        if (!serverApplicationExistences)
         {
             // Add new project  
-            for (int i = 1; i <= 3; i++)
+            for (int i = 1; i <= userList.Count; i++)
             {
-                MemoryMainDbContext.ServerApplications.Add(
-                   new Domain.Entities.ServerApplication
+                await MemoryMainDbContext.ServerApplications.AddAsync(
+                   new ServerApplication
                    {
                        AppId = Guid.NewGuid(),
                        Name = $"TestTitle{i}",
                        InternalPort = 2020 + i,
+                       User = userList[i - 1],
                        CreateDateTime = DateTime.Now,
                        UpdateDateTime = DateTime.Now,
                        State = Domain.Enums.RowStateEnum.Active,

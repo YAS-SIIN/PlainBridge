@@ -9,9 +9,7 @@ using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
 using PlainBridge.SharedApplication.Extentions;
 
-using System.Security.Claims;
-
-using ZiraLink.IDS.Pages.Account.Register;
+using System.Security.Claims; 
 
 namespace PlainBridge.IdentityServer.EndPoint.Endpoints;
 

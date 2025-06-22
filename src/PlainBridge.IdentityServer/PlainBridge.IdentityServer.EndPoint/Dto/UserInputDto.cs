@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ZiraLink.IDS.Pages.Account.Register;
+namespace PlainBridge.IdentityServer.EndPoint.Dto;
 
 public class UserInputDto
 {

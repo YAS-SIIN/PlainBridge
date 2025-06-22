@@ -80,6 +80,8 @@ try
     });
     builder.Services.AddExceptionHandler<ErrorHandler>();
 
+    builder.Services.AddLocalApiAuthentication();
+
     var app = builder.Build();
 
     app.MapGroup("api/")

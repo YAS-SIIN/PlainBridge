@@ -62,7 +62,7 @@ public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
         if (dto.ServerApplicationType == SharedApplication.Enums.ServerApplicationTypeEnum.UsePort)
         {
             var serverApplication = await _fixture.MemoryMainDbContext.ServerApplications.FirstOrDefaultAsync();
-            dto.ServerApplicationViewId = serverApplication.AppId;
+            dto.ServerApplicationAppId = serverApplication.AppId;
         }
 
         var guid = await serverApplicationService.CreateAsync(dto, CancellationToken.None);
@@ -90,7 +90,7 @@ public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
     {
         var res = await Assert.ThrowsAsync<ArgumentNullException>(() => serverApplicationService.CreateAsync(dto, CancellationToken.None));
         Assert.NotNull(res);
-        Assert.Equal(nameof(ServerApplicationDto.ServerApplicationViewId), res.ParamName);
+        Assert.Equal(nameof(ServerApplicationDto.ServerApplicationAppId), res.ParamName);
     }
 
 
@@ -153,7 +153,7 @@ public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
     {
         var res = await Assert.ThrowsAsync<ArgumentNullException>(() => serverApplicationService.UpdateAsync(dto, CancellationToken.None));
         Assert.NotNull(res);
-        Assert.Equal(nameof(ServerApplicationDto.ServerApplicationViewId), res.ParamName);
+        Assert.Equal(nameof(ServerApplicationDto.ServerApplicationAppId), res.ParamName);
     }
 
     #endregion

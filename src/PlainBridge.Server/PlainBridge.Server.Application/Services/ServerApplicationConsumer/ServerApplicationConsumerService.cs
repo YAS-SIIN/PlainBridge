@@ -47,13 +47,13 @@ public class ServerApplicationConsumerService(ILogger<ServerApplicationConsumerS
                 return;
             }
 
-            if (!appProject.ServerApplicationViewId.HasValue)
+            if (!appProject.ServerApplicationAppId.HasValue)
             {
                 await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
                 return;
             }
 
-            if (!_cacheManagement.TryGetServerApplication(appProject.ServerApplicationViewId.Value, out var destinationAppProject))
+            if (!_cacheManagement.TryGetServerApplication(appProject.ServerApplicationAppId.Value, out var destinationAppProject))
             {
                 await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
                 return;

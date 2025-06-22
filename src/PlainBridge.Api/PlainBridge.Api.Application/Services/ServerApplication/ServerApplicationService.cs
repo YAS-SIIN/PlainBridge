@@ -57,22 +57,22 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
             throw new ApplicationException("Port range is not valid");
         }
 
-        if (serverApplication.ServerApplicationType == ServerApplicationTypeEnum.UsePort && (!serverApplication.ServerApplicationViewId.HasValue || serverApplication.ServerApplicationViewId == Guid.Empty))
+        if (serverApplication.ServerApplicationType == ServerApplicationTypeEnum.UsePort && (!serverApplication.ServerApplicationAppId.HasValue || serverApplication.ServerApplicationAppId == Guid.Empty))
         {
             _logger.LogError("ServerApplicationViewId is required for UsePort type.");
-            throw new ArgumentNullException(nameof(ServerApplicationDto.ServerApplicationViewId));
+            throw new ArgumentNullException(nameof(ServerApplicationDto.ServerApplicationAppId));
         }
 
-        if (serverApplication.ServerApplicationType == ServerApplicationTypeEnum.UsePort && !_dbContext.ServerApplications.Any(x => x.AppId == serverApplication.ServerApplicationViewId))
+        if (serverApplication.ServerApplicationType == ServerApplicationTypeEnum.UsePort && !_dbContext.ServerApplications.Any(x => x.AppId == serverApplication.ServerApplicationAppId))
         {
-            _logger.LogError("Referenced ServerApplicationViewId not found: {ViewId}", serverApplication.ServerApplicationViewId);
-            throw new NotFoundException(nameof(serverApplication), new List<KeyValuePair<string, object>> { new KeyValuePair<string, object>(nameof(ServerApplicationDto.ServerApplicationViewId), serverApplication.ServerApplicationViewId.Value) });
+            _logger.LogError("Referenced ServerApplicationViewId not found: {ViewId}", serverApplication.ServerApplicationAppId);
+            throw new NotFoundException(nameof(serverApplication), new List<KeyValuePair<string, object>> { new KeyValuePair<string, object>(nameof(ServerApplicationDto.ServerApplicationAppId), serverApplication.ServerApplicationAppId.Value) });
         }
 
         var app = new Domain.Entities.ServerApplication
         {
             AppId = Guid.NewGuid(),
-            ServerApplicationViewId = serverApplication.ServerApplicationViewId,
+            ServerApplicationViewId = serverApplication.ServerApplicationAppId,
             Name = serverApplication.Name,
             InternalPort = serverApplication.InternalPort,
             State = (Domain.Enums.RowStateEnum)RowStateEnum.Inactive,

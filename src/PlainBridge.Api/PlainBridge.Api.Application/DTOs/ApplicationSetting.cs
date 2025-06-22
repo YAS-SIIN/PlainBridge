@@ -5,5 +5,9 @@ namespace PlainBridge.Api.Application.DTOs;
 
 public class ApplicationSetting
 {
-    public string IDSUrl { get; set; }
+    public string IdsUrl { get; set; }
+    public string IdsClientId { get; set; }
+    public string IdsClientSecret { get; set; }
+    public string IdsScope { get; set; }
+     
 }

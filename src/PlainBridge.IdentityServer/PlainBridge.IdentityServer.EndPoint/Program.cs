@@ -6,6 +6,7 @@ using Duende.IdentityServer.Licensing;
 using Duende.IdentityServer.Test;
 
 using PlainBridge.IdentityServer.EndPoint;
+using PlainBridge.IdentityServer.EndPoint.Endpoints;
 using PlainBridge.IdentityServer.EndPoint.ErrorHandling;
 
 using Serilog;
@@ -80,6 +81,9 @@ try
     builder.Services.AddExceptionHandler<ErrorHandler>();
 
     var app = builder.Build();
+
+    app.MapGroup("api/")
+        .MapUserEndpoint();
 
 
     app.UseSerilogRequestLogging();

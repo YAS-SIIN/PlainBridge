@@ -1,6 +1,7 @@
 ﻿ 
 using Microsoft.Extensions.Logging;
- 
+using Microsoft.Extensions.Options;
+
 using PlainBridge.Server.Application.DTOs;
 using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 using PlainBridge.Server.Application.Management.Cache;
@@ -12,7 +13,7 @@ using System;
 
 namespace PlainBridge.Server.Application.Services.HostApplication;
 
-public class HostApplicationService(ILogger<HostApplicationService> _logger, IPlainBridgeApiClientHandler _plainBridgeApiClientHandler, ApplicationSetting _applicationSetting, ICacheManagement _cache) : IHostApplicationService
+public class HostApplicationService(ILogger<HostApplicationService> _logger, IPlainBridgeApiClientHandler _plainBridgeApiClientHandler, IOptions<ApplicationSetting> _applicationSetting, ICacheManagement _cache) : IHostApplicationService
 {
     public HostApplicationDto GetByHost(string host)
     {

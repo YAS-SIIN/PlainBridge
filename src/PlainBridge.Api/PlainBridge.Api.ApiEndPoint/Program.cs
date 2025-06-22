@@ -2,6 +2,7 @@
 
 using PlainBridge.Api.ApiEndPoint.Endpoints;
 using PlainBridge.Api.ApiEndPoint.ErrorHandling;
+using PlainBridge.Api.Application.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,8 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
- 
+builder.Services.AddOptions<ApplicationSetting>().Bind(builder.Configuration.GetSection("ApplicationSetting"));
+
 builder.Services.AddApiProjectDatabase();
 builder.Services.AddApiProjectServices();
 builder.AddRabbitMQClient(connectionName: "messaging");

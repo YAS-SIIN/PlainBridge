@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using PlainBridge.Server.Application.DTOs;
 using PlainBridge.Server.Application.Management.Cache;
@@ -10,13 +11,13 @@ using System.Text.Json;
 
 namespace PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 
-public class PlainBridgeApiClientHandler(ILogger<PlainBridgeApiClientHandler> _logger, ApplicationSetting _applicationSetting, IHttpClientFactory _httpClientFactory) : IPlainBridgeApiClientHandler
+public class PlainBridgeApiClientHandler(ILogger<PlainBridgeApiClientHandler> _logger, IOptions<ApplicationSetting> _applicationSetting, IHttpClientFactory _httpClientFactory) : IPlainBridgeApiClientHandler
 {
  
     public async Task<IList<HostApplicationDto>?> GetHostApplicationsAsync(CancellationToken cancellationToken)
     {
         var apiClient = _httpClientFactory.CreateClient("Api");
-        var uri = new Uri($"{_applicationSetting.ApiAddress}/HostApplication"); // Fixed the Uri creation
+        var uri = new Uri($"{_applicationSetting.Value.ApiAddress}/HostApplication"); // Fixed the Uri creation
         var response = await apiClient.GetAsync(uri, cancellationToken); // Added cancellationToken to GetAsync
         if (!response.IsSuccessStatusCode)
             throw new ApplicationException("Failed to get host application");
@@ -36,7 +37,7 @@ public class PlainBridgeApiClientHandler(ILogger<PlainBridgeApiClientHandler> _l
     public async Task<IList<ServerApplicationDto>?> GetServerApplicationsAsync(CancellationToken cancellationToken)
     {
         var apiClient = _httpClientFactory.CreateClient("Api");
-        var uri = new Uri($"{_applicationSetting.ApiAddress}/ServerApplication"); // Fixed the Uri creation
+        var uri = new Uri($"{_applicationSetting.Value.ApiAddress}/ServerApplication"); // Fixed the Uri creation
         var response = await apiClient.GetAsync(uri, cancellationToken); // Added cancellationToken to GetAsync
         if (!response.IsSuccessStatusCode)
             throw new ApplicationException("Failed to get server application");

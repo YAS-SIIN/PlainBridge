@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using PlainBridge.Api.Domain.Entities; 
 using PlainBridge.Server.Application.DTOs;
@@ -11,7 +12,7 @@ using PlainBridge.SharedApplication.Enums;
 using System;
 namespace PlainBridge.Server.Application.Services.ServerApplication;
 
-public class ServerApplicationService(ILogger<ServerApplicationService> _logger, IPlainBridgeApiClientHandler _plainBridgeApiClientHandler, ApplicationSetting applicationSetting, ICacheManagement _cache) : IServerApplicationService
+public class ServerApplicationService(ILogger<ServerApplicationService> _logger, IPlainBridgeApiClientHandler _plainBridgeApiClientHandler, ICacheManagement _cache) : IServerApplicationService
 {
    
 

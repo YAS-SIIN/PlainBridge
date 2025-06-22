@@ -15,9 +15,11 @@ public class HostApplication : BaseEntity<long>
     public Guid AppId { get; set; } 
     public string Name { get; set; }
     public string Domain { get; set; }
-    public string InternalUrl { get; set; }  
+    public string InternalUrl { get; set; }
+    [ForeignKey("UserId")]
+    public long UserId { get; set; }
 
- 
+    public User User { get; set; }
 }
 
 public class HostApplicationTypeConfiguration : BaseEntityTypeConfiguration<HostApplication, long>

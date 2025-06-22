@@ -14,8 +14,8 @@ namespace PlainBridge.Api.Application.Services.User;
 
 public class UserService(
     ILogger<UserService> _logger,
-    IIdentityService _identityService,
-    MainDbContext _dbContext) : IUserService
+    MainDbContext _dbContext,
+    IIdentityService _identityService) : IUserService
 {
 
     public async Task<UserDto> GetUserByExternalIdAsync(string externalId, CancellationToken cancellationToken)

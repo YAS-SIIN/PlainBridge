@@ -10,17 +10,17 @@ public record HostApplicationDto : BaseDto<long>
 
     [Display(Name = "Name")]
     [Required]
-    [StringLength(150)]
+    [StringLength(150, MinimumLength = 3)]
     public string Name { get; set; }
 
     [Display(Name = "Domain")]
     [Required]
-    [StringLength(200)]
+    [StringLength(200, MinimumLength = 5)]
     public string Domain { get; set; }
 
     [Display(Name = "Internal URL")]
     [Required]
-    [StringLength(200)]
+    [StringLength(200, MinimumLength = 5)]
     public string InternalUrl { get; set; }
 
     public string GetProjectHost(string defaultDomain) => $"{this.Domain}{defaultDomain}";

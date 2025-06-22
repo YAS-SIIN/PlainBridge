@@ -2,7 +2,7 @@
 
 namespace PlainBridge.IdentityServer.EndPoint.Dto;
 
-public class UserInputDto
+public record UserDto
 {
 
     [Display(Name = "User Id")]
@@ -15,17 +15,18 @@ public class UserInputDto
 
     [Display(Name = "Password")]
     [Required]
-    [StringLength(100, ErrorMessage = "Password must be between 6 and 100 characters.", MinimumLength = 6)]
+    [StringLength(150, ErrorMessage = "Password must be between 6 and 100 characters.", MinimumLength = 6)]
     public string Password { get; set; }
-
-    [Display(Name = "Confirm password")]
-    [Compare("Password", ErrorMessage = "Passwords do not match.")]
-    public string RePassword { get; set; }
 
     [Display(Name = "Email address")]
     [Required]
     [EmailAddress(ErrorMessage = "Invalid email address.")]
     public string Email { get; set; }
+
+    [Display(Name = "Phone number")]
+    [StringLength(20)]
+    [RegularExpression(@"^\+?[0-9\s\-()]+$", ErrorMessage = "Invalid phone number format.")]
+    public string? PhoneNumber { get; set; }
 
     [Display(Name = "Name")]
     [Required]

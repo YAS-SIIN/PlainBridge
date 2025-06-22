@@ -2,7 +2,7 @@
 
 namespace PlainBridge.IdentityServer.EndPoint.Dto;
 
-public class ChangePasswordDto
+public record ChangeUserPasswordDto
 {
     [Display(Name = "User Id")]
     [Required]

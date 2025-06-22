@@ -14,14 +14,14 @@ public class MainDbContext : DbContext
 
     public DbSet<ServerApplication> ServerApplications { get; set; }
     public DbSet<HostApplication> HostApplications { get; set; }
-    public DbSet<Customer> Customers { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
         new ServerApplicationTypeConfiguration().Configure(modelBuilder.Entity<ServerApplication>());
         new HostApplicationTypeConfiguration().Configure(modelBuilder.Entity<HostApplication>());
-        new CustomerTypeConfiguration().Configure(modelBuilder.Entity<Customer>());
+        new UserTypeConfiguration().Configure(modelBuilder.Entity<User>());
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(MainDbContext).Assembly); base.OnModelCreating(modelBuilder);
     }

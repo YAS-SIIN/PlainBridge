@@ -16,7 +16,7 @@ public record ServerApplicationDto : BaseDto<long>
 
     [Display(Name = "Application name")]
     [Required]
-    [StringLength(150)]
+    [StringLength(150, MinimumLength = 3)]
     public string Name { get; set; } = string.Empty;
 
     [Display(Name = "Application internal port")]

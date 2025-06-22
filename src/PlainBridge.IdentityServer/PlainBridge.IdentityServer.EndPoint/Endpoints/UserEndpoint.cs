@@ -20,10 +20,10 @@ public static class UserEndpoint
         var app = builder.MapGroup("UserEndpoint");
 
         // GetAllAsync
-        app.MapPost("", async ([FromBody] UserInputDto model, UserManager<IdentityUser> _userManager, CancellationToken cancellationToken) =>
+        app.MapPost("", async ([FromBody] UserDto model, UserManager<IdentityUser> _userManager, CancellationToken cancellationToken) =>
         {
 
-            var user = new IdentityUser { UserName = model.Username, Email = model.Email };
+            var user = new IdentityUser { UserName = model.Username, Email = model.Email, PhoneNumber = model.PhoneNumber };
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded) throw new ApplicationException("User creation failed");
@@ -33,7 +33,8 @@ public static class UserEndpoint
                     new Claim(JwtClaimTypes.GivenName, model.Name),
                     new Claim(JwtClaimTypes.FamilyName, model.Family),
                     new Claim(JwtClaimTypes.Name, $"{model.Name} {model.Family}"),
-                    new Claim(JwtClaimTypes.Role, "customer")
+                    new Claim(JwtClaimTypes.Email, $"{model.Email}"),
+                    new Claim(JwtClaimTypes.Role, "simpleUser")
                 });
 
 
@@ -47,7 +48,7 @@ public static class UserEndpoint
         }).WithName("CreateUser");
 
 
-        app.MapPatch("", async ([FromBody] UserInputDto model, UserManager<IdentityUser> _userManager, CancellationToken cancellationToken) =>
+        app.MapPatch("", async ([FromBody] UserDto model, UserManager<IdentityUser> _userManager, CancellationToken cancellationToken) =>
         {
             var user = await _userManager.FindByIdAsync(model.UserId.ToString());
             if (user == null) throw new NotFoundException("User not found");
@@ -68,7 +69,7 @@ public static class UserEndpoint
         }).WithName("UpdateUser");
 
 
-        app.MapPatch("ChangePassword", async ([FromBody] ChangePasswordDto model, UserManager<IdentityUser> _userManager, CancellationToken cancellationToken) =>
+        app.MapPatch("ChangePassword", async ([FromBody] ChangeUserPasswordDto model, UserManager<IdentityUser> _userManager, CancellationToken cancellationToken) =>
         {
             var user = await _userManager.FindByIdAsync(model.UserId.ToString());
 

@@ -11,7 +11,9 @@ using OpenTelemetry.Trace;
 using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Handler.Bus;
 using PlainBridge.Api.Application.Services.HostApplication;
+using PlainBridge.Api.Application.Services.Identity;
 using PlainBridge.Api.Application.Services.ServerApplication;
+using PlainBridge.Api.Application.Services.User;
 using PlainBridge.Api.Infrastructure.Data.Context;
 using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 using PlainBridge.Server.Application.Management.Cache;
@@ -133,6 +135,8 @@ public static class Extensions
     {
         services.AddScoped<IHostApplicationService, HostApplicationService>();
         services.AddScoped<IServerApplicationService, ServerApplicationService>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IBusHandler, BusHandler>();
          
         return services;

@@ -12,7 +12,7 @@ using PlainBridge.SharedApplication.DTOs;
 using System.Text;
 using System.Text.Json;
 
-namespace PlainBridge.Api.Application.Identity.Customer;
+namespace PlainBridge.Api.Application.Services.Identity;
 
 public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactory _httpClientFactory, IOptions<ApplicationSetting> _applicationSetting) : IIdentityService
 {
@@ -41,17 +41,18 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         return httpClient;
     }
 
-    public async Task<ResultDto<string>> CreateUserAsync(string username, string password, string email, string name, string family, CancellationToken cancellationToken)
+    public async Task<ResultDto<string>> CreateUserAsync(UserDto user, CancellationToken cancellationToken)
     {
         var httpClient = await InitializeHttpClientAsync(cancellationToken);
 
         var jsonObject = new
         {
-            Username = username,
-            Password = password,
-            Email = email,
-            Name = name,
-            Family = family
+            user.Username,
+            user.Password,
+            user.Email,
+            user.PhoneNumber,
+            user.Name,
+            user.Family
         };
 
         var content = new StringContent(JsonSerializer.Serialize(jsonObject), Encoding.UTF8, "application/json");
@@ -68,15 +69,15 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         return userCreationResult;
     }
 
-    public async Task<ResultDto<string>> ChangePasswordAsync(string userId, string currentPassword, string newPassword, CancellationToken cancellationToken)
+    public async Task<ResultDto<string>> ChangePasswordAsync(ChangeUserPasswordDto changeUserPassword, CancellationToken cancellationToken)
     {
         var httpClient = await InitializeHttpClientAsync(cancellationToken);
 
         var jsonObject = new
         {
-            UserId = userId,
-            CurrentPassword = currentPassword,
-            NewPassword = newPassword
+            UserId = changeUserPassword.Id,
+            changeUserPassword.CurrentPassword,
+            changeUserPassword.NewPassword
         };
 
         var content = new StringContent(JsonSerializer.Serialize(jsonObject), Encoding.UTF8, "application/json");
@@ -92,15 +93,18 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         return userChangePasswordResult;
     }
 
-    public async Task<ResultDto<string>> UpdateUserAsync(string userId, string name, string family, CancellationToken cancellationToken)
+    public async Task<ResultDto<string>> UpdateUserAsync(UserDto user, CancellationToken cancellationToken)
     {
         var httpClient = await InitializeHttpClientAsync(cancellationToken);
 
         var jsonObject = new
         {
-            UserId = userId,
-            Name = name,
-            Family = family
+            user.Username,
+            user.Password,
+            user.Email,
+            user.PhoneNumber,
+            user.Name,
+            user.Family
         };
 
         var content = new StringContent(JsonSerializer.Serialize(jsonObject), Encoding.UTF8, "application/json");

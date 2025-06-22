@@ -1,10 +1,11 @@
-﻿using PlainBridge.SharedApplication.DTOs;
+﻿using PlainBridge.Api.Application.DTOs;
+using PlainBridge.SharedApplication.DTOs;
 
-namespace PlainBridge.Api.Application.Identity.Customer;
+namespace PlainBridge.Api.Application.Services.Identity;
 
 public interface IIdentityService
 {
-    Task<ResultDto<string>> ChangePasswordAsync(string userId, string currentPassword, string newPassword, CancellationToken cancellationToken);
-    Task<ResultDto<string>> CreateUserAsync(string username, string password, string email, string name, string family, CancellationToken cancellationToken);
-    Task<ResultDto<string>> UpdateUserAsync(string userId, string name, string family, CancellationToken cancellationToken);
+    Task<ResultDto<string>> ChangePasswordAsync(ChangeUserPasswordDto changeUserPassword, CancellationToken cancellationToken);
+    Task<ResultDto<string>> CreateUserAsync(UserDto user, CancellationToken cancellationToken);
+    Task<ResultDto<string>> UpdateUserAsync(UserDto user, CancellationToken cancellationToken);
 }

@@ -1,17 +1,18 @@
 ﻿
 using Microsoft.Extensions.Logging;
+ 
 
 using RabbitMQ.Client;
 
 using System.Threading.Tasks;
 
-namespace PlainBridge.Api.Application.Handler.Bus;
+namespace PlainBridge.Api.Infrastructure.Messaging;
 
-public class BusHandler(ILogger<BusHandler> _logger, IConnection _connection) : IBusHandler
+public class RabbitMqEventBus(ILogger<RabbitMqEventBus> _logger, IConnection _connection) : IEventBus
 {
-    public async Task PublishAsync<T>(T message, CancellationToken cancellationToken) where T : class
+    public async Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken) where TEvent : class
     {
-        if (message == null) throw new ArgumentNullException(nameof(message));
+        if (@event == null) throw new ArgumentNullException(typeof(TEvent).Name);
         using var channel = await _connection.CreateChannelAsync();
 
         var exchangeName = "external_bus";
@@ -35,7 +36,7 @@ public class BusHandler(ILogger<BusHandler> _logger, IConnection _connection) : 
             routingKey: routingKey,
             arguments: null);
 
-        var body = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(message);
+        var body = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(@event);
 
         // Specify the type argument explicitly to resolve CS0411
         await channel.BasicPublishAsync<BasicProperties>(

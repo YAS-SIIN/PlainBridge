@@ -3,9 +3,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-using PlainBridge.Api.Application.DTOs;
-using PlainBridge.Api.Application.Handler.Bus;
+using PlainBridge.Api.Application.DTOs; 
 using PlainBridge.Api.Infrastructure.Data.Context;
+using PlainBridge.Api.Infrastructure.Messaging;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
@@ -14,7 +14,7 @@ using RabbitMQ.Client;
 
 namespace PlainBridge.Api.Application.Services.ServerApplication;
 
-public class ServerApplicationService(ILogger<ServerApplicationService> _logger, MainDbContext _dbContext, IBusHandler _busHandler) : IServerApplicationService
+public class ServerApplicationService(ILogger<ServerApplicationService> _logger, MainDbContext _dbContext, IEventBus _eventBus) : IServerApplicationService
 {
     public async Task<IList<ServerApplicationDto>> GetAllAsync(CancellationToken cancellationToken)
     {
@@ -80,7 +80,7 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
 
         await _dbContext.ServerApplications.AddAsync(app, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
-        await _busHandler.PublishAsync<string>("Server_Application_Created", cancellationToken);
+        await _eventBus.PublishAsync<string>("Server_Application_Created", cancellationToken);
 
         _logger.LogInformation("Server application created with AppId: {AppId}", app.AppId);
         return app.AppId;
@@ -100,7 +100,7 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
         app.Name = serverApplication.Name;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
-        await _busHandler.PublishAsync<string>("Server_Application_Updated", cancellationToken);
+        await _eventBus.PublishAsync<string>("Server_Application_Updated", cancellationToken);
         _logger.LogInformation("Server application with Id: {Id} updated.", serverApplication.Id);
     }
 
@@ -116,7 +116,7 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
 
         _dbContext.ServerApplications.Remove(app);
         await _dbContext.SaveChangesAsync(cancellationToken);
-        await _busHandler.PublishAsync<string>("Server_Application_Deleted", cancellationToken);
+        await _eventBus.PublishAsync<string>("Server_Application_Deleted", cancellationToken);
         _logger.LogInformation("Server application with Id: {Id} deleted.", id);
     }
 }

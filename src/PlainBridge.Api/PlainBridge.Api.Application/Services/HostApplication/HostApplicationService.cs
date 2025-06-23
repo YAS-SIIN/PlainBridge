@@ -1,18 +1,15 @@
 ﻿
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-
-using PlainBridge.Api.Application.DTOs;
-using PlainBridge.Api.Application.Handler.Bus;
-using PlainBridge.Api.Domain.Entities;
+using Microsoft.Extensions.Logging; 
 using PlainBridge.Api.Infrastructure.Data.Context;
+using PlainBridge.Api.Infrastructure.Messaging;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Exceptions;
 
 namespace PlainBridge.Api.Application.Services.HostApplication;
 
-public class HostApplicationService(ILogger<HostApplicationService> _logger, MainDbContext _dbContext, IBusHandler _busHandler) : IHostApplicationService
+public class HostApplicationService(ILogger<HostApplicationService> _logger, MainDbContext _dbContext, IEventBus _eventBus) : IHostApplicationService
 {
     public async Task<IList<HostApplicationDto>> GetAllAsync(long userId, CancellationToken cancellationToken)
     {
@@ -73,7 +70,7 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
         await _dbContext.HostApplications.AddAsync(app, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Host application with domain {Domain} created. AppId: {AppId}", app.Domain, app.AppId);
-        await _busHandler.PublishAsync<string>("Host_Application_Created", cancellationToken);
+        await _eventBus.PublishAsync<string>("Host_Application_Created", cancellationToken);
 
         return app.AppId;
     }
@@ -102,7 +99,7 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Host application with Id {Id} updated.", hostApplication.Id);
-        await _busHandler.PublishAsync<string>("Host_Application_Updated", cancellationToken);
+        await _eventBus.PublishAsync<string>("Host_Application_Updated", cancellationToken);
     }
 
     public async Task DeleteAsync(long id, CancellationToken cancellationToken)
@@ -118,6 +115,6 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
         _dbContext.HostApplications.Remove(app);
         await _dbContext.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Host application with Id {Id} deleted.", id);
-        await _busHandler.PublishAsync<string>("Host_Application_Deleted", cancellationToken);
+        await _eventBus.PublishAsync<string>("Host_Application_Deleted", cancellationToken);
     }
 }

@@ -8,6 +8,6 @@ public interface IHostApplicationService
     Task<Guid> CreateAsync(HostApplicationDto hostApplication, CancellationToken cancellationToken);
     Task DeleteAsync(long id, CancellationToken cancellationToken);
     Task<IList<HostApplicationDto>> GetAllAsync(long userId, CancellationToken cancellationToken);
-    Task<HostApplicationDto?> GetByIdAsync(long id, CancellationToken cancellationToken);
+    Task<HostApplicationDto?> GetAsync(long id, long userId, CancellationToken cancellationToken);
     Task UpdateAsync(HostApplicationDto hostApplication, CancellationToken cancellationToken);
 }

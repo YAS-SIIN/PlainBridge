@@ -19,6 +19,7 @@ public class ServerApplication : BaseEntity<long>
     public string Name { get; set; } 
     public int InternalPort { get; set; } 
     public ServerApplicationTypeEnum ServerApplicationType { get; set; }
+
     [ForeignKey("UserId")]
     public long UserId { get; set; }
 

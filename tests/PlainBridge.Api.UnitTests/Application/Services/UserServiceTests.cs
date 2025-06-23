@@ -1,14 +1,13 @@
 ﻿
 using Microsoft.Extensions.Logging;
 
-using Moq;
-
-using PlainBridge.Api.Application.Handler.Bus;
+using Moq; 
 using PlainBridge.Api.Application.Services.Identity;
 using PlainBridge.Api.Application.Services.User;
 
 namespace PlainBridge.Api.UnitTests.Application.Services;
 
+[Collection("TestRun")]
 public class UserServiceTests : IClassFixture<TestRunFixture>
 {
     private readonly TestRunFixture _fixture;

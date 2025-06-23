@@ -14,6 +14,10 @@ public record ServerApplicationDto : BaseDto<long>
     [Display(Name = "Application app Id")]
     public Guid? ServerApplicationAppId { get; set; }
 
+    [Display(Name = "User Id")]
+    [Required]
+    public long UserId { get; set; }
+     
     [Display(Name = "Application name")]
     [Required]
     [StringLength(150, MinimumLength = 3)]
@@ -24,6 +28,4 @@ public record ServerApplicationDto : BaseDto<long>
     public int InternalPort { get; set; }
 
     public ServerApplicationTypeEnum ServerApplicationType { get; set; }
-
-
 }

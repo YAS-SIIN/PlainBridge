@@ -27,10 +27,10 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
         }).ToList();
     }
 
-    public async Task<HostApplicationDto?> GetByIdAsync(long id, CancellationToken cancellationToken)
+    public async Task<HostApplicationDto?> GetAsync(long id, long userId, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Getting host application by Id: {Id}", id);
-        var hostApp = await _dbContext.HostApplications.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+        var hostApp = await _dbContext.HostApplications.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.UserId == userId, cancellationToken);
 
         if (hostApp == null)
         {
@@ -62,6 +62,7 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
         var app = new Domain.Entities.HostApplication
         {
             AppId = Guid.NewGuid(),
+            UserId = hostApplication.UserId,
             Name = hostApplication.Name,
             Domain = hostApplication.Domain,
             InternalUrl = hostApplication.InternalUrl

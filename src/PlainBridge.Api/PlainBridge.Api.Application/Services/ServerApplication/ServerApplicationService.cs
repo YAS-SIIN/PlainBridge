@@ -3,7 +3,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-using PlainBridge.Api.Application.DTOs; 
+using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Infrastructure.Data.Context;
 using PlainBridge.Api.Infrastructure.Messaging;
 using PlainBridge.SharedApplication.DTOs;
@@ -16,10 +16,10 @@ namespace PlainBridge.Api.Application.Services.ServerApplication;
 
 public class ServerApplicationService(ILogger<ServerApplicationService> _logger, MainDbContext _dbContext, IEventBus _eventBus) : IServerApplicationService
 {
-    public async Task<IList<ServerApplicationDto>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<IList<ServerApplicationDto>> GetAllAsync(long userId, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Getting all server applications.");
-        var serverApplication = await _dbContext.ServerApplications.AsNoTracking().ToListAsync(cancellationToken);
+        var serverApplication = await _dbContext.ServerApplications.AsNoTracking().Where(x => x.UserId == userId).ToListAsync(cancellationToken);
 
         return serverApplication.Select(x => new ServerApplicationDto
         {
@@ -30,10 +30,10 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
         }).ToList();
     }
 
-    public async Task<ServerApplicationDto> GetByIdAsync(long id, CancellationToken cancellationToken)
+    public async Task<ServerApplicationDto> GetAsync(long id, long userId, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Getting server application by Id: {Id}", id);
-        var serverApp = await _dbContext.ServerApplications.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+        var serverApp = await _dbContext.ServerApplications.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.UserId == userId, cancellationToken);
         if (serverApp == null)
         {
             _logger.LogWarning("Server application with Id: {Id} not found.", id);
@@ -74,6 +74,7 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
             AppId = Guid.NewGuid(),
             ServerApplicationViewId = serverApplication.ServerApplicationAppId,
             Name = serverApplication.Name,
+            UserId = serverApplication.UserId,
             InternalPort = serverApplication.InternalPort,
             State = (Domain.Enums.RowStateEnum)RowStateEnum.Inactive,
         };

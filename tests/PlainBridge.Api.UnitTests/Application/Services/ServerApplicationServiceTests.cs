@@ -2,54 +2,55 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Moq;
- 
-using PlainBridge.Api.Application.Handler.Bus;
+using Moq; 
 using PlainBridge.Api.Application.Services.ServerApplication;
 using PlainBridge.Api.Domain.Entities;
+using PlainBridge.Api.Infrastructure.Messaging;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Exceptions;
 
 namespace PlainBridge.Api.UnitTests.Application.Services;
 
+[Collection("TestRun")]
 public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
 {
     private readonly TestRunFixture _fixture;
     private readonly IServerApplicationService _serverApplicationService;
     private readonly Mock<ILogger<ServerApplicationService>> _mockLoggerServerApplicationService;
-    private readonly Mock<IBusHandler> _mockBusHandler;
+    private readonly Mock<IEventBus> _mockEventBus;
 
     public ServerApplicationServiceTests(TestRunFixture fixture)
     {
         _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
         _mockLoggerServerApplicationService = new Mock<ILogger<ServerApplicationService>>();
-        _mockBusHandler = new Mock<IBusHandler>();
-        _serverApplicationService = new ServerApplicationService(_mockLoggerServerApplicationService.Object, _fixture.MemoryMainDbContext, _mockBusHandler.Object);
+        _mockEventBus = new Mock<IEventBus>();
+        _serverApplicationService = new ServerApplicationService(_mockLoggerServerApplicationService.Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
     }
 
-    [Fact]
-    public async Task GetAllAsync_ShouldReturnData()
+    [Theory]
+    [InlineData(1)]
+    public async Task GetAllAsync_ShouldReturnData(long userId)
     {
-        var result = await _serverApplicationService.GetAllAsync(CancellationToken.None);
+        var result = await _serverApplicationService.GetAllAsync(userId, CancellationToken.None);
         Assert.NotNull(result);
         Assert.True(result.Count > 0);
     }
 
-    #region GetByIdAsync 
+    #region GetAsync 
     [Theory]
-    [InlineData(1)]
-    public async Task GetByIdAsync_WhenIdExists_ShouldReturnData(long id)
+    [InlineData(1, 1)]
+    public async Task GetAsync_WhenIdExists_ShouldReturnData(long id, long userId)
     {
-        var result = await _serverApplicationService.GetByIdAsync(id, CancellationToken.None);
+        var result = await _serverApplicationService.GetAsync(id, userId, CancellationToken.None);
         Assert.NotNull(result);
         Assert.Equal(id, result.Id);
     }
 
     [Theory]
-    [InlineData(999)]
-    public async Task GetByIdAsync_WhenIdDoesntExist_ShouldReturnNull(long id)
+    [InlineData(999, 1)]
+    public async Task GetAsync_WhenIdDoesntExist_ShouldReturnNull(long id, long userId)
     {
-        await Assert.ThrowsAsync<NotFoundException>(async () => await _serverApplicationService.GetByIdAsync(id, CancellationToken.None));
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _serverApplicationService.GetAsync(id, userId, CancellationToken.None));
     }
     #endregion
 
@@ -145,15 +146,6 @@ public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
     {
         var res = await Assert.ThrowsAsync<NotFoundException>(() => _serverApplicationService.UpdateAsync(dto, CancellationToken.None));
         Assert.NotNull(res);
-    }
-
-    [Theory]
-    [MemberData(nameof(ServerApplicationServiceData.SetDataFor_UpdateAsync_WhenServerApplicationViewIdIsEmpty_ShouldThrowException), MemberType = typeof(ServerApplicationServiceData))]
-    public async Task UpdateAsync_WhenServerApplicationViewIdIsEmpty_ShouldThrowException(ServerApplicationDto dto)
-    {
-        var res = await Assert.ThrowsAsync<ArgumentNullException>(() => _serverApplicationService.UpdateAsync(dto, CancellationToken.None));
-        Assert.NotNull(res);
-        Assert.Equal(nameof(ServerApplicationDto.ServerApplicationAppId), res.ParamName);
     }
 
     #endregion

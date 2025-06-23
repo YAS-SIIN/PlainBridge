@@ -2,30 +2,30 @@
 using Humanizer;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging; 
 
-using Moq;
- 
-using PlainBridge.Api.Application.Handler.Bus;
+using Moq; 
 using PlainBridge.Api.Application.Services.HostApplication;
+using PlainBridge.Api.Infrastructure.Messaging;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Exceptions;
 
 namespace PlainBridge.Api.UnitTests.Application.Services;
 
+[Collection("TestRun")]
 public class HostApplicationServiceTests : IClassFixture<TestRunFixture>
 {
     private readonly TestRunFixture _fixture;
     private readonly IHostApplicationService _hostApplicationService;
     private readonly Mock<ILogger<HostApplicationService>> _mockLoggerHostApplicationService;
-    private readonly Mock<IBusHandler> _mockBusHandler;
+    private readonly Mock<IEventBus> _mockEventBus;
 
     public HostApplicationServiceTests(TestRunFixture fixture)
     {
         _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
         _mockLoggerHostApplicationService = new Mock<ILogger<HostApplicationService>>();
-        _mockBusHandler = new Mock<IBusHandler>();
-        _hostApplicationService = new HostApplicationService(_mockLoggerHostApplicationService.Object, _fixture.MemoryMainDbContext, _mockBusHandler.Object);
+        _mockEventBus = new Mock<IEventBus>();
+        _hostApplicationService = new HostApplicationService(_mockLoggerHostApplicationService.Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
     }
 
     [Theory]
@@ -37,21 +37,21 @@ public class HostApplicationServiceTests : IClassFixture<TestRunFixture>
         Assert.True(result.Count > 0);
     }
 
-    #region GetByIdAsync 
+    #region GetAsync 
     [Theory]
-    [InlineData(1)]
-    public async Task GetByIdAsync_WhenIdExists_ShouldReturnData(long id)
+    [InlineData(1, 1)]
+    public async Task GetAsync_WhenIdExists_ShouldReturnData(long id, long userId)
     {
-        var result = await _hostApplicationService.GetByIdAsync(id, CancellationToken.None);
+        var result = await _hostApplicationService.GetAsync(id, userId, CancellationToken.None);
         Assert.NotNull(result);
         Assert.Equal(id, result.Id);
     }
 
     [Theory]
-    [InlineData(999)]
-    public async Task GetByIdAsync_WhenIdDoesntExist_ShouldReturnNull(long id)
+    [InlineData(999, 1)]
+    public async Task GetAsync_WhenIdDoesntExist_ShouldReturnNull(long id, long userId)
     {
-        await Assert.ThrowsAsync<NotFoundException>(async () => await _hostApplicationService.GetByIdAsync(id, CancellationToken.None));
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _hostApplicationService.GetAsync(id, userId, CancellationToken.None));
     }
     #endregion
 

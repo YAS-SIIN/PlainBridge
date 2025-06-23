@@ -1,8 +1,5 @@
 ﻿
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-
-using PlainBridge.Api.Domain.Entities; 
+using Microsoft.Extensions.Logging; 
 using PlainBridge.Server.Application.DTOs;
 using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 using PlainBridge.Server.Application.Management.Cache;

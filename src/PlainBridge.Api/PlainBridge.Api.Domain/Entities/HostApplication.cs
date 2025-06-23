@@ -16,6 +16,7 @@ public class HostApplication : BaseEntity<long>
     public string Name { get; set; }
     public string Domain { get; set; }
     public string InternalUrl { get; set; }
+
     [ForeignKey("UserId")]
     public long UserId { get; set; }
 

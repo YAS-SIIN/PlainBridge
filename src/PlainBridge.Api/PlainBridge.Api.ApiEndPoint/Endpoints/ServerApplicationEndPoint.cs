@@ -27,7 +27,7 @@ public static class ServerApplicationEndPoint
         // GetByIdAsync
         app.MapGet("{id:long}", async (long id, IServerApplicationService serverApplicationService, CancellationToken cancellationToken) =>
         {
-            var data = await serverApplicationService.GetByIdAsync(id, cancellationToken);
+            var data = await serverApplicationService.GetAsync(id, cancellationToken);
             if (data == null)
             {
                 return Results.NotFound(ResultDto<ServerApplicationDto>.ReturnData(

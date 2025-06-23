@@ -13,6 +13,10 @@ public record HostApplicationDto : BaseDto<long>
     [StringLength(150, MinimumLength = 3)]
     public string Name { get; set; }
 
+    [Display(Name = "User Id")]
+    [Required]
+    public long UserId { get; set; }
+
     [Display(Name = "Domain")]
     [Required]
     [StringLength(200, MinimumLength = 5)]

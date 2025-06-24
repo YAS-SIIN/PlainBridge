@@ -1,9 +1,15 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-using Moq; 
+using Moq;
+
+using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.Identity;
 using PlainBridge.Api.Application.Services.User;
+using PlainBridge.SharedApplication.DTOs;
+using PlainBridge.SharedApplication.Enums;
+using PlainBridge.SharedApplication.Exceptions;
 
 namespace PlainBridge.Api.UnitTests.Application.Services;
 
@@ -18,8 +24,149 @@ public class UserServiceTests : IClassFixture<TestRunFixture>
     public UserServiceTests(TestRunFixture fixture)
     {
         _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
-        _mockLoggerUserService = new Mock<ILogger<UserService>>(); 
+        _mockLoggerUserService = new Mock<ILogger<UserService>>();
+        _mockIdentityService = new Mock<IIdentityService>();
         _userService = new UserService(_mockLoggerUserService.Object, _fixture.MemoryMainDbContext, _mockIdentityService.Object);
     }
 
+    [Theory]
+    [InlineData("1")]
+    [InlineData("2")]
+    public async Task GetUserByExternalIdAsync_WhenEveryThingIsOk_ShouldReturnData(string externalId)
+    {
+        var user = await _userService.GetUserByExternalIdAsync(externalId, CancellationToken.None);
+        Assert.NotNull(user);
+        Assert.Equal(externalId, user.ExternalId);
+    }
+
+    [Fact]
+    public async Task GetUserByExternalIdAsync_WhenIdDoesntExist_ShouldThrowException()
+    {
+        await Assert.ThrowsAsync<NotFoundException>(() => _userService.GetUserByExternalIdAsync("999", CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task GetAllAsync_WhenEveryThingIsOk_ShouldReturnData()
+    {
+        var users = await _userService.GetAllAsync(CancellationToken.None);
+        Assert.NotNull(users);
+        Assert.True(users.Count >= 3);
+    }
+
+    #region CreateAsync
+     
+    [Theory]
+    [MemberData(nameof(UserServiceData.SetDataFor_WhenEveryThingIsOk_ShouldBeSucceeded), MemberType = typeof(UserServiceData))]
+    public async Task CreateAsync_WhenEveryThingIsOk_ShouldBeSucceeded(UserDto userDto)
+    { 
+        _mockIdentityService.Setup(x => x.CreateUserAsync(userDto, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ResultDto<string> { Data = "external-123", ResultCode = ResultCodeEnum.Success });
+
+        var appId = await _userService.CreateAsync(userDto, CancellationToken.None);
+        Assert.NotEqual(Guid.Empty, appId);
+
+        var created = await _fixture.MemoryMainDbContext.Users.FirstOrDefaultAsync(x => x.Username == "NewUser");
+
+        _mockIdentityService.Verify(x => x.CreateUserAsync(userDto, It.IsAny<CancellationToken>()), Times.Once);
+        Assert.NotNull(created);
+        Assert.Equal(userDto.Username, created.Username); 
+        Assert.Equal(userDto.Email, created.Email); 
+        Assert.Equal(userDto.Name, created.Name); 
+        Assert.Equal(userDto.Family, created.Family); 
+    }
+
+    [Theory]
+    [MemberData(nameof(UserServiceData.SetDataFor_CreateAsync_WhenUserExists_ShouldThrowException), MemberType = typeof(UserServiceData))]
+    public async Task CreateAsync_WhenUserExists_ShouldThrowException(UserDto userDto)
+    { 
+        await Assert.ThrowsAsync<DuplicatedException>(() => _userService.CreateAsync(userDto, CancellationToken.None));
+    }
+
+    [Theory]
+    [MemberData(nameof(UserServiceData.SetDataFor_CreateAsync_WhenIdentityFails_ShouldThrowException), MemberType = typeof(UserServiceData))]
+    public async Task CreateAsync_WhenIdentityFails_ShouldThrowException(UserDto userDto)
+    { 
+        _mockIdentityService.Setup(x => x.CreateUserAsync(userDto, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ResultDto<string> { Data = null, ResultCode = ResultCodeEnum.Error });
+
+        await Assert.ThrowsAsync<ApplicationException>(() => _userService.CreateAsync(userDto, CancellationToken.None));
+        _mockIdentityService.Verify(x => x.CreateUserAsync(userDto, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    #endregion
+
+    #region ChangePasswordAsync
+     
+    [Theory]
+    [MemberData(nameof(UserServiceData.SetDataFor_ChangePasswordAsync_WhenEveryThingIsOk_ShouldBeSucceeded), MemberType = typeof(UserServiceData))]
+    public async Task ChangePasswordAsync_WhenEveryThingIsOk_ShouldBeSucceeded(ChangeUserPasswordDto changeUserPassword)
+    {
+
+        _mockIdentityService.Setup(x => x.ChangePasswordAsync(changeUserPassword, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ResultDto<string> { ResultCode = ResultCodeEnum.Success });
+
+        await _userService.ChangePasswordAsync(changeUserPassword, CancellationToken.None);
+
+        _mockIdentityService.Verify(x => x.ChangePasswordAsync(changeUserPassword, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Theory]
+    [MemberData(nameof(UserServiceData.SetDataFor_ChangePasswordAsync_WhenUserDoesNotExist_ShouldThrowException), MemberType = typeof(UserServiceData))]
+    public async Task ChangePasswordAsync_WhenUserDoesNotExist_ShouldThrowException(ChangeUserPasswordDto changeUserPassword)
+    { 
+        await Assert.ThrowsAsync<NotFoundException>(() => _userService.ChangePasswordAsync(changeUserPassword, CancellationToken.None));
+    }
+
+    [Theory]
+    [MemberData(nameof(UserServiceData.SetDataFor_ChangePasswordAsync_WhenEveryThingIsOk_ShouldBeSucceeded), MemberType = typeof(UserServiceData))]
+    public async Task ChangePasswordAsync_WhenIdentityFails_ShouldThrowException(ChangeUserPasswordDto changeUserPassword)
+    { 
+
+        _mockIdentityService.Setup(x => x.ChangePasswordAsync(changeUserPassword, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ResultDto<string> { ResultCode = ResultCodeEnum.Error });
+
+        await Assert.ThrowsAsync<ApplicationException>(() => _userService.ChangePasswordAsync(changeUserPassword, CancellationToken.None));
+        _mockIdentityService.Verify(x => x.ChangePasswordAsync(changeUserPassword, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    #endregion
+
+    #region UpdateProfileAsync
+     
+    [Theory]
+    [MemberData(nameof(UserServiceData.SetDataFor_UpdateProfileAsync_WhenEveryThingIsOk_ShouldBeSucceeded), MemberType = typeof(UserServiceData))]
+    public async Task UpdateProfileAsync_WhenEveryThingIsOk_ShouldBeSucceeded(UserDto user)
+    {
+         
+
+        _mockIdentityService.Setup(x => x.UpdateUserAsync(user, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ResultDto<string> { ResultCode = ResultCodeEnum.Success });
+
+        await _userService.UpdateProfileAsync(user, CancellationToken.None);
+
+        var updated = await _fixture.MemoryMainDbContext.Users.FindAsync(user.Id);
+        _mockIdentityService.Verify(x => x.UpdateUserAsync(user, It.IsAny<CancellationToken>()), Times.Once);
+        Assert.Equal(user.Name, updated.Name);
+        Assert.Equal(user.Family, updated.Family);
+    }
+
+    [Theory]
+    [MemberData(nameof(UserServiceData.SetDataFor_UpdateProfileAsync_WhenUserDoesNotExist_ShouldThrowException), MemberType = typeof(UserServiceData))]
+    public async Task UpdateProfileAsync_WhenUserDoesNotExist_ShouldThrowException(UserDto user)
+    { 
+        await Assert.ThrowsAsync<NotFoundException>(() => _userService.UpdateProfileAsync(user, CancellationToken.None));
+    }
+
+    [Theory]
+    [MemberData(nameof(UserServiceData.SetDataFor_UpdateProfileAsync_WhenIdentityFails_ShouldThrowException), MemberType = typeof(UserServiceData))]
+    public async Task UpdateProfileAsync_WhenIdentityFails_ShouldThrowException(UserDto user)
+    { 
+        _mockIdentityService.Setup(x => x.UpdateUserAsync(user, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ResultDto<string> { ResultCode = ResultCodeEnum.Error });
+
+        await Assert.ThrowsAsync<ApplicationException>(() => _userService.UpdateProfileAsync(user, CancellationToken.None));
+        _mockIdentityService.Verify(x => x.UpdateUserAsync(user, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    #endregion
 }

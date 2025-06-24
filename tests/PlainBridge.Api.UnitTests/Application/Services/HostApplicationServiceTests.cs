@@ -30,7 +30,7 @@ public class HostApplicationServiceTests : IClassFixture<TestRunFixture>
 
     [Theory]
     [InlineData(1)]
-    public async Task GetAllAsync_ShouldReturnData(long userId)
+    public async Task GetAllAsync_WhenEveryThingIsOk_ShouldReturnData(long userId)
     {
         var result = await _hostApplicationService.GetAllAsync(userId, CancellationToken.None);
         Assert.NotNull(result);
@@ -40,7 +40,7 @@ public class HostApplicationServiceTests : IClassFixture<TestRunFixture>
     #region GetAsync 
     [Theory]
     [InlineData(1, 1)]
-    public async Task GetAsync_WhenIdExists_ShouldReturnData(long id, long userId)
+    public async Task GetAsync_WhenEveryThingIsOk_ShouldReturnData(long id, long userId)
     {
         var result = await _hostApplicationService.GetAsync(id, userId, CancellationToken.None);
         Assert.NotNull(result);
@@ -49,7 +49,7 @@ public class HostApplicationServiceTests : IClassFixture<TestRunFixture>
 
     [Theory]
     [InlineData(999, 1)]
-    public async Task GetAsync_WhenIdDoesntExist_ShouldReturnNull(long id, long userId)
+    public async Task GetAsync_WhenIdDoesntExist__ShouldThrowException(long id, long userId)
     {
         await Assert.ThrowsAsync<NotFoundException>(async () => await _hostApplicationService.GetAsync(id, userId, CancellationToken.None));
     }

@@ -85,11 +85,11 @@ public class UserService(
             Family = user.Family,
             ExternalId = userCreationResult!.Data!
         };
-        await _dbContext.Users.AddAsync(newUser, cancellationToken);
+        var createdUser = await _dbContext.Users.AddAsync(newUser, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
-
+        newUser = createdUser.Entity;
         _logger.LogInformation("User created successfully: {Username}", user.Username);
-        return user.AppId;
+        return newUser.AppId;
     }
 
     public async Task ChangePasswordAsync(ChangeUserPasswordDto changeUserPassword, CancellationToken cancellationToken)

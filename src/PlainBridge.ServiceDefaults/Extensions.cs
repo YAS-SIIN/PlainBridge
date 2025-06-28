@@ -1,14 +1,18 @@
+using Duende.Bff.Yarp;
+
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Logging; 
+using Microsoft.Extensions.Logging;
+
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
-using PlainBridge.Api.Application.DTOs; 
+using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.HostApplication;
 using PlainBridge.Api.Application.Services.Identity;
 using PlainBridge.Api.Application.Services.ServerApplication;
@@ -24,6 +28,8 @@ using PlainBridge.Server.Application.Services.AppProjectConsumer;
 using PlainBridge.Server.Application.Services.HttpRequestProxy;
 using PlainBridge.Server.Application.Services.ServerBus;
 using PlainBridge.Server.Application.Services.WebSocket;
+
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -41,7 +47,7 @@ public static class Extensions
         builder.Services.AddEndpointsApiExplorer();
 
         builder.Services.AddServiceDiscovery();
-         
+
         builder.Services.ConfigureHttpClientDefaults(http =>
         {
             // Turn on resilience by default
@@ -123,25 +129,46 @@ public static class Extensions
 
         return services;
     }
-     
+
     public static IServiceCollection AddIDSProjectDatabase(this IServiceCollection services)
     {
         services.AddDbContext<MainDbContext>(options => options.UseInMemoryDatabase("PlainBridgeIDSDBContext"));
 
         return services;
     }
-     
+
     public static IServiceCollection AddApiProjectServices(this IServiceCollection services)
     {
+        services.AddCors(options =>
+        {
+            options.AddPolicy("CorsPolicy",
+                builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .WithExposedHeaders("X-Pagination"));
+        });
+
+
         services.AddScoped<IHostApplicationService, HostApplicationService>();
         services.AddScoped<IServerApplicationService, ServerApplicationService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IEventBus, RabbitMqEventBus>();
-         
+
+        services.AddAuthorization();
+
+        services.AddHttpClient("Api");
+        services
+              .AddBff()
+              .AddRemoteApis();
+        JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+
+        services.AddHttpContextAccessor();
+
+
         return services;
     }
-    
+
     public static IServiceCollection AddServerProjectServices(this IServiceCollection services)
     {
         services.AddScoped<IPlainBridgeApiClientHandler, PlainBridgeApiClientHandler>();
@@ -152,9 +179,11 @@ public static class Extensions
         services.AddScoped<IServerBusService, ServerBusService>();
         services.AddScoped<IServerApplicationConsumerService, ServerApplicationConsumerService>();
         services.AddScoped<IHttpRequestProxyService, HttpRequestProxyService>();
-        services.AddScoped<IWebSocketService, 
+        services.AddScoped<IWebSocketService,
             WebSocketService>();
         services.AddScoped<ResponseCompletionSourcesManagement>();
+        services.AddHttpClient("Api");
+
         return services;
     }
 

@@ -24,10 +24,10 @@ public static class HostApplicationEndpoint
         }).WithName("GetAllHostApplication");
 
 
-        // GetByIdAsync
+        // GetAsync
         app.MapGet("{id:long}", async (long id, IHostApplicationService hostApplicationService, CancellationToken cancellationToken) =>
         {
-            var data = await hostApplicationService.GetByIdAsync(id, cancellationToken);
+            var data = await hostApplicationService.GetAsync(id, cancellationToken);
             if (data == null)
             {
                 return Results.NotFound(ResultDto<HostApplicationDto>.ReturnData(

@@ -10,8 +10,7 @@ builder.AddServiceDefaults();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
  builder.Services.AddOpenApi();
-builder.Services.AddOptions<ApplicationSetting>().Bind(builder.Configuration.GetSection("ApplicationSetting")); 
-builder.Services.AddHttpServices();
+builder.Services.AddOptions<ApplicationSetting>().Bind(builder.Configuration.GetSection("ApplicationSetting"));  
 builder.Services.AddMemoryCache();
 builder.AddRabbitMQClient(connectionName: "messaging");
 builder.Services.AddServerProjectServices();

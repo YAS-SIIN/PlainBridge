@@ -1,4 +1,7 @@
-﻿using PlainBridge.Api.Application.DTOs;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+
+using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.ServerApplication;
 using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.SharedApplication.DTOs;
@@ -12,12 +15,13 @@ public static class ServerApplicationEndPoint
 {
     public static void MapServerApplicationEndpoint(this IEndpointRouteBuilder builder)
     {
-        var app = builder.MapGroup("ServerApplication");
+        var app = builder.MapGroup("ServerApplication")
+            .RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme });
 
         // GetAllAsync
         app.MapGet("", async (CancellationToken cancellationToken, IServerApplicationService serverApplicationService, ISessionService _sessionService) =>
         {
-            var user = await _sessionService.GetCurrentUsereAsync(cancellationToken);
+            var user = await _sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
                 throw new NotFoundException("User");
 
@@ -27,13 +31,13 @@ public static class ServerApplicationEndPoint
                 ResultCodeEnum.Success,
                 ResultCodeEnum.Success.ToDisplayName()
             ));
-        }).WithName("GetAllServerApplication");
+        }).WithName("GetAllServerApplications");
 
 
         // GetByIdAsync
         app.MapGet("{id:long}", async (long id, CancellationToken cancellationToken, IServerApplicationService serverApplicationService,  ISessionService _sessionService) =>
         {
-            var user = await _sessionService.GetCurrentUsereAsync(cancellationToken);
+            var user = await _sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
                 throw new NotFoundException("User");
 
@@ -55,15 +59,15 @@ public static class ServerApplicationEndPoint
 
 
         // CreateAsync
-        app.MapPost("", async (ServerApplicationDto hostApplication, CancellationToken cancellationToken, IServerApplicationService serverApplicationService, ISessionService _sessionService) =>
+        app.MapPost("", async (ServerApplicationDto hostApplication, CancellationToken cancellationToken, IServerApplicationService serverApplicationService, ISessionService sessionService) =>
         {
-            var user = await _sessionService.GetCurrentUsereAsync(cancellationToken);
+            var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
                 throw new NotFoundException("User");
 
             hostApplication.UserId = user.Id;
             var id = await serverApplicationService.CreateAsync(hostApplication, cancellationToken);
-            return Results.Created($"/persons/{id}", ResultDto<Guid>.ReturnData(
+            return Results.Created($"/serverApplication/{id}", ResultDto<Guid>.ReturnData(
                 id,
                 ResultCodeEnum.Success,
                 ResultCodeEnum.Success.ToDisplayName()
@@ -71,9 +75,9 @@ public static class ServerApplicationEndPoint
         }).WithName("CreateServerApplication");
 
         // UpdateAsync
-        app.MapPut("{id:long}", async (long id, CancellationToken cancellationToken, ServerApplicationDto hostApplication, IServerApplicationService serverApplicationService, ISessionService _sessionService) =>
+        app.MapPut("{id:long}", async (long id, CancellationToken cancellationToken, ServerApplicationDto hostApplication, IServerApplicationService serverApplicationService, ISessionService sessionService) =>
         {
-            var user = await _sessionService.GetCurrentUsereAsync(cancellationToken);
+            var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
                 throw new NotFoundException("User");
 
@@ -89,7 +93,7 @@ public static class ServerApplicationEndPoint
 
 
         // DeleteAsync
-        app.MapDelete("{id:long}", async (long id, CancellationToken cancellationToken, IServerApplicationService serverApplicationService, ISessionService _sessionService) =>
+        app.MapDelete("{id:long}", async (long id, CancellationToken cancellationToken, IServerApplicationService serverApplicationService, ISessionService sessionService) =>
         {
             await serverApplicationService.DeleteAsync(id, cancellationToken);
             return Results.Ok(ResultDto<object>.ReturnData(

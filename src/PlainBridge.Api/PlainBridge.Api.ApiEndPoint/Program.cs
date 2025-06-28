@@ -51,6 +51,9 @@ app.MapGroup("api/")
 app.MapGroup("api/")
     .MapServerApplicationEndpoint();
 
+app.MapGroup("api/")
+    .MapUserEndpoint();
+
 app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())

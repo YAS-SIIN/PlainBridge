@@ -41,7 +41,7 @@ public class UserService(
         };
     }
 
-    public async Task<List<UserDto>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<IList<UserDto>> GetAllAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Getting all users.");
         var res = await _dbContext.Users.AsNoTracking().ToListAsync(cancellationToken);
@@ -113,13 +113,13 @@ public class UserService(
         _logger.LogInformation("Password changed successfully for user id: {UserId}", changeUserPassword.Id);
     }
 
-    public async Task UpdateProfileAsync(UserDto user, CancellationToken cancellationToken)
+    public async Task UpdateAsync(UserDto user, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Updating profile for user id: {UserId}", user.Id);
+        _logger.LogInformation("Updating for user id: {UserId}", user.Id);
         var existedUser = await _dbContext.Users.FindAsync(user.Id, cancellationToken);
         if (existedUser == null)
         {
-            _logger.LogWarning("User not found for profile update. Id: {UserId}", user.Id);
+            _logger.LogWarning("User not found for update. Id: {UserId}", user.Id);
             throw new NotFoundException(nameof(UserDto), new List<KeyValuePair<string, object>>() { new KeyValuePair<string, object>(nameof(UserDto.Id), user.Id) });
         }
 
@@ -127,8 +127,8 @@ public class UserService(
 
         if (userUpdatingResult.ResultCode != ResultCodeEnum.Success)
         {
-            _logger.LogError("Profile update failed on identity server for user id: {UserId}", user.Id);
-            throw new ApplicationException("Updating profile on identity server failed");
+            _logger.LogError("User update failed on identity server for user id: {UserId}", user.Id);
+            throw new ApplicationException("Updating user on identity server failed");
         }
 
         existedUser.Name = user.Name;

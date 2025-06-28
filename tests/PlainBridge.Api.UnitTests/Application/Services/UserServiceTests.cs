@@ -142,7 +142,7 @@ public class UserServiceTests : IClassFixture<TestRunFixture>
         _mockIdentityService.Setup(x => x.UpdateUserAsync(user, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ResultDto<string> { ResultCode = ResultCodeEnum.Success });
 
-        await _userService.UpdateProfileAsync(user, CancellationToken.None);
+        await _userService.UpdateAsync(user, CancellationToken.None);
 
         var updated = await _fixture.MemoryMainDbContext.Users.FindAsync(user.Id);
         _mockIdentityService.Verify(x => x.UpdateUserAsync(user, It.IsAny<CancellationToken>()), Times.Once);
@@ -154,7 +154,7 @@ public class UserServiceTests : IClassFixture<TestRunFixture>
     [MemberData(nameof(UserServiceData.SetDataFor_UpdateProfileAsync_WhenUserDoesNotExist_ShouldThrowException), MemberType = typeof(UserServiceData))]
     public async Task UpdateProfileAsync_WhenUserDoesNotExist_ShouldThrowException(UserDto user)
     { 
-        await Assert.ThrowsAsync<NotFoundException>(() => _userService.UpdateProfileAsync(user, CancellationToken.None));
+        await Assert.ThrowsAsync<NotFoundException>(() => _userService.UpdateAsync(user, CancellationToken.None));
     }
 
     [Theory]
@@ -164,7 +164,7 @@ public class UserServiceTests : IClassFixture<TestRunFixture>
         _mockIdentityService.Setup(x => x.UpdateUserAsync(user, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ResultDto<string> { ResultCode = ResultCodeEnum.Error });
 
-        await Assert.ThrowsAsync<ApplicationException>(() => _userService.UpdateProfileAsync(user, CancellationToken.None));
+        await Assert.ThrowsAsync<ApplicationException>(() => _userService.UpdateAsync(user, CancellationToken.None));
         _mockIdentityService.Verify(x => x.UpdateUserAsync(user, It.IsAny<CancellationToken>()), Times.Once);
     }
 

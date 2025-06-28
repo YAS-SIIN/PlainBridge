@@ -23,7 +23,7 @@ public class SessionService(IHttpContextAccessor _httpContextAccessor, IUserServ
         return customer;
     }
 
-    public async Task<UserProfileViewDto?> GetCurrentCustomerProfileAsync(CancellationToken cancellationToken)
+    public async Task<UserProfileViewDto?> GetCurrentUserProfileAsync(CancellationToken cancellationToken)
     {
         var userId = _httpContextAccessor.HttpContext.User.Claims.SingleOrDefault(claim => claim.Type == "sub");
 

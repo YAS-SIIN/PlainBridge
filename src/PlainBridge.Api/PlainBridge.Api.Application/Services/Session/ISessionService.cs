@@ -4,7 +4,7 @@ namespace PlainBridge.Api.Application.Services.Session
 {
     public interface ISessionService
     {
-        Task<UserProfileViewDto?> GetCurrentCustomerProfileAsync(CancellationToken cancellationToken);
+        Task<UserProfileViewDto?> GetCurrentUserProfileAsync(CancellationToken cancellationToken);
         Task<UserDto> GetCurrentUsereAsync(CancellationToken cancellationToken);
     }
 }

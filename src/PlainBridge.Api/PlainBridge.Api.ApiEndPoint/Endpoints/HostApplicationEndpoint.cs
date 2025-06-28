@@ -1,7 +1,9 @@
 ﻿using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.HostApplication;
+using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
+using PlainBridge.SharedApplication.Exceptions;
 using PlainBridge.SharedApplication.Extentions;
 
 namespace PlainBridge.Api.ApiEndPoint.Endpoints;
@@ -13,9 +15,13 @@ public static class HostApplicationEndpoint
         var app = builder.MapGroup("HostApplication");
 
         // GetAllAsync
-        app.MapGet("", async (IHostApplicationService hostApplicationService, CancellationToken cancellationToken) =>
+        app.MapGet("", async (CancellationToken cancellationToken, IHostApplicationService hostApplicationService, ISessionService _sessionService) =>
         {
-                var data = await hostApplicationService.GetAllAsync(cancellationToken);
+            var user = await _sessionService.GetCurrentUsereAsync(cancellationToken);
+            if (user == null)
+                throw new NotFoundException("User");
+
+            var data = await hostApplicationService.GetAllAsync(user.Id, cancellationToken);
                 return Results.Ok(ResultDto<IList<HostApplicationDto>>.ReturnData(
                     data,
                     ResultCodeEnum.Success,
@@ -25,9 +31,13 @@ public static class HostApplicationEndpoint
 
 
         // GetAsync
-        app.MapGet("{id:long}", async (long id, IHostApplicationService hostApplicationService, CancellationToken cancellationToken) =>
+        app.MapGet("{id:long}", async (long id, CancellationToken cancellationToken, IHostApplicationService hostApplicationService, ISessionService _sessionService) =>
         {
-            var data = await hostApplicationService.GetAsync(id, cancellationToken);
+            var user = await _sessionService.GetCurrentUsereAsync(cancellationToken);
+            if (user == null)
+                throw new NotFoundException("User");
+
+            var data = await hostApplicationService.GetAsync(id, user.Id, cancellationToken);
             if (data == null)
             {
                 return Results.NotFound(ResultDto<HostApplicationDto>.ReturnData(
@@ -45,9 +55,14 @@ public static class HostApplicationEndpoint
 
 
         // CreateAsync
-        app.MapPost("", async (HostApplicationDto hostApplication, IHostApplicationService hostApplicationService, CancellationToken cancellationToken) =>
+        app.MapPost("", async (HostApplicationDto hostApplication, CancellationToken cancellationToken, IHostApplicationService hostApplicationService, ISessionService _sessionService) =>
         {
-                var id = await hostApplicationService.CreateAsync(hostApplication, cancellationToken);
+            var user = await _sessionService.GetCurrentUsereAsync(cancellationToken);
+            if (user == null)
+                throw new NotFoundException("User");
+
+            hostApplication.UserId = user.Id;
+            var id = await hostApplicationService.CreateAsync(hostApplication, cancellationToken);
                 return Results.Created($"/persons/{id}", ResultDto<Guid>.ReturnData(
                     id,
                     ResultCodeEnum.Success,
@@ -56,9 +71,14 @@ public static class HostApplicationEndpoint
         }).WithName("CreateHostApplication");
 
         // UpdateAsync
-        app.MapPut("{id:long}", async (long id, HostApplicationDto hostApplication, IHostApplicationService hostApplicationService, CancellationToken cancellationToken) =>
+        app.MapPut("{id:long}", async (long id, CancellationToken cancellationToken, HostApplicationDto hostApplication, IHostApplicationService hostApplicationService, ISessionService _sessionService) =>
         {
-                hostApplication.Id = id;
+            var user = await _sessionService.GetCurrentUsereAsync(cancellationToken);
+            if (user == null)
+                throw new NotFoundException("User");
+
+            hostApplication.UserId = user.Id;
+            hostApplication.Id = id;
                 await hostApplicationService.UpdateAsync(hostApplication, cancellationToken);
                 return Results.Ok(ResultDto<HostApplicationDto>.ReturnData(
                     hostApplication,
@@ -69,9 +89,9 @@ public static class HostApplicationEndpoint
 
 
         // DeleteAsync
-        app.MapDelete("{id:long}", async (long id, IHostApplicationService hostApplicationService, CancellationToken cancellationToken) =>
-        {
-                await hostApplicationService.DeleteAsync(id, cancellationToken);
+        app.MapDelete("{id:long}", async (long id, CancellationToken cancellationToken, IHostApplicationService hostApplicationService) =>
+        { 
+            await hostApplicationService.DeleteAsync(id, cancellationToken);
                 return Results.Ok(ResultDto<object>.ReturnData(
                     null,
                     ResultCodeEnum.Success,

@@ -16,6 +16,8 @@ using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.HostApplication;
 using PlainBridge.Api.Application.Services.Identity;
 using PlainBridge.Api.Application.Services.ServerApplication;
+using PlainBridge.Api.Application.Services.Session;
+using PlainBridge.Api.Application.Services.Token;
 using PlainBridge.Api.Application.Services.User;
 using PlainBridge.Api.Infrastructure.Data.Context;
 using PlainBridge.Api.Infrastructure.Messaging;
@@ -154,6 +156,8 @@ public static class Extensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IEventBus, RabbitMqEventBus>();
+        services.AddScoped<ISessionService, SessionService>();
+        services.AddScoped<ITokenService, TokenService>();
 
         services.AddAuthorization();
 

@@ -21,7 +21,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
     private async Task<HttpClient> InitializeHttpClientAsync(CancellationToken cancellationToken)
     {
         var httpClient = _httpClientFactory.CreateClient("Default");
-        var disco = await httpClient.GetDiscoveryDocumentAsync(_applicationSetting.Value.IdsUrl.ToString(), cancellationToken);
+        var disco = await httpClient.GetDiscoveryDocumentAsync(_applicationSetting.Value.PlainBridgeIdsUrl.ToString(), cancellationToken);
         if (disco.IsError)
             throw new ApplicationException("Failed to get discivery document");
 
@@ -56,7 +56,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         };
 
         var content = new StringContent(JsonSerializer.Serialize(jsonObject), Encoding.UTF8, "application/json");
-        var uri = new Uri($"{_applicationSetting.Value.IdsUrl}/User");
+        var uri = new Uri($"{_applicationSetting.Value.PlainBridgeIdsUrl}/User");
 
         HttpResponseMessage? response;
 
@@ -81,7 +81,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         };
 
         var content = new StringContent(JsonSerializer.Serialize(jsonObject), Encoding.UTF8, "application/json");
-        var uri = new Uri($"{_applicationSetting.Value.IdsUrl}/User/ChangePassword");
+        var uri = new Uri($"{_applicationSetting.Value.PlainBridgeIdsUrl}/User/ChangePassword");
 
         HttpResponseMessage? response;
 
@@ -108,7 +108,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         };
 
         var content = new StringContent(JsonSerializer.Serialize(jsonObject), Encoding.UTF8, "application/json");
-        var uri = new Uri($"{_applicationSetting.Value.IdsUrl}/User");
+        var uri = new Uri($"{_applicationSetting.Value.PlainBridgeIdsUrl}/User");
 
         HttpResponseMessage? response;
 

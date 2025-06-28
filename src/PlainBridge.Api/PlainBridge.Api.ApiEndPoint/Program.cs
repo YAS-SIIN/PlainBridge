@@ -4,6 +4,7 @@ using Duende.IdentityModel;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -23,8 +24,10 @@ builder.AddServiceDefaults();
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 builder.Services.AddOptions<ApplicationSetting>().Bind(builder.Configuration.GetSection("ApplicationSetting"));
+var appSettings = builder.Services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSetting>>();
 
 builder.Services.AddApiProjectDatabase();
+builder.Services.AddAuthentication(appSettings.Value);
 builder.Services.AddApiProjectServices();
 builder.AddRabbitMQClient(connectionName: "messaging");
 builder.AddRedisClient(connectionName: "cache");
@@ -69,72 +72,72 @@ app.UseAuthorization();
 
 await app.RunAsync();
 
-
-IServiceCollection AddAuthentication(this IServiceCollection services)
+public static class AuthenticationExtensions
 {
-
-    var serviceProvider = services.BuildServiceProvider();
-    var connectionMultiplexer = serviceProvider.GetRequiredService<IConnectionMultiplexer>();
-    var appSettings = serviceProvider.GetRequiredService<IOptions<ApplicationSetting>>();
-
-    services.AddAuthentication(options =>
+    public static IServiceCollection AddAuthentication(this IServiceCollection services, ApplicationSetting appSettings)
     {
-        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = "oidc";
-        options.DefaultSignOutScheme = "oidc";
-    })
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddJwtBearer("Bearer", options =>
+        var serviceProvider = services.BuildServiceProvider();
+        var connectionMultiplexer = serviceProvider.GetRequiredService<IConnectionMultiplexer>();
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = "oidc";
+            options.DefaultSignOutScheme = "oidc";
+        })
+        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddJwtBearer("Bearer", options =>
+        {
+            object configuration = null;
+            if (!string.IsNullOrWhiteSpace(appSettings.PlainBridgeUseHttp) && bool.Parse(appSettings.PlainBridgeUseHttp!))
+            {
+                options.RequireHttpsMetadata = false;
+            }
+
+            options.Authority = new Uri(appSettings.PlainBridgeIdsUrl!).ToString();
+            options.SaveToken = true;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false
+            };
+
+            var db = connectionMultiplexer.GetDatabase(10);
+
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = async context =>
                 {
-                    object configuration = null;
-                    if (!string.IsNullOrWhiteSpace(appSettings.Value.ZIRALINK_USE_HTTP) && bool.Parse(appSettings.Value.ZIRALINK_USE_HTTP!))
-                    {
-                        options.RequireHttpsMetadata = false;
-                    }
+                    var tokenp = context.Request.Headers["Authorization"];
+                    tokenp = tokenp.ToString().Replace("Bearer ", "");
+                    var token = await db.StringGetAsync($"tokenptoken:{tokenp}");
+                    context.Token = token;
+                }
+            };
+        })
+        .AddOpenIdConnect("oidc", options =>
+        {
+            if (!string.IsNullOrWhiteSpace(appSettings.PlainBridgeUseHttp) && bool.Parse(appSettings.PlainBridgeUseHttp!))
+            {
+                options.RequireHttpsMetadata = false;
+            }
 
-                    options.Authority = new Uri(appSettings.Value.ZIRALINK_URL_IDS!).ToString();
-                    options.SaveToken = true;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateAudience = false
-                    };
+            options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.Authority = new Uri(appSettings.PlainBridgeIdsUrl!).ToString();
+            options.ClientId = "bff";
+            options.ClientSecret = "secret";
+            options.ResponseType = OidcConstants.ResponseTypes.Code;
+            options.Scope.Clear();
+            options.Scope.Add("PlainBridge");
+            options.Scope.Add("openid");
+            options.Scope.Add("profile");
+            options.Scope.Add("email");
+            options.Scope.Add("offline_access");
+            options.SaveTokens = true;
 
+            options.GetClaimsFromUserInfoEndpoint = true;
+        });
 
-                    var db = connectionMultiplexer.GetDatabase(10);
-
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = async context =>
-                        {
-                            var tokenp = context.Request.Headers["Authorization"];
-                            tokenp = tokenp.ToString().Replace("Bearer ", "");
-                            var token = await db.StringGetAsync($"tokenptoken:{tokenp}");
-                            context.Token = token;
-                        }
-                    };
-                })
-                .AddOpenIdConnect("oidc", options =>
-                {
-                    if (!string.IsNullOrWhiteSpace(appSettings.Value.ZIRALINK_USE_HTTP) && bool.Parse(appSettings.Value.ZIRALINK_USE_HTTP!))
-                    {
-                        options.RequireHttpsMetadata = false;
-                    }
-
-                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.Authority = new Uri(appSettings.Value.ZIRALINK_URL_IDS!).ToString();
-                    options.ClientId = "bff";
-                    options.ClientSecret = "secret";
-                    options.ResponseType = OidcConstants.ResponseTypes.Code;
-                    options.Scope.Clear();
-                    options.Scope.Add("PlainBridge");
-                    options.Scope.Add("openid");
-                    options.Scope.Add("profile");
-                    options.Scope.Add("email");
-                    options.Scope.Add("offline_access");
-                    options.SaveTokens = true;
-
-                    options.GetClaimsFromUserInfoEndpoint = true;
-                  
-                });
-    return services;
+        return services;
+    }
 }
+

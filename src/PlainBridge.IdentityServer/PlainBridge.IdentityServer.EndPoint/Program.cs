@@ -5,9 +5,14 @@ using Duende.IdentityServer;
 using Duende.IdentityServer.Licensing;
 using Duende.IdentityServer.Test;
 
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 using PlainBridge.IdentityServer.EndPoint;
+using PlainBridge.IdentityServer.EndPoint.Domain.Entities;
 using PlainBridge.IdentityServer.EndPoint.Endpoints;
 using PlainBridge.IdentityServer.EndPoint.ErrorHandling;
+using PlainBridge.IdentityServer.EndPoint.Infrastructure.Data;
 
 using Serilog;
 
@@ -43,6 +48,13 @@ try
     isBuilder.AddInMemoryApiScopes(Config.ApiScopes);
     isBuilder.AddInMemoryClients(Config.Clients);
 
+
+    builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultTokenProviders();
+
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseInMemoryDatabase("IdentityDb"));
 
     // if you want to use server-side sessions: https://blog.duendesoftware.com/posts/20220406_session_management/
     // then enable it
@@ -107,6 +119,7 @@ try
 
     app.UseStaticFiles();
     app.UseRouting();
+    app.UseHttpsRedirection();
     app.UseIdentityServer();
     app.UseAuthorization();
 

@@ -46,7 +46,7 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, IPl
 
         foreach (var project in hostApplications.Where(x => x.State == RowStateEnum.Active))
         {
-            var projectHost = project.GetProjectHost(_applicationSetting.DefaultDomain);
+            var projectHost = project.GetProjectHost(_applicationSetting.Value.DefaultDomain);
             _cache.SetHostApplication(projectHost, project);
             _logger.LogInformation("Host application cached: {ProjectHost}", projectHost);
         }

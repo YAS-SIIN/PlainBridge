@@ -27,10 +27,10 @@ builder.Services.AddOptions<ApplicationSetting>().Bind(builder.Configuration.Get
 var appSettings = builder.Services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSetting>>();
 
 builder.Services.AddApiProjectDatabase();
-builder.Services.AddAuthentication(appSettings.Value);
 builder.Services.AddApiProjectServices();
 builder.AddRabbitMQClient(connectionName: "messaging");
 builder.AddRedisClient(connectionName: "cache");
+builder.Services.AddAuthentication(appSettings.Value);
 builder.Services.AddExceptionHandler<ErrorHandler>();
 
 // Configure Kestrel to support HTTP/3

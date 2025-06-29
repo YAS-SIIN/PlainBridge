@@ -4,8 +4,8 @@ var cache = builder.AddRedis("cache");
 var rabbitmq = builder.AddRabbitMQ("messaging");
 
 var apiService = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-endpoint")
-    .WithReference(rabbitmq);
-
+    .WithReference(rabbitmq)
+    .WithReference(cache);
 //builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
 //    .WithExternalHttpEndpoints()
 //    .WithReference(cache)

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.ServerApplication;
@@ -23,7 +24,7 @@ public static class ServerApplicationEndPoint
         {
             var user = await _sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
-                throw new NotFoundException("User");
+                throw new NotFoundException("user");
 
             var data = await serverApplicationService.GetAllAsync(user.Id, cancellationToken);
             return Results.Ok(ResultDto<IList<ServerApplicationDto>>.ReturnData(
@@ -35,11 +36,11 @@ public static class ServerApplicationEndPoint
 
 
         // GetByIdAsync
-        app.MapGet("{id:long}", async (long id, CancellationToken cancellationToken, IServerApplicationService serverApplicationService,  ISessionService _sessionService) =>
+        app.MapGet("{id:long}", async (long id, CancellationToken cancellationToken, IServerApplicationService serverApplicationService,  ISessionService sessionService) =>
         {
-            var user = await _sessionService.GetCurrentUserAsync(cancellationToken);
+            var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
-                throw new NotFoundException("User");
+                throw new NotFoundException("user");
 
             var data = await serverApplicationService.GetAsync(id, user.Id, cancellationToken);
             if (data == null)
@@ -59,11 +60,11 @@ public static class ServerApplicationEndPoint
 
 
         // CreateAsync
-        app.MapPost("", async (ServerApplicationDto hostApplication, CancellationToken cancellationToken, IServerApplicationService serverApplicationService, ISessionService sessionService) =>
+        app.MapPost("", async ([FromBody] ServerApplicationDto hostApplication, CancellationToken cancellationToken, IServerApplicationService serverApplicationService, ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
-                throw new NotFoundException("User");
+                throw new NotFoundException("user");
 
             hostApplication.UserId = user.Id;
             var id = await serverApplicationService.CreateAsync(hostApplication, cancellationToken);
@@ -75,11 +76,11 @@ public static class ServerApplicationEndPoint
         }).WithName("CreateServerApplication");
 
         // UpdateAsync
-        app.MapPut("{id:long}", async (long id, CancellationToken cancellationToken, ServerApplicationDto hostApplication, IServerApplicationService serverApplicationService, ISessionService sessionService) =>
+        app.MapPut("{id:long}", async (long id, [FromBody] ServerApplicationDto hostApplication, CancellationToken cancellationToken, IServerApplicationService serverApplicationService, ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
-                throw new NotFoundException("User");
+                throw new NotFoundException("user");
 
             hostApplication.Id = id;
             hostApplication.UserId = user.Id;

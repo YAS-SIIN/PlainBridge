@@ -1,0 +1,14 @@
+﻿@PlainBridge.Api.ApiEndPoint_HostAddress = 
+
+POST {{PlainBridge.Api.ApiEndPoint_HostAddress}}/User
+
+{
+    "username": "Yasin",
+    "password": "1234",
+    "rePassword": "1234",
+    "email": "y@y.com",
+    "phoneNumber": "09149611762",
+    "name": "Yasin",
+    "family": "As"
+}
+###

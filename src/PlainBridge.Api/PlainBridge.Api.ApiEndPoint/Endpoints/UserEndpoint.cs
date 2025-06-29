@@ -1,4 +1,6 @@
-﻿ 
+﻿
+using Microsoft.AspNetCore.Mvc;
+
 using PlainBridge.Api.Application.DTOs; 
 using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.Services.User;
@@ -31,7 +33,7 @@ public static class UserEndpoint
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
-                throw new NotFoundException("User");
+                throw new NotFoundException("user");
              
             return Results.Ok(ResultDto<UserDto>.ReturnData(
                 user,
@@ -42,7 +44,7 @@ public static class UserEndpoint
 
 
         // CreateAsync
-        app.MapPost("", async (UserDto user, CancellationToken cancellationToken, IUserService userService) =>
+        app.MapPost("", async ([FromBody] UserDto user, CancellationToken cancellationToken, IUserService userService) =>
         { 
             var id = await userService.CreateAsync(user, cancellationToken);
             return Results.Created($"/user/{id}", ResultDto<Guid>.ReturnData(
@@ -53,11 +55,11 @@ public static class UserEndpoint
         }).WithName("CreateUser");
 
         // ChangePasswordAsync
-        app.MapPatch("ChangePassword", async (ChangeUserPasswordDto changeUserPassword, CancellationToken cancellationToken, IUserService userService, ISessionService sessionService) =>
+        app.MapPatch("ChangePassword", async ([FromBody] ChangeUserPasswordDto changeUserPassword, CancellationToken cancellationToken, IUserService userService, ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
-                throw new NotFoundException("User");
+                throw new NotFoundException("user");
 
             changeUserPassword.Id = user.Id;
             await userService.ChangePasswordAsync(changeUserPassword, cancellationToken);
@@ -70,11 +72,11 @@ public static class UserEndpoint
 
 
         // UpdateAsync
-        app.MapPatch("{id:long}", async (UserDto user, CancellationToken cancellationToken, IUserService userService, ISessionService sessionService) =>
+        app.MapPatch("{id:long}", async ([FromBody] UserDto user, CancellationToken cancellationToken, IUserService userService, ISessionService sessionService) =>
         {
             var currentUser = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (currentUser == null)
-                throw new NotFoundException("User");
+                throw new NotFoundException("user");
 
             user.Id = currentUser.Id;
             await userService.UpdateAsync(user, cancellationToken);

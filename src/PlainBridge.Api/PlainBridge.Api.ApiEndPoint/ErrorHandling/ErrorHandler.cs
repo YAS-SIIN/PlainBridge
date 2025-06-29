@@ -35,7 +35,6 @@ public class ErrorHandler : IExceptionHandler
                 break;
         }
 
-        httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
         await httpContext.Response.WriteAsJsonAsync(ResultDto<object>.ReturnData(exception.Message, ResultCodeEnum.Error, ResultCodeEnum.Error.ToDisplayName(), exception?.InnerException?.Message ?? ""), cancellationToken);
 
         return true;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.HostApplication;
@@ -23,7 +24,7 @@ public static class HostApplicationEndpoint
         {
             var user = await _sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
-                throw new NotFoundException("User");
+                throw new NotFoundException("user");
 
             var data = await hostApplicationService.GetAllAsync(user.Id, cancellationToken);
             return Results.Ok(ResultDto<IList<HostApplicationDto>>.ReturnData(
@@ -38,7 +39,7 @@ public static class HostApplicationEndpoint
         {
             var user = await _sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
-                throw new NotFoundException("User");
+                throw new NotFoundException("user");
 
             var data = await hostApplicationService.GetAsync(id, user.Id, cancellationToken);
             if (data == null)
@@ -57,11 +58,11 @@ public static class HostApplicationEndpoint
         }).WithName("GetHostApplication");
 
         // CreateAsync
-        app.MapPost("", async (HostApplicationDto hostApplication, CancellationToken cancellationToken, IHostApplicationService hostApplicationService, ISessionService sessionService) =>
+        app.MapPost("", async ([FromBody] HostApplicationDto hostApplication, CancellationToken cancellationToken, IHostApplicationService hostApplicationService, ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
-                throw new NotFoundException("User");
+                throw new NotFoundException("user");
 
             hostApplication.UserId = user.Id;
             var id = await hostApplicationService.CreateAsync(hostApplication, cancellationToken);
@@ -73,11 +74,11 @@ public static class HostApplicationEndpoint
         }).WithName("CreateHostApplication");
 
         // UpdateAsync
-        app.MapPut("{id:long}", async (long id, CancellationToken cancellationToken, HostApplicationDto hostApplication, IHostApplicationService hostApplicationService, ISessionService sessionService) =>
+        app.MapPut("{id:long}", async (long id, CancellationToken cancellationToken, [FromBody] HostApplicationDto hostApplication, IHostApplicationService hostApplicationService, ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
-                throw new NotFoundException("User");
+                throw new NotFoundException("user");
 
             hostApplication.UserId = user.Id;
             hostApplication.Id = id;

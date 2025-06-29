@@ -3,7 +3,10 @@ var builder = DistributedApplication.CreateBuilder(args);
 var cache = builder.AddRedis("cache");
 var rabbitmq = builder.AddRabbitMQ("messaging");
 
-var apiService = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-endpoint")
+var identityserverEndpoint = builder.AddProject<Projects.PlainBridge_IdentityServer_EndPoint>("identityserver-endpoint");
+
+var apiEndpoint = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-endpoint")
+    .WithReference(identityserverEndpoint)
     .WithReference(rabbitmq)
     .WithReference(cache);
 //builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
@@ -23,6 +26,7 @@ var apiService = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-e
 //    .WaitFor(apiService);
 
 var serverEndpoint = builder.AddProject<Projects.PlainBridge_Server_ApiEndPoint>("server-endpoint")
+    .WithReference(apiEndpoint)
     .WithReference(rabbitmq);
 
 //builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
@@ -39,7 +43,11 @@ var serverEndpoint = builder.AddProject<Projects.PlainBridge_Server_ApiEndPoint>
 //    .WithReference(apiService)
 //    .WaitFor(apiService);
 
-var identityserverEndpoint = builder.AddProject<Projects.PlainBridge_IdentityServer_EndPoint>("identityserver-endpoint");
+var angularWebUi =
+builder.AddNpmApp("angularWebUi", "../PlainBridge.Web/PlainBridge.Web.UI")
+    .WithReference(apiEndpoint)
+    .WithReference(identityserverEndpoint)
+    .WithExternalHttpEndpoints();
 
 //builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
 //    .WithExternalHttpEndpoints()

@@ -12,7 +12,7 @@ using System.Text.Json;
 namespace PlainBridge.Api.Application.Services.Session;
 
 
-public class SessionService(ILogger<SessionService> _logger, IHttpContextAccessor _httpContextAccessor, IUserService _userService, ITokenService _tokenService, IOptions<ApplicationSetting> _applicationSetting) : ISessionService
+public class SessionService(ILogger<SessionService> _logger, IHttpContextAccessor _httpContextAccessor, IUserService _userService, ITokenService _tokenService, IHttpClientFactory _httpClientFactory, IOptions<ApplicationSetting> _applicationSetting) : ISessionService
 {
     public async Task<UserDto> GetCurrentUserAsync(CancellationToken cancellationToken)
     {
@@ -21,7 +21,7 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
         if (userId == null || string.IsNullOrEmpty(userId.Value))
         {
             _logger.LogWarning("User ID claim 'sub' not found in HttpContext.");
-            return null!;
+            return await Task.FromResult<UserDto>(null!);
         }
         _logger.LogInformation("Fetching user by external ID: {UserId}", userId.Value);
         var customer = await _userService.GetUserByExternalIdAsync(userId.Value, cancellationToken);
@@ -51,8 +51,8 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
         };
 
         _logger.LogInformation("Requesting user info from: {Address}", userInfoRequest.Address);
-        var client = new HttpClient();
-        var userInfoResponse = await client.GetUserInfoAsync(userInfoRequest);
+        var httpClientx = _httpClientFactory.CreateClient("Default"); 
+        var userInfoResponse = await httpClientx.GetUserInfoAsync(userInfoRequest);
         var result = await userInfoResponse.HttpResponse.Content.ReadAsStringAsync();
 
         _logger.LogInformation("User info received and deserializing.");

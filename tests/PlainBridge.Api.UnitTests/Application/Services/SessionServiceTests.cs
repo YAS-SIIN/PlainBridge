@@ -13,6 +13,7 @@ using PlainBridge.Api.Application.Services.User;
 
 namespace PlainBridge.Api.UnitTests.Application.Services;
 
+[Collection("TestRun")]
 public class SessionServiceTests : IClassFixture<TestRunFixture>
 {
     private readonly TestRunFixture _fixture;

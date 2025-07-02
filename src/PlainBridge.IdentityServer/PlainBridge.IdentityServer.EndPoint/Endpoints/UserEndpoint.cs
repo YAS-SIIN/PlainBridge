@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-
+using PlainBridge.IdentityServer.EndPoint.Domain.Entities;
 using PlainBridge.IdentityServer.EndPoint.Dto;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
@@ -17,13 +17,13 @@ public static class UserEndpoint
 {
     public static void MapUserEndpoint(this IEndpointRouteBuilder builder)
     {
-        var app = builder.MapGroup("UserEndpoint");
+        var app = builder.MapGroup("User");
 
         // GetAllAsync
         app.MapPost("", async ([FromBody] UserDto model, UserManager<IdentityUser> _userManager, CancellationToken cancellationToken) =>
         {
 
-            var user = new IdentityUser { UserName = model.Username, Email = model.Email, PhoneNumber = model.PhoneNumber };
+            var user = new ApplicationUser { UserName = model.Username, Email = model.Email, PhoneNumber = model.PhoneNumber };
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded) throw new ApplicationException("User creation failed");

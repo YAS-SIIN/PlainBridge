@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using System.Reflection.Emit;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-
 using PlainBridge.IdentityServer.EndPoint.Domain.Entities;
-
-using System.Reflection.Emit;
 
 namespace PlainBridge.IdentityServer.EndPoint.Infrastructure.Data;
 
@@ -14,6 +13,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         : base(options)
     {
     }
+
+    public DbSet<IdentityUser> IdentityUsers { get; set; } = null!;
+    public DbSet<IdentityRole> IdentityRoles { get; set; } = null!;
 
     //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     //{

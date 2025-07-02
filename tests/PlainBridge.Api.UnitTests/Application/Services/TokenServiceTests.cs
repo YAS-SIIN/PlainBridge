@@ -9,6 +9,7 @@ using StackExchange.Redis;
 
 namespace PlainBridge.Api.UnitTests.Application.Services;
 
+[Collection("TestRun")]
 public class TokenServiceTests : IClassFixture<TestRunFixture>
 {
     private readonly TestRunFixture _fixture;

@@ -21,7 +21,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
     private async Task<HttpClient> InitializeHttpClientAsync(CancellationToken cancellationToken)
     {
         var httpClient = _httpClientFactory.CreateClient("Default");
-        var disco = await httpClient.GetDiscoveryDocumentAsync(_applicationSetting.Value.PlainBridgeIdsUrl.ToString(), cancellationToken);
+        var disco = await httpClient.GetDiscoveryDocumentAsync(new Uri(_applicationSetting.Value.PlainBridgeIdsUrl).ToString(), cancellationToken);
         if (disco.IsError)
             throw new ApplicationException("Failed to get discivery document");
 
@@ -29,7 +29,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         {
             Address = disco.TokenEndpoint,
             ClientId = _applicationSetting.Value.IdsClientId,
-            ClientSecret = _applicationSetting.Value.IdsClientId,
+            ClientSecret = _applicationSetting.Value.IdsClientSecret,
             Scope = _applicationSetting.Value.IdsScope
         }, cancellationToken);
 
@@ -56,13 +56,18 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         };
 
         var content = new StringContent(JsonSerializer.Serialize(jsonObject), Encoding.UTF8, "application/json");
-        var uri = new Uri($"{_applicationSetting.Value.PlainBridgeIdsUrl}/User");
+        var uri = new Uri($"{_applicationSetting.Value.PlainBridgeIdsUrl}/api/User");
 
         HttpResponseMessage? response;
 
         response = await httpClient.PostAsync(uri.ToString(), content);
 
         var responseString = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        if (!response.IsSuccessStatusCode || string.IsNullOrEmpty(responseString))
+        { 
+            return new ResultDto<string>();
+        }
 
         var userCreationResult = JsonSerializer.Deserialize<ResultDto<string>>(responseString, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }) ?? new ResultDto<string>();
 
@@ -81,7 +86,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         };
 
         var content = new StringContent(JsonSerializer.Serialize(jsonObject), Encoding.UTF8, "application/json");
-        var uri = new Uri($"{_applicationSetting.Value.PlainBridgeIdsUrl}/User/ChangePassword");
+        var uri = new Uri($"{_applicationSetting.Value.PlainBridgeIdsUrl}/api/User/ChangePassword");
 
         HttpResponseMessage? response;
 
@@ -108,7 +113,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         };
 
         var content = new StringContent(JsonSerializer.Serialize(jsonObject), Encoding.UTF8, "application/json");
-        var uri = new Uri($"{_applicationSetting.Value.PlainBridgeIdsUrl}/User");
+        var uri = new Uri($"{_applicationSetting.Value.PlainBridgeIdsUrl}/api/User");
 
         HttpResponseMessage? response;
 

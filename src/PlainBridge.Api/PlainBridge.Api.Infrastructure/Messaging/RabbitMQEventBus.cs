@@ -38,15 +38,39 @@ public class RabbitMqEventBus(ILogger<RabbitMqEventBus> _logger, IConnection _co
 
         var body = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(@event);
 
-        // Specify the type argument explicitly to resolve CS0411
-        await channel.BasicPublishAsync<BasicProperties>(
-            exchange: exchangeName,
-            routingKey: routingKey,
-            mandatory: true,
-            basicProperties: null,
-            body: body,
-            cancellationToken: cancellationToken);
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
+        var properties = new BasicProperties
+        {
+            Headers = new Dictionary<string, object>
+            {
+                { "IntUrl", "internalUrl" },
+                { "Host", "projectHost" }
+            }
+        };
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
 
+        // Specify the type argument explicitly to resolve CS0411
+        //await channel.BasicPublishAsync<BasicProperties>(
+        //    exchange: exchangeName,
+        //    routingKey: routingKey,
+        //    mandatory: true,
+        //    basicProperties: properties,
+        //    body: body,
+        //    cancellationToken: cancellationToken);
+        try
+        {
+            await channel.BasicPublishAsync<BasicProperties>(
+           exchange: exchangeName,
+           routingKey: routingKey,
+           mandatory: true,
+           basicProperties: properties,
+           body: body,
+           cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Error in publishing message to bus: {MessageType}", routingKey);
+        }
         _logger.LogInformation("Message published to bus: {MessageType}", routingKey);
     }
 }

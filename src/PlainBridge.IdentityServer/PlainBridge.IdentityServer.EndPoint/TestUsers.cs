@@ -30,6 +30,8 @@ public static class TestUsers
                     Claims =
                     {
                         new Claim(JwtClaimTypes.Name, "Yasin Asadnezhad"),
+                        new Claim(JwtClaimTypes.PreferredUserName, "Yasin"),
+                        new Claim(JwtClaimTypes.PhoneNumber, "0914"),
                         new Claim(JwtClaimTypes.GivenName, "Yasin"),
                         new Claim(JwtClaimTypes.FamilyName, "Asadnezhad"),
                         new Claim(JwtClaimTypes.Email, "YasinAsadnezhad@example.com"),
@@ -46,6 +48,8 @@ public static class TestUsers
                     Claims =
                     {
                         new Claim(JwtClaimTypes.Name, "Sadeq Asadnezhad"),
+                        new Claim(JwtClaimTypes.PreferredUserName, "Sadeq"),
+                        new Claim(JwtClaimTypes.PhoneNumber, "0930"),
                         new Claim(JwtClaimTypes.GivenName, "Sadeq"),
                         new Claim(JwtClaimTypes.FamilyName, "Asadnezhad"),
                         new Claim(JwtClaimTypes.Email, "BobSmith@example.com"),

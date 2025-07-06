@@ -34,7 +34,7 @@ public class UserTypeConfiguration : BaseEntityTypeConfiguration<User, long>
         builder.Property(b => b.Family).IsRequired().HasMaxLength(150);
         builder.Property(b => b.Email).IsRequired().HasMaxLength(200);
         builder.Property(b => b.Username).IsRequired().HasMaxLength(150);
-        builder.Property(b => b.PhoneNumber).IsRequired().HasMaxLength(20);
+        builder.Property(b => b.PhoneNumber).HasMaxLength(20);
 
 
     }

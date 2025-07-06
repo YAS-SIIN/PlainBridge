@@ -49,15 +49,20 @@ public static class LoginEndpoint
             catch (NotFoundException)
             {
                 var customerProfile = await sessionService.GetCurrentUserProfileAsync(cancellationToken);
-                var user = new UserDto
+
+                if (customerProfile is not null)
                 {
-                    ExternalId = sub,
-                    Username = customerProfile.Username,
-                    Email = customerProfile.Email,
-                    Name = customerProfile.Name,
-                    Family = customerProfile.Family
-                };
-                await customerService.CreateLocallyAsync(user, cancellationToken);
+                    var user = new UserDto
+                    {
+                        ExternalId = sub,
+                        Username = customerProfile.Username,
+                        Email = customerProfile.Email,
+                        PhoneNumber = customerProfile.PhoneNumber,
+                        Name = customerProfile.Name,
+                        Family = customerProfile.Family
+                    };
+                    await customerService.CreateLocallyAsync(user, cancellationToken);
+                } 
             }
 
             var baseUri = new Uri(_applicationSetting.Value.PlainBridgeWebUrl);

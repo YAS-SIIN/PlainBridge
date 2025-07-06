@@ -32,6 +32,8 @@ public static class UserEndpoint
                 {
                     new Claim(JwtClaimTypes.GivenName, model.Name),
                     new Claim(JwtClaimTypes.FamilyName, model.Family),
+                    new Claim(JwtClaimTypes.PreferredUserName, model.Username),
+                    new Claim(JwtClaimTypes.PhoneNumber, model.PhoneNumber ?? string.Empty),
                     new Claim(JwtClaimTypes.Name, $"{model.Name} {model.Family}"),
                     new Claim(JwtClaimTypes.Email, $"{model.Email}"),
                     new Claim(JwtClaimTypes.Role, "simpleUser")
@@ -58,7 +60,8 @@ public static class UserEndpoint
 
             await _userManager.ReplaceClaimAsync(user, claims.Single(x => x.Type == JwtClaimTypes.GivenName), new Claim(JwtClaimTypes.GivenName, model.Name));
             await _userManager.ReplaceClaimAsync(user, claims.Single(x => x.Type == JwtClaimTypes.FamilyName), new Claim(JwtClaimTypes.FamilyName, model.Family));
-            await _userManager.ReplaceClaimAsync(user, claims.Single(x => x.Type == JwtClaimTypes.Name), new Claim(JwtClaimTypes.Name, $"{model.Name} {model.Family}"));
+            await _userManager.ReplaceClaimAsync(user, claims.Single(x => x.Type == JwtClaimTypes.PhoneNumber), new Claim(JwtClaimTypes.PhoneNumber, model.PhoneNumber ?? string.Empty));
+            await _userManager.ReplaceClaimAsync(user, claims.Single(x => x.Type == JwtClaimTypes.Name), new Claim(JwtClaimTypes.Name, $"{model.Name} {model.Family}")); 
 
             return Results.Ok(ResultDto<string>.ReturnData(
                 user.Id,

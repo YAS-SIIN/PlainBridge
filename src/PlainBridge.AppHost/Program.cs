@@ -11,43 +11,18 @@ var apiEndpoint = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-
     .WithReference(identityserverEndpoint)
     .WithReference(rabbitmq)
     .WithReference(cache)
+    .WaitFor(cache)
+    .WaitFor(rabbitmq)
     .PublishAsDockerFile();
-//builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
-//    .WithExternalHttpEndpoints()
-//    .WithReference(cache)
-//    .WaitFor(cache)
-//    .WithReference(apiService)
-//    .WaitFor(apiService);
-
-//builder.AddProject<Projects.PlainBridge_Server>("plainbridge-server");
-
-//builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
-//    .WithExternalHttpEndpoints()
-//    .WithReference(cache)
-//    .WaitFor(cache)
-//    .WithReference(apiService)
-//    .WaitFor(apiService);
+ 
 
 var serverEndpoint = builder.AddProject<Projects.PlainBridge_Server_ApiEndPoint>("server-endpoint")
     .WithUrl("https://localhost:5002")
     .WithReference(apiEndpoint)
-    .WithReference(rabbitmq)
+    .WithReference(rabbitmq) 
+    .WaitFor(rabbitmq)
     .PublishAsDockerFile();
-
-//builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
-//    .WithExternalHttpEndpoints()
-//    .WithReference(cache)
-//    .WaitFor(cache)
-//    .WithReference(apiService)
-//    .WaitFor(apiService);
-
-//builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
-//    .WithExternalHttpEndpoints()
-//    .WithReference(cache)
-//    .WaitFor(cache)
-//    .WithReference(apiService)
-//    .WaitFor(apiService);
-
+ 
 var angularWebUi =
 builder.AddNpmApp("angularWebUi", "../PlainBridge.Web/PlainBridge.Web.UI")
     .WithUrl("http://localhost:12007")
@@ -55,21 +30,5 @@ builder.AddNpmApp("angularWebUi", "../PlainBridge.Web/PlainBridge.Web.UI")
     .WithReference(identityserverEndpoint)
     .WithExternalHttpEndpoints()
     .PublishAsDockerFile();
-
-//builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
-//    .WithExternalHttpEndpoints()
-//    .WithReference(cache)
-//    .WaitFor(cache)
-//    .WithReference(apiService)
-//    .WaitFor(apiService);
-
-//builder.AddProject<Projects.PlainBridge_Server>("plainbridge-server");
-
-//builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
-//    .WithExternalHttpEndpoints()
-//    .WithReference(cache)
-//    .WaitFor(cache)
-//    .WithReference(apiService)
-//    .WaitFor(apiService);
-
+ 
 await builder.Build().RunAsync();

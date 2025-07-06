@@ -28,6 +28,8 @@ public class UserServiceTests : IClassFixture<TestRunFixture>
         _mockIdentityService = new Mock<IIdentityService>();
         _userService = new UserService(_mockLoggerUserService.Object, _fixture.MemoryMainDbContext, _mockIdentityService.Object);
     }
+    
+    #region GetUserByExternalIdAsync
 
     [Theory]
     [InlineData("1")]
@@ -45,6 +47,9 @@ public class UserServiceTests : IClassFixture<TestRunFixture>
         await Assert.ThrowsAsync<NotFoundException>(() => _userService.GetUserByExternalIdAsync("999", CancellationToken.None));
     }
 
+    #endregion
+
+    #region GetAllAsync
     [Fact]
     public async Task GetAllAsync_WhenEveryThingIsOk_ShouldReturnData()
     {
@@ -53,10 +58,12 @@ public class UserServiceTests : IClassFixture<TestRunFixture>
         Assert.True(users.Count >= 3);
     }
 
+    #endregion
+
     #region CreateAsync
-     
+
     [Theory]
-    [MemberData(nameof(UserServiceData.SetDataFor_WhenEveryThingIsOk_ShouldBeSucceeded), MemberType = typeof(UserServiceData))]
+    [MemberData(nameof(UserServiceData.SetDataFor_CreateAsync_WhenEveryThingIsOk_ShouldBeSucceeded), MemberType = typeof(UserServiceData))]
     public async Task CreateAsync_WhenEveryThingIsOk_ShouldBeSucceeded(UserDto userDto)
     { 
         _mockIdentityService.Setup(x => x.CreateUserAsync(userDto, It.IsAny<CancellationToken>()))
@@ -91,6 +98,33 @@ public class UserServiceTests : IClassFixture<TestRunFixture>
 
         await Assert.ThrowsAsync<ApplicationException>(() => _userService.CreateAsync(userDto, CancellationToken.None));
         _mockIdentityService.Verify(x => x.CreateUserAsync(userDto, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    #endregion
+
+    #region CreateLocallyAsync
+     
+    [Theory]
+    [MemberData(nameof(UserServiceData.SetDataFor_CreateLocallyAsync_WhenEveryThingIsOk_ShouldBeSucceeded), MemberType = typeof(UserServiceData))]
+    public async Task CreateLocallyAsync_WhenEveryThingIsOk_ShouldBeSucceeded(UserDto userDto)
+    { 
+        var appId = await _userService.CreateLocallyAsync(userDto, CancellationToken.None);
+        Assert.NotEqual(Guid.Empty, appId);
+
+        var created = await _fixture.MemoryMainDbContext.Users.FirstOrDefaultAsync(x => x.Username == "NewUser");
+
+        Assert.NotNull(created);
+        Assert.Equal(userDto.Username, created.Username); 
+        Assert.Equal(userDto.Email, created.Email); 
+        Assert.Equal(userDto.Name, created.Name); 
+        Assert.Equal(userDto.Family, created.Family); 
+    }
+
+    [Theory]
+    [MemberData(nameof(UserServiceData.SetDataFor_CreateLocallyAsync_WhenUserExists_ShouldThrowException), MemberType = typeof(UserServiceData))]
+    public async Task CreateLocallyAsync_WhenUserExists_ShouldThrowException(UserDto userDto)
+    { 
+        await Assert.ThrowsAsync<DuplicatedException>(() => _userService.CreateLocallyAsync(userDto, CancellationToken.None));
     }
 
     #endregion

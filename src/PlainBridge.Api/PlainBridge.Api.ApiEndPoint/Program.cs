@@ -70,6 +70,8 @@ app.UseStaticFiles();
 app.MapDefaultEndpoints();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseBff();
+
 
 
 

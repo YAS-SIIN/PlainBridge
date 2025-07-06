@@ -17,7 +17,7 @@ public static class UserEndpoint
     {
         var app = builder.MapGroup("User");
         // GetAllAsync
-        app.MapGet("", async (CancellationToken cancellationToken, IUserService userService) =>
+        app.MapGet("", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IUserService userService) =>
         { 
             var data = await userService.GetAllAsync(cancellationToken);
             return Results.Ok(ResultDto<IList<UserDto>>.ReturnData(
@@ -29,7 +29,7 @@ public static class UserEndpoint
 
 
         // GetCurrentUser
-        app.MapGet("GetCurrentUser", async (long id, CancellationToken cancellationToken, ISessionService sessionService) =>
+        app.MapGet("GetCurrentUser", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
@@ -44,7 +44,7 @@ public static class UserEndpoint
 
 
         // CreateAsync
-        app.MapPost("", async ([FromBody] UserDto user, CancellationToken cancellationToken, IUserService userService) =>
+        app.MapPost("", async ([FromBody] UserDto user, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IUserService userService) =>
         { 
             var id = await userService.CreateAsync(user, cancellationToken);
             return Results.Created($"/user/{id}", ResultDto<Guid>.ReturnData(
@@ -55,7 +55,7 @@ public static class UserEndpoint
         }).WithName("CreateUser");
 
         // ChangePasswordAsync
-        app.MapPatch("ChangePassword", async ([FromBody] ChangeUserPasswordDto changeUserPassword, CancellationToken cancellationToken, IUserService userService, ISessionService sessionService) =>
+        app.MapPatch("ChangePassword", async ([FromBody] ChangeUserPasswordDto changeUserPassword, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IUserService userService, ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
@@ -72,7 +72,7 @@ public static class UserEndpoint
 
 
         // UpdateAsync
-        app.MapPatch("{id:long}", async ([FromBody] UserDto user, CancellationToken cancellationToken, IUserService userService, ISessionService sessionService) =>
+        app.MapPatch("{id:long}", async ([FromBody] UserDto user, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IUserService userService, ISessionService sessionService) =>
         {
             var currentUser = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (currentUser == null)

@@ -20,7 +20,7 @@ public static class ServerApplicationEndPoint
             .RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme });
 
         // GetAllAsync
-        app.MapGet("", async (CancellationToken cancellationToken, IServerApplicationService serverApplicationService, ISessionService _sessionService) =>
+        app.MapGet("", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IServerApplicationService serverApplicationService, ISessionService _sessionService) =>
         {
             var user = await _sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
@@ -36,7 +36,7 @@ public static class ServerApplicationEndPoint
 
 
         // GetByIdAsync
-        app.MapGet("{id:long}", async (long id, CancellationToken cancellationToken, IServerApplicationService serverApplicationService,  ISessionService sessionService) =>
+        app.MapGet("{id:long}", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IServerApplicationService serverApplicationService,  ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
@@ -60,7 +60,7 @@ public static class ServerApplicationEndPoint
 
 
         // CreateAsync
-        app.MapPost("", async ([FromBody] ServerApplicationDto hostApplication, CancellationToken cancellationToken, IServerApplicationService serverApplicationService, ISessionService sessionService) =>
+        app.MapPost("", async ([FromBody] ServerApplicationDto hostApplication, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IServerApplicationService serverApplicationService, ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
@@ -76,7 +76,7 @@ public static class ServerApplicationEndPoint
         }).WithName("CreateServerApplication");
 
         // UpdateAsync
-        app.MapPut("{id:long}", async (long id, [FromBody] ServerApplicationDto hostApplication, CancellationToken cancellationToken, IServerApplicationService serverApplicationService, ISessionService sessionService) =>
+        app.MapPut("{id:long}", async (long id, [FromBody] ServerApplicationDto hostApplication, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IServerApplicationService serverApplicationService, ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
@@ -94,7 +94,7 @@ public static class ServerApplicationEndPoint
 
 
         // DeleteAsync
-        app.MapDelete("{id:long}", async (long id, CancellationToken cancellationToken, IServerApplicationService serverApplicationService, ISessionService sessionService) =>
+        app.MapDelete("{id:long}", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IServerApplicationService serverApplicationService, ISessionService sessionService) =>
         {
             await serverApplicationService.DeleteAsync(id, cancellationToken);
             return Results.Ok(ResultDto<object>.ReturnData(

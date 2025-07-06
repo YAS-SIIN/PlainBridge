@@ -20,7 +20,7 @@ public static class HostApplicationEndpoint
             .RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme});
 
         // GetAllAsync
-        app.MapGet("", async (CancellationToken cancellationToken, IHostApplicationService hostApplicationService, ISessionService _sessionService) =>
+        app.MapGet("", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, ISessionService _sessionService) =>
         {
             var user = await _sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
@@ -35,7 +35,7 @@ public static class HostApplicationEndpoint
         }).WithName("GetAllHostApplications");
 
         // GetAsync
-        app.MapGet("{id:long}", async (long id, CancellationToken cancellationToken, IHostApplicationService hostApplicationService, ISessionService _sessionService) =>
+        app.MapGet("{id:long}", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, ISessionService _sessionService) =>
         {
             var user = await _sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
@@ -58,7 +58,7 @@ public static class HostApplicationEndpoint
         }).WithName("GetHostApplication");
 
         // CreateAsync
-        app.MapPost("", async ([FromBody] HostApplicationDto hostApplication, CancellationToken cancellationToken, IHostApplicationService hostApplicationService, ISessionService sessionService) =>
+        app.MapPost("", async ([FromBody] HostApplicationDto hostApplication, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
@@ -74,7 +74,7 @@ public static class HostApplicationEndpoint
         }).WithName("CreateHostApplication");
 
         // UpdateAsync
-        app.MapPut("{id:long}", async (long id, CancellationToken cancellationToken, [FromBody] HostApplicationDto hostApplication, IHostApplicationService hostApplicationService, ISessionService sessionService) =>
+        app.MapPut("{id:long}", async (long id, CancellationToken cancellationToken, [FromBody] HostApplicationDto hostApplication, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
@@ -91,7 +91,7 @@ public static class HostApplicationEndpoint
         }).WithName("UpdateHostApplication");
 
         // DeleteAsync
-        app.MapDelete("{id:long}", async (long id, CancellationToken cancellationToken, IHostApplicationService hostApplicationService) =>
+        app.MapDelete("{id:long}", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService) =>
         {
             await hostApplicationService.DeleteAsync(id, cancellationToken);
             return Results.Ok(ResultDto<object>.ReturnData(

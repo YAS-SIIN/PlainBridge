@@ -10,7 +10,8 @@ var apiEndpoint = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-
     .WithUrl("https://localhost:5001")
     .WithReference(identityserverEndpoint)
     .WithReference(rabbitmq)
-    .WithReference(cache);
+    .WithReference(cache)
+    .PublishAsDockerFile();
 //builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
 //    .WithExternalHttpEndpoints()
 //    .WithReference(cache)
@@ -30,7 +31,8 @@ var apiEndpoint = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-
 var serverEndpoint = builder.AddProject<Projects.PlainBridge_Server_ApiEndPoint>("server-endpoint")
     .WithUrl("https://localhost:5002")
     .WithReference(apiEndpoint)
-    .WithReference(rabbitmq);
+    .WithReference(rabbitmq)
+    .PublishAsDockerFile();
 
 //builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
 //    .WithExternalHttpEndpoints()
@@ -51,7 +53,8 @@ builder.AddNpmApp("angularWebUi", "../PlainBridge.Web/PlainBridge.Web.UI")
     .WithUrl("http://localhost:12007")
     .WithReference(apiEndpoint)
     .WithReference(identityserverEndpoint)
-    .WithExternalHttpEndpoints();
+    .WithExternalHttpEndpoints()
+    .PublishAsDockerFile();
 
 //builder.AddProject<Projects.PlainBridge_Api_Web>("webfrontend")
 //    .WithExternalHttpEndpoints()

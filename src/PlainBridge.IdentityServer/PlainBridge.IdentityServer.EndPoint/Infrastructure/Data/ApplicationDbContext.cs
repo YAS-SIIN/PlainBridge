@@ -7,7 +7,7 @@ using PlainBridge.IdentityServer.EndPoint.Domain.Entities;
 namespace PlainBridge.IdentityServer.EndPoint.Infrastructure.Data;
 
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)

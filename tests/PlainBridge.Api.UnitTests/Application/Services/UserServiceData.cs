@@ -6,7 +6,7 @@ namespace PlainBridge.Api.UnitTests.Application.Services;
 public class UserServiceData
 {
     #region CreateAsync
-    public static IEnumerable<object[]> SetDataFor_WhenEveryThingIsOk_ShouldBeSucceeded()
+    public static IEnumerable<object[]> SetDataFor_CreateAsync_WhenEveryThingIsOk_ShouldBeSucceeded()
     {
         yield return new object[] { new UserDto
         {
@@ -47,6 +47,39 @@ public class UserServiceData
             RePassword = "Password123!"
         }};
     }
+    #endregion
+    
+    #region CreateLocallyAsync
+    public static IEnumerable<object[]> SetDataFor_CreateLocallyAsync_WhenEveryThingIsOk_ShouldBeSucceeded()
+    {
+        yield return new object[] { new UserDto
+        {
+            Username = "NewUser",
+            Email = "newuser@PlainBridge.com",
+            PhoneNumber = "09120000000",
+            Name = "New",
+            Family = "User",
+            Password = "Password123!",
+            RePassword = "Password123!",
+            ExternalId = "1"
+        }};
+    }
+
+    public static IEnumerable<object[]> SetDataFor_CreateLocallyAsync_WhenUserExists_ShouldThrowException()
+    {
+        yield return new object[] { new UserDto
+        {
+            Username = "TestUser1",
+            Email = "TestUser1@PlainBridge.com",
+            PhoneNumber = "09120000000",
+            Name = "New",
+            Family = "User",
+            Password = "Password123!",
+            RePassword = "Password123!",
+            ExternalId = "1"
+        }};
+    }
+     
     #endregion
     
     

@@ -57,6 +57,33 @@ public class UserService(
         }).ToList();
     }
 
+    public async Task<Guid> CreateLocallyAsync(UserDto user, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Creating user: {Username}, {Email}", user.Username, user.Email);
+        var existedUser = await _dbContext.Users.AnyAsync(x => x.Username == user.Username || x.Email == user.Email, cancellationToken);
+        if (existedUser)
+        {
+            _logger.LogWarning("User already exists with username: {Username} or email: {Email}", user.Username, user.Email);
+            throw new DuplicatedException($"{user.Username} or {user.Email}");
+        }
+         
+        var newUser = new Domain.Entities.User
+        {
+            AppId = Guid.NewGuid(),
+            Username = user.Username,
+            Email = user.Email,
+            PhoneNumber = user.PhoneNumber,
+            Name = user.Name,
+            Family = user.Family,
+            ExternalId = user.ExternalId
+        };
+        var createdUser = await _dbContext.Users.AddAsync(newUser, cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        newUser = createdUser.Entity;
+        _logger.LogInformation("User created successfully: {Username}", user.Username);
+        return newUser.AppId;
+    }
+
     public async Task<Guid> CreateAsync(UserDto user, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Creating user: {Username}, {Email}", user.Username, user.Email);

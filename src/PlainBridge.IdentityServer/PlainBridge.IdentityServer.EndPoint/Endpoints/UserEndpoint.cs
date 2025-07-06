@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PlainBridge.IdentityServer.EndPoint.Domain.Entities;
-using PlainBridge.IdentityServer.EndPoint.Dto;
+using PlainBridge.IdentityServer.EndPoint.DTOs;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;

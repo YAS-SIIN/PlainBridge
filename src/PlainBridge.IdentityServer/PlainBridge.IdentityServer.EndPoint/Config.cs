@@ -1,5 +1,6 @@
 using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
+using PlainBridge.IdentityServer.EndPoint.DTOs;
 
 namespace PlainBridge.IdentityServer.EndPoint;
 
@@ -20,7 +21,7 @@ public static class Config
             new ApiScope(IdentityServerConstants.LocalApi.ScopeName) ,
         };
 
-    public static IEnumerable<Client> Clients =>
+    public static IEnumerable<Client> Clients(ApplicationSetting applcationSetting) =>
         new Client[]
         {
             // m2m client credentials flow client
@@ -29,8 +30,14 @@ public static class Config
                 ClientId = "m2m.client",
                 ClientName = "Client Credentials Client",
 
-                AllowedGrantTypes = GrantTypes.ClientCredentials,
+                AllowedGrantTypes = GrantTypes.Code,
                 ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
+
+                // where to redirect to after login
+                RedirectUris = { $"{applcationSetting.PlainBridgeWebUrl}/signin-oidc" },
+
+                // where to redirect to after logout
+                PostLogoutRedirectUris = { $"{applcationSetting.PlainBridgeWebUrl}/signout-callback-oidc" },
 
                 AllowedScopes = {
                     "PlainBridge", 
@@ -43,21 +50,18 @@ public static class Config
                     IdentityServerConstants.StandardScopes.OfflineAccess,
                 }
             },
-
-            // interactive client using code flow + pkce
+             
             new Client
             {
-                ClientId = "interactive",
+                ClientId = "back",
                 ClientSecrets = { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
 
-                AllowedGrantTypes = GrantTypes.Code,
+           
+                // no interactive user, use the clientid/secret for authentication
+                AllowedGrantTypes = GrantTypes.ClientCredentials,
 
-                RedirectUris = { "https://localhost:44300/signin-oidc" },
-                FrontChannelLogoutUri = "https://localhost:44300/signout-oidc",
-                PostLogoutRedirectUris = { "https://localhost:44300/signout-callback-oidc" },
-
-                AllowOfflineAccess = true,
-                AllowedScopes = { "openid", "profile", "PlainBridge2" }
+                // scopes that client has access to
+                AllowedScopes = { "PlainBridge", IdentityServerConstants.LocalApi.ScopeName, IdentityServerConstants.StandardScopes.Profile, IdentityServerConstants.StandardScopes.Email }
             },
 
             // BFF client for Backend for Frontend pattern
@@ -69,10 +73,10 @@ public static class Config
                 AllowedGrantTypes = GrantTypes.Code,
 
                 // where to redirect to after login
-                RedirectUris = { "https://localhost:7498/signin-oidc", "http://localhost:5438/signin-oidc" },
+                RedirectUris = { $"{applcationSetting.PlainBridgeApiUrl}/signin-oidc" },
 
                 // where to redirect to after logout
-                PostLogoutRedirectUris = { "https://localhost:7498/signout-callback-oidc", "http://localhost:5438/signout-callback-oidc" },
+                PostLogoutRedirectUris = { $"{applcationSetting.PlainBridgeApiUrl}/signout-callback-oidc" },
 
                 AllowedScopes = new List<string>
                 {

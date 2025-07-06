@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PlainBridge.IdentityServer.EndPoint.Dto;
+namespace PlainBridge.IdentityServer.EndPoint.DTOs;
 
 public record UserDto
 {

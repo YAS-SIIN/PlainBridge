@@ -10,5 +10,6 @@ public class ApplicationSetting
     public string IdsScope { get; set; }
     public string? PlainBridgeUseHttp { get; set; }
     public string PlainBridgeIdsUrl { get; set; }
-    public string PlainBridgeWebRedirectUrl { get; set; }
+    public string PlainBridgeWebUrl { get; set; } 
+    public string PlainBridgeWebRedirectPage { get; set; }
 }

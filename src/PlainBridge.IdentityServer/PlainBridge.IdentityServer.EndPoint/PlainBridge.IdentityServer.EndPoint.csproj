@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\PlainBridge.ServiceDefaults\PlainBridge.ServiceDefaults.csproj" />
     <ProjectReference Include="..\..\PlainBridge.SharedApplication\PlainBridge.SharedApplication.csproj" />
   </ItemGroup>
 

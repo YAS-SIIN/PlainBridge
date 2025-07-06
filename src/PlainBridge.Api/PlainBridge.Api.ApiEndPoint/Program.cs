@@ -1,5 +1,6 @@
 
 
+using System.Globalization;
 using Duende.IdentityModel;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -11,11 +12,16 @@ using Microsoft.IdentityModel.Tokens;
 using PlainBridge.Api.ApiEndPoint.Endpoints;
 using PlainBridge.Api.ApiEndPoint.ErrorHandling;
 using PlainBridge.Api.Application.DTOs;
-
+using Serilog;
 using StackExchange.Redis;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((ctx, lc) => lc
+    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", formatProvider: CultureInfo.InvariantCulture)
+    .Enrich.FromLogContext()
+    .ReadFrom.Configuration(ctx.Configuration));
 
 // Add service defaults & Aspire client integrations.
 builder.AddServiceDefaults();
@@ -44,6 +50,9 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 var app = builder.Build();
+
+app.MapGroup("")
+    .MapLoginEndpoint();
 
 app.MapGroup("api/")
     .MapHostApplicationEndpoint();

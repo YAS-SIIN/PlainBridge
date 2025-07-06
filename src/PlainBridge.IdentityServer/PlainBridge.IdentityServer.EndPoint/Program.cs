@@ -7,9 +7,11 @@ using Duende.IdentityServer.Test;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using PlainBridge.IdentityServer.EndPoint;
 using PlainBridge.IdentityServer.EndPoint.Domain.Entities;
+using PlainBridge.IdentityServer.EndPoint.DTOs;
 using PlainBridge.IdentityServer.EndPoint.Endpoints;
 using PlainBridge.IdentityServer.EndPoint.ErrorHandling;
 using PlainBridge.IdentityServer.EndPoint.Infrastructure.Data;
@@ -30,7 +32,12 @@ try
         .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", formatProvider: CultureInfo.InvariantCulture)
         .Enrich.FromLogContext()
         .ReadFrom.Configuration(ctx.Configuration));
-      
+
+    builder.AddServiceDefaults();
+
+    builder.Services.AddOptions<ApplicationSetting>().Bind(builder.Configuration.GetSection("ApplicationSetting"));
+    var appSettings = builder.Services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSetting>>();
+
     builder.Services.AddRazorPages();
 
     var isBuilder = builder.Services.AddIdentityServer(options =>
@@ -46,7 +53,7 @@ try
     // in-memory, code config
     isBuilder.AddInMemoryIdentityResources(Config.IdentityResources);
     isBuilder.AddInMemoryApiScopes(Config.ApiScopes);
-    isBuilder.AddInMemoryClients(Config.Clients);
+    isBuilder.AddInMemoryClients(Config.Clients(appSettings.Value));
 
 
     builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>

@@ -25,6 +25,8 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
         {
             Id = x.Id,
             AppId = x.AppId,
+            UserId = x.UserId,
+            UserName = x.User.Username,
             Name = x.Name,
             InternalPort = x.InternalPort
         }).ToList();
@@ -43,6 +45,8 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
         {
             Id = serverApp.Id,
             AppId = serverApp.AppId,
+            UserId = serverApp.UserId,
+            UserName = serverApp.User.Username,
             Name = serverApp.Name,
             InternalPort = serverApp.InternalPort
         };

@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Altavec.Aspire.Hosting.Containers.Extensions" Version="9.3.1.1" />
     <PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.1" />
     <PackageReference Include="Aspire.Hosting.NodeJs" Version="9.3.1" />
     <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.3.1" />

@@ -17,6 +17,9 @@ public record HostApplicationDto : BaseDto<long>
     [Required]
     public long UserId { get; set; }
 
+    [Display(Name = "User name")]
+    public string? UserName { get; set; } = string.Empty;
+
     [Display(Name = "Domain")]
     [Required]
     [StringLength(200, MinimumLength = 5)]

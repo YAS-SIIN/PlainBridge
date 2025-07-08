@@ -1,7 +1,7 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 var cache = builder.AddRedis("cache");
-var rabbitmq = builder.AddRabbitMQ("messaging");
+var rabbitmq = builder.AddRabbitMQ("messaging").WithManagementPlugin();
 
 var identityserverEndpoint = builder.AddProject<Projects.PlainBridge_IdentityServer_EndPoint>("identityserver-endpoint")
     .WithUrl("https://localhost:5003");
@@ -29,6 +29,12 @@ builder.AddNpmApp("angularWebUi", "../PlainBridge.Web/PlainBridge.Web.UI")
     .WithReference(apiEndpoint)
     .WithReference(identityserverEndpoint)
     .WithExternalHttpEndpoints()
-    .PublishAsDockerFile();
+    .PublishAsDockerFile(); 
  
+builder.AddDockerfile("PlainBridge-AppHost", "relative/context/path")
+    .WithReference(apiEndpoint)
+    .WithReference(identityserverEndpoint)
+    .WithReference(serverEndpoint)
+    .WithReference(angularWebUi);   
+
 await builder.Build().RunAsync();

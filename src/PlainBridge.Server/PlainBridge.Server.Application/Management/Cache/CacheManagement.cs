@@ -18,8 +18,8 @@ public class CacheManagement(ILogger<CacheManagement> _logger, IMemoryCache _mem
 
     public ServerApplicationDto SetServerApplication(Guid viewId, ServerApplicationDto value) => _memoryCache.Set($"serverApplication:viewId:{viewId}", value);
 
-    public ServerApplicationDto SetServerApplication(int port, ServerApplicationDto value) => _memoryCache.Set($"serverApplication:port:{port}", value);
-    public bool TryGetServerApplication(int port, out ServerApplicationDto value) => _memoryCache.TryGetValue($"serverApplication:port:{port}", out value);
+    public ServerApplicationDto SetServerApplication(string username, int port, ServerApplicationDto value) => _memoryCache.Set($"serverApplication:username:{username}:port:{port}", value);
+    public bool TryGetServerApplication(string username, int port, out ServerApplicationDto value) => _memoryCache.TryGetValue($"serverApplication:username:{username}:port:{port}", out value);
     public bool TryGetServerApplication(Guid viewId, out ServerApplicationDto value) => _memoryCache.TryGetValue($"serverApplication:viewId:{viewId}", out value);
 
     public IWebSocketManagement SetWebSocket(string host, IWebSocketManagement value) => _memoryCache.Set($"webSocket:{host}", value);

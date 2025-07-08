@@ -21,6 +21,8 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
         {
             Id = x.Id,
             AppId = x.AppId,
+            UserId = x.UserId,
+            UserName = x.User.Username,
             Name = x.Name,
             Domain = x.Domain,
             InternalUrl = x.InternalUrl
@@ -43,6 +45,8 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
         {
             Id = hostApp.Id,
             AppId = hostApp.AppId,
+            UserId = hostApp.UserId,
+            UserName = hostApp.User.Username,
             Name = hostApp.Name,
             Domain = hostApp.Domain,
             InternalUrl = hostApp.InternalUrl

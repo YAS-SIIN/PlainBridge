@@ -7,11 +7,11 @@ public interface ICacheManagement
 {
     HostApplicationDto SetHostApplication(string host, HostApplicationDto value);
     ServerApplicationDto SetServerApplication(Guid viewId, ServerApplicationDto value);
-    ServerApplicationDto SetServerApplication(int port, ServerApplicationDto value);
+    ServerApplicationDto SetServerApplication(string username, int port, ServerApplicationDto value);
     IWebSocketManagement SetWebSocket(string host, IWebSocketManagement value);
     bool TryGetHostApplication(string host, out HostApplicationDto value);
     bool TryGetServerApplication(Guid viewId, out ServerApplicationDto value);
-    bool TryGetServerApplication(int port, out ServerApplicationDto value);
+    bool TryGetServerApplication(string username, int port, out ServerApplicationDto value);
     bool TryGetWebSocket(string host, out IWebSocketManagement value);
     void RemoveWebSocket(string host);
 }

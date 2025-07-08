@@ -18,6 +18,9 @@ public record ServerApplicationDto : BaseDto<long>
     [Required]
     public long UserId { get; set; }
      
+    [Display(Name = "User name")]
+    public string? UserName { get; set; } = string.Empty;
+     
     [Display(Name = "Application name")]
     [Required]
     [StringLength(150, MinimumLength = 3)]

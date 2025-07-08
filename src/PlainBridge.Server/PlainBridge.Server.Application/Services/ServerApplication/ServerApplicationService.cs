@@ -20,7 +20,7 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
         var serverApplicationDictionary = new Dictionary<string, ServerApplicationDto>();
         foreach (var serverApplication in serverApplications.Where(x => x.State == RowStateEnum.Active))
         {
-            _cache.SetServerApplication(serverApplication.InternalPort, serverApplication);
+            _cache.SetServerApplication(serverApplication.UserId, serverApplication.InternalPort, serverApplication);
             _cache.SetServerApplication(serverApplication.AppId, serverApplication);
         }
     }

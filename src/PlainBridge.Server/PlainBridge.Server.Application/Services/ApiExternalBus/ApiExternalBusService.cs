@@ -13,7 +13,7 @@ using System.Text;
 
 namespace PlainBridge.Server.Application.Services.ApiExternalBus;
 
-public class ApiExternalBusService(ILogger<ApiExternalBusService> _logger, IConnection _connection, IHostApplicationService _hostApplicationService, IServerApplicationService _serverApplicationService) : IApiExternalBusService
+public class ApiExternalBusService(ILogger<ApiExternalBusService> _logger, IConnection _connection, IServerApplicationService _hostApplicationService, IServerApplicationService _serverApplicationService) : IApiExternalBusService
 {
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {

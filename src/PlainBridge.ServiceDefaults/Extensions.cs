@@ -176,7 +176,9 @@ public static class Extensions
     public static IServiceCollection AddServerProjectServices(this IServiceCollection services)
     {
         services.AddScoped<IPlainBridgeApiClientHandler, PlainBridgeApiClientHandler>();
+
         services.AddScoped<PlainBridge.Server.Application.Services.ServerApplication.IServerApplicationService, PlainBridge.Server.Application.Services.ServerApplication.ServerApplicationService>();
+
         services.AddScoped<PlainBridge.Server.Application.Services.HostApplication.IHostApplicationService, PlainBridge.Server.Application.Services.HostApplication.HostApplicationService>();
         services.AddScoped<ICacheManagement, CacheManagement>();
         services.AddScoped<IApiExternalBusService, ApiExternalBusService>();

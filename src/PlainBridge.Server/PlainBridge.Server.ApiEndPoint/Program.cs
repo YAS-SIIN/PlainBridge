@@ -1,5 +1,6 @@
 using System.Globalization;
 using Microsoft.Extensions.Options;
+using PlainBridge.Server.ApiEndPoint.Middlewares;
 using PlainBridge.Server.Application.DTOs;
 using PlainBridge.Server.Application.Management.WebSocketManagement;
 using Serilog;
@@ -44,7 +45,10 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseWebSockets();
 app.UseHttpsRedirection();
+
+app.UseWebSockets();
+app.UseMiddleware<HttpRequestProxyMiddleware>();
+app.UseMiddleware<WebSocketProxyMiddleware>();
  
 await app.RunAsync();

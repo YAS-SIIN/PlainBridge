@@ -1,55 +1,40 @@
-﻿ 
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-
+﻿
+using Microsoft.Extensions.Logging; 
 using PlainBridge.Server.Application.DTOs;
 using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 using PlainBridge.Server.Application.Management.Cache;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
-using PlainBridge.SharedApplication.Exceptions;
 
 using System;
-
 namespace PlainBridge.Server.Application.Services.HostApplication;
 
-public class HostApplicationService(ILogger<HostApplicationService> _logger, IPlainBridgeApiClientHandler _plainBridgeApiClientHandler, IOptions<ApplicationSetting> _applicationSetting, ICacheManagement _cache) : IHostApplicationService
+public class HostApplicationService(ILogger<HostApplicationService> _logger, IPlainBridgeApiClientHandler _plainBridgeApiClientHandler, ICacheManagement _cache) : IHostApplicationService
 {
+
+
     public HostApplicationDto GetByHost(string host)
     {
-        _logger.LogInformation("Getting HostApplication by host: {Host}", host);
         if (string.IsNullOrEmpty(host))
-        {
-            _logger.LogError("Host parameter is null or empty.");
             throw new ArgumentNullException(nameof(host));
-        }
 
-        if (!_cache.TryGetHostApplication(host, out HostApplicationDto hostApplication))
-        {
-            _logger.LogWarning("Host application not found for host: {Host}", host);
-            throw new NotFoundException("Host application not found");
-        }
-        _logger.LogInformation("Host application found for host: {Host}", host);
-        return hostApplication;
+        if (!_cache.TryGetHostApplication(host, out HostApplicationDto serverApplicationS)) throw new ApplicationException("Project not found");
+        return serverApplicationS;
     }
 
-    public async Task UpdateHostApplicationAsync(CancellationToken cancellationToken)
+    public async Task UpdateServerApplicationAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Updating host applications from API.");
-        var hostApplications = await _plainBridgeApiClientHandler.GetHostApplicationsAsync(CancellationToken.None);
+        var serverApplications = await _plainBridgeApiClientHandler.GetServerApplicationsAsync(CancellationToken.None);
 
-        if (hostApplications == null)
+        var serverApplicationDictionary = new Dictionary<string, HostApplicationDto>();
+        if (serverApplications is not null)
         {
-            _logger.LogWarning("No host applications received from API.");
-            return;
+            foreach (var serverApplication in serverApplications.Where(x => x.State == RowStateEnum.Active))
+            {
+                _cache.SetServerApplication(serverApplication.UserName, serverApplication.InternalPort, serverApplication);
+                _cache.SetServerApplication(serverApplication.AppId, serverApplication);
+            }
         }
-
-        foreach (var project in hostApplications.Where(x => x.State == RowStateEnum.Active))
-        {
-            var projectHost = project.GetProjectHost(_applicationSetting.Value.DefaultDomain);
-            _cache.SetHostApplication(projectHost, project);
-            _logger.LogInformation("Host application cached: {ProjectHost}", projectHost);
-        }
-        _logger.LogInformation("Host applications update completed.");
     }
+
 }

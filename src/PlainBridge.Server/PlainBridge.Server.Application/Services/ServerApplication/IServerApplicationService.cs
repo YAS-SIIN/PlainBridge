@@ -1,8 +1,9 @@
-﻿
-namespace PlainBridge.Server.Application.Services.ServerApplication
+﻿using PlainBridge.SharedApplication.DTOs;
+
+namespace PlainBridge.Server.Application.Services.ServerApplication;
+
+public interface IServerApplicationService
 {
-    public interface IServerApplicationService
-    {
-        Task UpdateServerApplicationAsync(CancellationToken cancellationToken);
-    }
+    HostApplicationDto GetByHost(string host);
+    Task UpdateHostApplicationAsync(CancellationToken cancellationToken);
 }

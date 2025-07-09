@@ -1,10 +1,7 @@
-﻿using PlainBridge.SharedApplication.DTOs;
+﻿
+namespace PlainBridge.Server.Application.Services.HostApplication;
 
-namespace PlainBridge.Server.Application.Services.HostApplication
+public interface IHostApplicationService
 {
-    public interface IHostApplicationService
-    {
-        HostApplicationDto GetByHost(string host);
-        Task UpdateHostApplicationAsync(CancellationToken cancellationToken);
-    }
+    Task UpdateServerApplicationAsync(CancellationToken cancellationToken);
 }

@@ -1,6 +1,5 @@
 ﻿
-
-using Microsoft.Extensions.Configuration;
+ 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -23,10 +22,10 @@ namespace PlainBridge.Server.Application.Services.WebSocket;
 public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagement _cacheManagement, IConnection _connection, IOptions<ApplicationSetting> _applicationSetting) : IWebSocketService
 {
 
-    public async Task HandleWebSocketAsync(IWebSocketManagement webSocketManagement, HostApplicationDto project, CancellationToken cancellationToken)
+    public async Task HandleWebSocketAsync(IWebSocketManagement webSocketManagement, HostApplicationDto hostApplication, CancellationToken cancellationToken)
     {
-        _cacheManagement.SetWebSocket(project.GetProjectHost(_applicationSetting.Value.DefaultDomain), webSocketManagement);
-        await InitializeRabbitMQAsync(cancellationToken);
+        _cacheManagement.SetWebSocket(hostApplication.GetProjectHost(_applicationSetting.Value.DefaultDomain), webSocketManagement);
+        await InitializeRabbitMQAsync(hostApplication?.UserName!, cancellationToken);
 
 
         try
@@ -47,12 +46,12 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
                 };
 
                 var message = JsonSerializer.Serialize(webSocketData);
-                await PublishWebSocketDataToRabbitMQAsync(project.GetProjectHost(_applicationSetting.Value.DefaultDomain), project.InternalUrl, message, cancellationToken);
+                await PublishWebSocketDataToRabbitMQAsync(hostApplication?.UserName!, hostApplication?.GetProjectHost(_applicationSetting.Value.DefaultDomain)!, hostApplication?.InternalUrl!, message, cancellationToken);
             }
         }
         finally
         {
-            _cacheManagement.RemoveWebSocket(project.GetProjectHost(_applicationSetting.Value.DefaultDomain));
+            _cacheManagement.RemoveWebSocket(hostApplication.GetProjectHost(_applicationSetting.Value.DefaultDomain));
         }
     }
 
@@ -88,7 +87,7 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
                 if (!_cacheManagement.TryGetWebSocket(host, out IWebSocketManagement webSocket))
                     throw new NotFoundException("WebSocket not found");
 
-                var arraySegment = new ArraySegment<byte>(requestModel.Payload, 0, requestModel.PayloadCount);
+                var arraySegment = new ArraySegment<byte>(requestModel?.Payload!, 0, requestModel?.PayloadCount ?? 0);
                 await webSocket.SendAsync(arraySegment,
                         requestModel.MessageType,
                         requestModel.EndOfMessage,
@@ -103,9 +102,9 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
         await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer, cancellationToken: cancellationToken);
     }
 
-    private async Task InitializeRabbitMQAsync(CancellationToken cancellationToken)
+    private async Task InitializeRabbitMQAsync(string username, CancellationToken cancellationToken)
     {
-        var queueName = $"websocket_server_bus";
+        var queueName = $"{username}_websocket_server_bus";
         var exchangeName = "websocket_bus";
         using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
@@ -127,9 +126,9 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
             arguments: null, cancellationToken: cancellationToken);
     }
 
-    private async Task PublishWebSocketDataToRabbitMQAsync(string projectHost, string internalUrl, string message, CancellationToken cancellationToken)
+    private async Task PublishWebSocketDataToRabbitMQAsync(string username, string projectHost, string internalUrl, string message, CancellationToken cancellationToken)
     {
-        var queueName = $"websocket_server_bus";
+        var queueName = $"{username}_websocket_server_bus";
         var exchangeName = "websocket_bus";
         using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 

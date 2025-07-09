@@ -33,15 +33,33 @@ public class ServerApplicationConsumerService(ILogger<ServerApplicationConsumerS
             var props = ea.BasicProperties as BasicProperties;
             props ??= new BasicProperties();
             props.Headers ??= new Dictionary<string, object?>();
-
-            var userPort = int.Parse(props.Headers["user_port"]?.ToString()!);
-            string userConnectionId = string.Empty;
-            if (props.Headers.TryGetValue("user_connection_id", out var connectionIdObj) && connectionIdObj is byte[] connectionIdBytes)
+ 
+            
+            int use_port = 0;
+            if (props.Headers.TryGetValue("user_port", out var portObj) && int.TryParse(portObj?.ToString(), out int usePort))
             {
-                userConnectionId = Encoding.UTF8.GetString(connectionIdBytes);
+                use_port = usePort; 
             }
 
-            if (!_cacheManagement.TryGetServerApplication(userPort, out var appProject))
+            var useport_username = string.Empty;
+            if (props.Headers.TryGetValue("useport_username", out var usernameObj) && usernameObj is byte[] usernameBytes)
+            {
+                useport_username = Encoding.UTF8.GetString(usernameBytes); 
+            }
+
+            var useportConnectionId = string.Empty;
+            if (props.Headers.TryGetValue("useport_connectionid", out var connectionIdObj) && connectionIdObj is byte[] connectionIdBytes)
+            {
+                useportConnectionId = Encoding.UTF8.GetString(connectionIdBytes);
+            }
+
+            string userConnectionId = string.Empty;
+            if (props.Headers.TryGetValue("user_connection_id", out var userConnectionIdObj) && userConnectionIdObj is byte[] userConnectionIdBytes)
+            {
+                userConnectionId = Encoding.UTF8.GetString(userConnectionIdBytes);
+            }
+
+            if (!_cacheManagement.TryGetServerApplication(useport_username, use_port, out var appProject))
             {
                 await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
                 return;
@@ -62,13 +80,9 @@ public class ServerApplicationConsumerService(ILogger<ServerApplicationConsumerS
             var destinationQueue = $"client_shared_port_network_packets";
             await channel.QueueDeclareAsync(destinationQueue, false, false, false, null, cancellationToken: cancellationToken);
 
-
-
-            props.Headers["user_port"] = userPort;
-            props.Headers["user_connection_id"] = userConnectionId;
             props.Headers["shared_port"] = destinationAppProject.InternalPort;
 
-            await channel.BasicPublishAsync(string.Empty, destinationQueue, false, props, body, cancellationToken);
+            await channel.BasicPublishAsync(string.Empty, destinationQueue, false, props, body, cancellationToken: cancellationToken);
             await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
         };
 

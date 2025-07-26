@@ -5,19 +5,26 @@ using PlainBridge.Server.Application.Services.WebSocket;
 
 namespace PlainBridge.Server.ApiEndPoint.Middlewares;
 
-public class WebSocketProxyMiddleware(RequestDelegate _next, ILogger<WebSocketProxyMiddleware> _logger, IServerApplicationService _serverApplicationService, IWebSocketService _webSocketService, ApplicationSetting _applicationSetting, IWebSocketManagement _webSocketManagement)
+public class WebSocketProxyMiddleware(RequestDelegate _next, ILogger<WebSocketProxyMiddleware> _logger, IServiceProvider _serviceProvider)
 {
     public async Task Invoke(HttpContext context, CancellationToken cancellationToken)
     {
+        using var scope = _serviceProvider.CreateScope();
+        var serverApplicationService = scope.ServiceProvider.GetRequiredService<IServerApplicationService>();
+        var webSocketService = scope.ServiceProvider.GetRequiredService<IWebSocketService>();
+        var applicationSetting = scope.ServiceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<ApplicationSetting>>().Value;
+        IWebSocketManagement webSocketManagement = null;
+        
         var requestId = Guid.NewGuid().ToString();
         var host = context.Request.Host;
 
-        var project = _serverApplicationService.GetByHost(host.Value);
+        var project = serverApplicationService.GetByHost(host.Value);
 
         if (context.WebSockets.IsWebSocketRequest)
         {
             var webSocketConnection = await context.WebSockets.AcceptWebSocketAsync();
-            await _webSocketService.HandleWebSocketAsync(_webSocketManagement, project, cancellationToken);
+            webSocketManagement = new WebSocketManagement(webSocketConnection);
+            await webSocketService.HandleWebSocketAsync(webSocketManagement, project, cancellationToken);
         }
         else
         {

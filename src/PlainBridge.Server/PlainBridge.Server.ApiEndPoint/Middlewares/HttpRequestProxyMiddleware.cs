@@ -1,47 +1,45 @@
 ﻿using System;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Channels;
 using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.CodeAnalysis;
-using Microsoft.EntityFrameworkCore.Metadata;
-using PlainBridge.Api.Domain.Entities;
 using PlainBridge.Server.Application.DTOs;
 using PlainBridge.Server.Application.Management.ResponseCompletionSources;
-using PlainBridge.Server.Application.Services.HostApplication;
 using PlainBridge.Server.Application.Services.ServerApplication;
 using PlainBridge.SharedApplication.DTOs;
-using RabbitMQ.Client;
-using StackExchange.Redis;
+using RabbitMQ.Client; 
 
 namespace PlainBridge.Server.ApiEndPoint.Middlewares;
 
-public class HttpRequestProxyMiddleware(RequestDelegate _next, ILogger<HttpRequestProxyMiddleware> _logger, ResponseCompletionSourcesManagement _responseCompletionSourcesManagement, IServerApplicationService _hostApplicationService, ApplicationSetting _applicationSetting, IConnection _connection)
+public class HttpRequestProxyMiddleware(RequestDelegate _next, ILogger<HttpRequestProxyMiddleware> _logger, IServiceProvider _serviceProvider, IConnection _connection)
 { 
     private Dictionary<string, bool> _initializedQueues = new Dictionary<string, bool>();
      
     public async Task Invoke(HttpContext context, CancellationToken cancellationToken)
     {
+        using var scope = _serviceProvider.CreateScope();
+        var hostApplicationService = scope.ServiceProvider.GetRequiredService<IServerApplicationService>();
+        var responseCompletionSourcesManagement = scope.ServiceProvider.GetRequiredService<ResponseCompletionSourcesManagement>();
+        var applicationSetting = scope.ServiceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<ApplicationSetting>>().Value;
+        
         var requestId = Guid.NewGuid().ToString();
         var host = context.Request.Host;
 
-        var hostApplication = _hostApplicationService.GetByHost(host.Value);
-        var projectHost = $"{hostApplication.Domain}{_applicationSetting.DefaultDomain}";
+        var hostApplication = hostApplicationService.GetByHost(host.Value);
+        var projectHost = $"{hostApplication.Domain}{applicationSetting.DefaultDomain}";
 
         if (!context.WebSockets.IsWebSocketRequest)
-            await HandleHttpRequest(context, requestId, hostApplication, projectHost, cancellationToken);
+            await HandleHttpRequest(context, requestId, hostApplication, projectHost, responseCompletionSourcesManagement, cancellationToken);
         else
             await _next(context);
     }
 
-    private async Task HandleHttpRequest(HttpContext context, string requestId, HostApplicationDto hostApplication, string projectHost, CancellationToken cancellationToken)
+    private async Task HandleHttpRequest(HttpContext context, string requestId, HostApplicationDto hostApplication, string projectHost, ResponseCompletionSourcesManagement responseCompletionSourcesManagement, CancellationToken cancellationToken)
     {
         // Create a TaskCompletionSource to await the response
         var responseCompletionSource = new TaskCompletionSource<HttpResponseDto>();
 
         // Store the response completion source in a dictionary or cache
-        StoreResponseCompletionSource(requestId, responseCompletionSource);
+        StoreResponseCompletionSource(requestId, responseCompletionSource, responseCompletionSourcesManagement);
 
         // Extract request details
         var requestData = await GetRequestDataAsync(context.Request);
@@ -141,10 +139,10 @@ public class HttpRequestProxyMiddleware(RequestDelegate _next, ILogger<HttpReque
             cancellationToken: cancellationToken);
     }
 
-    private void StoreResponseCompletionSource(string requestID, TaskCompletionSource<HttpResponseDto> responseCompletionSource)
+    private void StoreResponseCompletionSource(string requestID, TaskCompletionSource<HttpResponseDto> responseCompletionSource, ResponseCompletionSourcesManagement responseCompletionSourcesManagement)
     {
         // Store the response completion source in a dictionary or cache based on requestID
-        _responseCompletionSourcesManagement.Sources.TryAdd(requestID, responseCompletionSource);
+        responseCompletionSourcesManagement.Sources.TryAdd(requestID, responseCompletionSource);
     }
 
     private async Task<string> GetRequestDataAsync(HttpRequest request)

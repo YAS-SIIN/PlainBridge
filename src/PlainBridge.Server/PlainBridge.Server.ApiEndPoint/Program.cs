@@ -1,5 +1,6 @@
 using System.Globalization;
 using Microsoft.Extensions.Options;
+using PlainBridge.Server.ApiEndPoint;
 using PlainBridge.Server.ApiEndPoint.Middlewares;
 using PlainBridge.Server.Application.DTOs;
 using PlainBridge.Server.Application.Management.WebSocketManagement;
@@ -22,6 +23,7 @@ builder.Services.AddOptions<ApplicationSetting>().Bind(builder.Configuration.Get
 builder.Services.AddMemoryCache();
 builder.AddRabbitMQClient(connectionName: "messaging");
 builder.Services.AddServerProjectServices();
+//builder.Services.AddHostedService<Worker>();
 
 // Configure Kestrel to support HTTP/3
 builder.WebHost.ConfigureKestrel(options =>

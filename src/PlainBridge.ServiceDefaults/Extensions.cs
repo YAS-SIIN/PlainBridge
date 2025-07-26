@@ -1,5 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
 using Duende.Bff.Yarp;
-
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -7,11 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
-
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
-
 using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.HostApplication;
 using PlainBridge.Api.Application.Services.Identity;
@@ -30,8 +28,6 @@ using PlainBridge.Server.Application.Services.AppProjectConsumer;
 using PlainBridge.Server.Application.Services.HttpRequestProxy;
 using PlainBridge.Server.Application.Services.ServerBus;
 using PlainBridge.Server.Application.Services.WebSocket;
-
-using System.IdentityModel.Tokens.Jwt;
 
 namespace Microsoft.Extensions.Hosting;
 

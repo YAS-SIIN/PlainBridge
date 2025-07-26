@@ -1,10 +1,8 @@
 ﻿
 
-using Microsoft.Extensions.Logging;
-using PlainBridge.Server.Application.Management.Cache;
+using Microsoft.Extensions.Logging; 
 using PlainBridge.Server.Application.Services.HostApplication;
-using PlainBridge.Server.Application.Services.ServerApplication;
-
+using PlainBridge.Server.Application.Services.ServerApplication; 
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -13,7 +11,7 @@ using System.Text;
 
 namespace PlainBridge.Server.Application.Services.ApiExternalBus;
 
-public class ApiExternalBusService(ILogger<ApiExternalBusService> _logger, IConnection _connection, IServerApplicationService _hostApplicationService, IServerApplicationService _serverApplicationService) : IApiExternalBusService
+public class ApiExternalBusService(ILogger<ApiExternalBusService> _logger, IConnection _connection, IHostApplicationService _hostApplicationService, IServerApplicationService _serverApplicationService) : IApiExternalBusService
 {
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
@@ -43,13 +41,13 @@ public class ApiExternalBusService(ILogger<ApiExternalBusService> _logger, IConn
                     case "Host_Application_Deleted":
                     case "Host_Application_Updated":
                         _logger.LogInformation("Updating Host Application due to message: {Message}", message);
-                        await _hostApplicationService.UpdateHostApplicationAsync(cancellationToken);
+                        await _hostApplicationService.UpdateServerApplicationAsync(cancellationToken);
                         break;
                     case "Server_Application_Created":
                     case "Server_Application_Deleted":
                     case "Server_Application_Updated":
                         _logger.LogInformation("Updating Server Application due to message: {Message}", message);
-                        await _serverApplicationService.UpdateServerApplicationAsync(cancellationToken);
+                        await _serverApplicationService.UpdateHostApplicationAsync(cancellationToken);
                         break;
                     default:
                         _logger.LogWarning("Received unknown message type: {Message}", message);
@@ -66,10 +64,10 @@ public class ApiExternalBusService(ILogger<ApiExternalBusService> _logger, IConn
         };
 
         _logger.LogInformation("Updating Host Application cache on initialization.");
-        await _hostApplicationService.UpdateHostApplicationAsync(cancellationToken);
+        await _hostApplicationService.UpdateServerApplicationAsync(cancellationToken);
 
         _logger.LogInformation("Updating Server Application cache on initialization.");
-        await _serverApplicationService.UpdateServerApplicationAsync(cancellationToken);
+        await _serverApplicationService.UpdateHostApplicationAsync(cancellationToken);
 
         _logger.LogInformation("Starting to consume messages from queue: {QueueName}", queueName);
         await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: external_bus_consumer, cancellationToken);

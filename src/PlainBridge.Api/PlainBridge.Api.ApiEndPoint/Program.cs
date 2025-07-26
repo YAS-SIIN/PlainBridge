@@ -29,8 +29,8 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
-builder.Services.AddOptions<ApplicationSetting>().Bind(builder.Configuration.GetSection("ApplicationSetting"));
-var appSettings = builder.Services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSetting>>();
+builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
+var appSettings = builder.Services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSettings>>();
 
 builder.Services.AddApiProjectDatabase();
 builder.Services.AddApiProjectServices();
@@ -88,7 +88,7 @@ await app.RunAsync();
 
 public static class AuthenticationExtensions
 {
-    public static IServiceCollection AddAuthentication(this IServiceCollection services, ApplicationSetting appSettings)
+    public static IServiceCollection AddAuthentication(this IServiceCollection services, ApplicationSettings appSettings)
     {
         var serviceProvider = services.BuildServiceProvider();
         var connectionMultiplexer = serviceProvider.GetRequiredService<IConnectionMultiplexer>();

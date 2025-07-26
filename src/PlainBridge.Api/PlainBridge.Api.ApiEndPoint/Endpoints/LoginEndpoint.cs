@@ -16,7 +16,7 @@ public static class LoginEndpoint
         app.MapBffManagementEndpoints();
      
 
-        app.MapGet("/", static async (CancellationToken cancellationToken, HttpContext context, ILoggerFactory loggerFactory, IHttpContextAccessor httpContextAccessor, ITokenService tokenService, ISessionService sessionService, IUserService customerService, IOptions<ApplicationSetting> _applicationSetting) =>
+        app.MapGet("/", static async (CancellationToken cancellationToken, HttpContext context, ILoggerFactory loggerFactory, IHttpContextAccessor httpContextAccessor, ITokenService tokenService, ISessionService sessionService, IUserService customerService, IOptions<ApplicationSettings> _applicationSettings) =>
         {
             var _logger = loggerFactory.CreateLogger(nameof(LoginEndpoint));
 
@@ -65,8 +65,8 @@ public static class LoginEndpoint
                 } 
             }
 
-            var baseUri = new Uri(_applicationSetting.Value.PlainBridgeWebUrl);
-            var signinPage = new Uri(baseUri, _applicationSetting.Value.PlainBridgeWebRedirectPage.ToString());
+            var baseUri = new Uri(_applicationSettings.Value.PlainBridgeWebUrl);
+            var signinPage = new Uri(baseUri, _applicationSettings.Value.PlainBridgeWebRedirectPage.ToString());
             var uri = new Uri(signinPage, $"?access_token={tokenp}");
             httpContextAccessor.HttpContext.Response.Redirect(uri.ToString(), true);
             return Task.FromResult(0);

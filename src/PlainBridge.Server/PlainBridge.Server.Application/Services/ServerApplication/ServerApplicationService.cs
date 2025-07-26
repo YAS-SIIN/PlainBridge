@@ -13,7 +13,7 @@ using System;
 
 namespace PlainBridge.Server.Application.Services.ServerApplication;
 
-public class ServerApplicationService(ILogger<ServerApplicationService> _logger, IPlainBridgeApiClientHandler _plainBridgeApiClientHandler, IOptions<ApplicationSetting> _applicationSetting, ICacheManagement _cache) : IServerApplicationService
+public class ServerApplicationService(ILogger<ServerApplicationService> _logger, IPlainBridgeApiClientHandler _plainBridgeApiClientHandler, IOptions<ApplicationSettings> _applicationSetting, ICacheManagement _cache) : IServerApplicationService
 {
     public HostApplicationDto GetByHost(string host)
     {

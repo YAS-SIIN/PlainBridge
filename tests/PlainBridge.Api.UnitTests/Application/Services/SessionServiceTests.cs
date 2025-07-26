@@ -23,7 +23,7 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
     private readonly Mock<IUserService> _mockIUserService;
     private readonly Mock<ITokenService> _mockITokenService;
     private readonly Mock<IHttpClientFactory> _mockIHttpClientFactory;
-    private readonly Mock<IOptions<ApplicationSetting>> _mockApplicationSetting;
+    private readonly Mock<IOptions<ApplicationSettings>> _mockApplicationSetting;
 
     public SessionServiceTests(TestRunFixture fixture)
     {
@@ -33,7 +33,7 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
         _mockIUserService = new Mock<IUserService>();
         _mockITokenService = new Mock<ITokenService>();
         _mockIHttpClientFactory = new Mock<IHttpClientFactory>();
-        _mockApplicationSetting = new Mock<IOptions<ApplicationSetting>>();
+        _mockApplicationSetting = new Mock<IOptions<ApplicationSettings>>();
         _sessionService = new SessionService(
             _mockLoggerSessionService.Object,
             _mockIHttpContextAccessor.Object,
@@ -99,7 +99,7 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
         var token = "token123";
         _mockITokenService.Setup(x => x.GetSunTokenAsync(userId)).ReturnsAsync(token);
 
-        var appSetting = new ApplicationSetting { PlainBridgeIdsUrl = "https://ids.example.com" };
+        var appSetting = new ApplicationSettings { PlainBridgeIdsUrl = "https://ids.example.com" };
         _mockApplicationSetting.Setup(x => x.Value).Returns(appSetting);
 
         var userInfo = new UserProfileViewDto

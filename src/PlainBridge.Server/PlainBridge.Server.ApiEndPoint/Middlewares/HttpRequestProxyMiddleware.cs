@@ -19,13 +19,13 @@ public class HttpRequestProxyMiddleware(RequestDelegate _next, ILogger<HttpReque
         using var scope = _serviceProvider.CreateScope();
         var hostApplicationService = scope.ServiceProvider.GetRequiredService<IServerApplicationService>();
         var responseCompletionSourcesManagement = scope.ServiceProvider.GetRequiredService<ResponseCompletionSourcesManagement>();
-        var applicationSetting = scope.ServiceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<ApplicationSetting>>().Value;
+        var applicationSettings = scope.ServiceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<ApplicationSettings>>().Value;
         
         var requestId = Guid.NewGuid().ToString();
         var host = context.Request.Host;
 
         var hostApplication = hostApplicationService.GetByHost(host.Value);
-        var projectHost = $"{hostApplication.Domain}{applicationSetting.DefaultDomain}";
+        var projectHost = $"{hostApplication.Domain}{applicationSettings.DefaultDomain}";
 
         if (!context.WebSockets.IsWebSocketRequest)
             await HandleHttpRequest(context, requestId, hostApplication, projectHost, responseCompletionSourcesManagement, cancellationToken);

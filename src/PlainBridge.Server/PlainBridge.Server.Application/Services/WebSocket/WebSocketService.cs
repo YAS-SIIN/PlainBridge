@@ -19,12 +19,12 @@ using System.Threading;
 
 namespace PlainBridge.Server.Application.Services.WebSocket;
 
-public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagement _cacheManagement, IConnection _connection, IOptions<ApplicationSetting> _applicationSetting) : IWebSocketService
+public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagement _cacheManagement, IConnection _connection, IOptions<ApplicationSettings> _applicationSettings) : IWebSocketService
 {
 
     public async Task HandleWebSocketAsync(IWebSocketManagement webSocketManagement, HostApplicationDto hostApplication, CancellationToken cancellationToken)
     {
-        _cacheManagement.SetWebSocket(hostApplication.GetProjectHost(_applicationSetting.Value.DefaultDomain), webSocketManagement);
+        _cacheManagement.SetWebSocket(hostApplication.GetProjectHost(_applicationSettings.Value.DefaultDomain), webSocketManagement);
         await InitializeRabbitMQAsync(hostApplication?.UserName!, cancellationToken);
 
 
@@ -46,12 +46,12 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
                 };
 
                 var message = JsonSerializer.Serialize(webSocketData);
-                await PublishWebSocketDataToRabbitMQAsync(hostApplication?.UserName!, hostApplication?.GetProjectHost(_applicationSetting.Value.DefaultDomain)!, hostApplication?.InternalUrl!, message, cancellationToken);
+                await PublishWebSocketDataToRabbitMQAsync(hostApplication?.UserName!, hostApplication?.GetProjectHost(_applicationSettings.Value.DefaultDomain)!, hostApplication?.InternalUrl!, message, cancellationToken);
             }
         }
         finally
         {
-            _cacheManagement.RemoveWebSocket(hostApplication.GetProjectHost(_applicationSetting.Value.DefaultDomain));
+            _cacheManagement.RemoveWebSocket(hostApplication.GetProjectHost(_applicationSettings.Value.DefaultDomain));
         }
     }
 

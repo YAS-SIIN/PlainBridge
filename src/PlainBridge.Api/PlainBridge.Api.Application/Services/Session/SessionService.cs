@@ -12,7 +12,7 @@ using System.Text.Json;
 namespace PlainBridge.Api.Application.Services.Session;
 
 
-public class SessionService(ILogger<SessionService> _logger, IHttpContextAccessor _httpContextAccessor, IUserService _userService, ITokenService _tokenService, IHttpClientFactory _httpClientFactory, IOptions<ApplicationSetting> _applicationSetting) : ISessionService
+public class SessionService(ILogger<SessionService> _logger, IHttpContextAccessor _httpContextAccessor, IUserService _userService, ITokenService _tokenService, IHttpClientFactory _httpClientFactory, IOptions<ApplicationSettings> _applicationSettings) : ISessionService
 {
     public async Task<UserDto> GetCurrentUserAsync(CancellationToken cancellationToken)
     {
@@ -42,7 +42,7 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
 
         _logger.LogInformation("Getting token for user: {UserId}", userId.Value);
         var token = await _tokenService.GetSunTokenAsync(userId.Value);
-        var baseUri = new Uri(_applicationSetting.Value.PlainBridgeIdsUrl!);
+        var baseUri = new Uri(_applicationSettings.Value.PlainBridgeIdsUrl!);
         var uri = new Uri(baseUri, "connect/userinfo");
         var userInfoRequest = new UserInfoRequest
         {

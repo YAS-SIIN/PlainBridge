@@ -12,7 +12,7 @@ public class WebSocketProxyMiddleware(RequestDelegate _next, ILogger<WebSocketPr
         using var scope = _serviceProvider.CreateScope();
         var serverApplicationService = scope.ServiceProvider.GetRequiredService<IServerApplicationService>();
         var webSocketService = scope.ServiceProvider.GetRequiredService<IWebSocketService>();
-        var applicationSetting = scope.ServiceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<ApplicationSetting>>().Value;
+        var applicationSettings = scope.ServiceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<ApplicationSettings>>().Value;
         IWebSocketManagement webSocketManagement = null;
         
         var requestId = Guid.NewGuid().ToString();

@@ -21,7 +21,7 @@ public static class Config
             new ApiScope(IdentityServerConstants.LocalApi.ScopeName) ,
         };
 
-    public static IEnumerable<Client> Clients(ApplicationSetting applcationSetting) =>
+    public static IEnumerable<Client> Clients(ApplicationSettings applcationSettings) =>
         new Client[]
         {
             // m2m client credentials flow client
@@ -34,10 +34,10 @@ public static class Config
                 ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
 
                 // where to redirect to after login
-                RedirectUris = { $"{applcationSetting.PlainBridgeWebUrl}/signin-oidc" },
+                RedirectUris = { $"{applcationSettings.PlainBridgeWebUrl}/signin-oidc" },
 
                 // where to redirect to after logout
-                PostLogoutRedirectUris = { $"{applcationSetting.PlainBridgeWebUrl}/signout-callback-oidc" },
+                PostLogoutRedirectUris = { $"{applcationSettings.PlainBridgeWebUrl}/signout-callback-oidc" },
 
                 AllowedScopes = {
                     "PlainBridge", 
@@ -73,13 +73,14 @@ public static class Config
                 AllowedGrantTypes = GrantTypes.Code,
 
                 // where to redirect to after login
-                RedirectUris = { $"{applcationSetting.PlainBridgeApiUrl}/signin-oidc" },
+                RedirectUris = { $"{applcationSettings.PlainBridgeApiUrl}/signin-oidc" },
 
                 // where to redirect to after logout
-                PostLogoutRedirectUris = { $"{applcationSetting.PlainBridgeApiUrl}/signout-callback-oidc" },
+                PostLogoutRedirectUris = { $"{applcationSettings.PlainBridgeApiUrl}/signout-callback-oidc" },
 
                 AllowedScopes = new List<string>
                 {
+                    IdentityServerConstants.LocalApi.ScopeName,
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
                     IdentityServerConstants.StandardScopes.Email,

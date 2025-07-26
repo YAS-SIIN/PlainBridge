@@ -27,7 +27,7 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, IPl
         var serverApplications = await _plainBridgeApiClientHandler.GetServerApplicationsAsync(CancellationToken.None);
 
         var serverApplicationDictionary = new Dictionary<string, HostApplicationDto>();
-        if (serverApplications is not null)
+        if (serverApplications is not null && serverApplications.Any())
         {
             foreach (var serverApplication in serverApplications.Where(x => x.State == RowStateEnum.Active))
             {

@@ -1,10 +1,10 @@
 ﻿
+using System.Text;
+using System.Text.Json; 
 using Microsoft.Extensions.Logging;
 using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Text;
-using System.Text.Json; 
 
 namespace PlainBridge.Server.Application.Services.ServerBus;
 
@@ -16,6 +16,7 @@ public class ServerBusService(ILogger<ServerBusService> _logger, IConnection _co
         var queueName = "server_bus";
         using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
+        await channel.QueueDeclareAsync(queueName, false, false, false, null, cancellationToken: cancellationToken);
 
         var consumer = new AsyncEventingBasicConsumer(channel);
         consumer.ReceivedAsync += async (model, ea) =>

@@ -181,8 +181,8 @@ public static class Extensions
         services.AddScoped<IServerBusService, ServerBusService>();
         services.AddScoped<IServerApplicationConsumerService, ServerApplicationConsumerService>();
         services.AddScoped<IHttpRequestProxyService, HttpRequestProxyService>();
-        services.AddScoped<IWebSocketService,
-            WebSocketService>();
+        services.AddScoped<IWebSocketService, WebSocketService>();
+        services.AddScoped<PlainBridge.Server.Application.Services.Identity.IIdentityService, PlainBridge.Server.Application.Services.Identity.IdentityService>();
         services.AddScoped<ResponseCompletionSourcesManagement>();
         services.AddHttpClient("Api");
 

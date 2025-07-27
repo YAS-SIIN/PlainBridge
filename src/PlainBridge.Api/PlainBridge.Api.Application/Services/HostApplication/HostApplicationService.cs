@@ -13,10 +13,10 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
 {
     public async Task<IList<HostApplicationDto>> GetAllAsync(long userId, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Getting all host applications.");
-        var list = await _dbContext.HostApplications.AsNoTracking().Where(x => x.UserId == userId).ToListAsync(cancellationToken);
+        _logger.LogInformation("Getting all host applications for user: {UserId}.", userId);
+        var list = await _dbContext.HostApplications.Include(a=>a.User).AsNoTracking().Where(x => x.UserId == userId).ToListAsync(cancellationToken);
 
-        _logger.LogInformation("Retrieved {Count} host applications.", list.Count);
+        _logger.LogInformation("Retrieved {Count} host applications for user: {UserId}.", list.Count, userId);
         return list.Select(x => new HostApplicationDto
         {
             Id = x.Id,
@@ -32,7 +32,7 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
     public async Task<HostApplicationDto?> GetAsync(long id, long userId, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Getting host application by Id: {Id}", id);
-        var hostApp = await _dbContext.HostApplications.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.UserId == userId, cancellationToken);
+        var hostApp = await _dbContext.HostApplications.Include(a => a.User).AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.UserId == userId, cancellationToken);
 
         if (hostApp == null)
         {

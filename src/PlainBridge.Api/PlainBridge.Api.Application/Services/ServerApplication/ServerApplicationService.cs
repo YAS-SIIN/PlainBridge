@@ -18,8 +18,8 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
 {
     public async Task<IList<ServerApplicationDto>> GetAllAsync(long userId, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Getting all server applications.");
-        var serverApplication = await _dbContext.ServerApplications.AsNoTracking().Where(x => x.UserId == userId).ToListAsync(cancellationToken);
+        _logger.LogInformation("Getting all server applications for user: {UserId}.", userId);
+        var serverApplication = await _dbContext.ServerApplications.Include(a => a.User).AsNoTracking().Where(x => x.UserId == userId).ToListAsync(cancellationToken);
 
         return serverApplication.Select(x => new ServerApplicationDto
         {
@@ -31,11 +31,11 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
             InternalPort = x.InternalPort
         }).ToList();
     }
-
+     
     public async Task<ServerApplicationDto> GetAsync(long id, long userId, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Getting server application by Id: {Id}", id);
-        var serverApp = await _dbContext.ServerApplications.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.UserId == userId, cancellationToken);
+        var serverApp = await _dbContext.ServerApplications.Include(a => a.User).AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.UserId == userId, cancellationToken);
         if (serverApp == null)
         {
             _logger.LogWarning("Server application with Id: {Id} not found.", id);

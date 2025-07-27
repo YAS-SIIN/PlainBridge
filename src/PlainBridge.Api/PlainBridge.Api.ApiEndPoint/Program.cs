@@ -14,6 +14,7 @@ using PlainBridge.Api.ApiEndPoint.ErrorHandling;
 using PlainBridge.Api.Application.DTOs;
 using Serilog;
 using StackExchange.Redis;
+using System.IdentityModel.Tokens.Jwt;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -93,6 +94,9 @@ public static class AuthenticationExtensions
         var serviceProvider = services.BuildServiceProvider();
         var connectionMultiplexer = serviceProvider.GetRequiredService<IConnectionMultiplexer>();
 
+        // This is crucial - prevents the JWT handler from mapping 'sub' claim to ClaimTypes.NameIdentifier
+        JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+
         services.AddAuthentication(options =>
         {
             options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -101,9 +105,8 @@ public static class AuthenticationExtensions
         })
         .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddJwtBearer("Bearer", options =>
-        {
-            object configuration = null;
-            if (!string.IsNullOrWhiteSpace(appSettings.PlainBridgeUseHttp) && bool.Parse(appSettings.PlainBridgeUseHttp!))
+        { 
+            if (appSettings.PlainBridgeUseHttp)
             {
                 options.RequireHttpsMetadata = false;
             }
@@ -123,14 +126,26 @@ public static class AuthenticationExtensions
                 {
                     var tokenp = context.Request.Headers["Authorization"];
                     tokenp = tokenp.ToString().Replace("Bearer ", "");
+                    
+                    // Try to get token from Redis (for user tokens from BFF)
                     var token = await db.StringGetAsync($"tokenptoken:{tokenp}");
-                    context.Token = token;
+                    
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        // This is a user token from BFF, use the original token
+                        context.Token = token;
+                    }
+                    else
+                    {
+                        // This might be a client credentials token, let it validate directly
+                        context.Token = tokenp;
+                    }
                 }
             };
         })
         .AddOpenIdConnect("oidc", options =>
         {
-            if (!string.IsNullOrWhiteSpace(appSettings.PlainBridgeUseHttp) && bool.Parse(appSettings.PlainBridgeUseHttp!))
+            if (appSettings.PlainBridgeUseHttp)
             {
                 options.RequireHttpsMetadata = false;
             }

@@ -31,7 +31,6 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         var tokenResponse = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
         {
             Address = disco.TokenEndpoint,
-
             ClientId = _applicationSettings.Value.PlainBridgeIdsClientId,
             ClientSecret = _applicationSettings.Value.PlainBridgeIdsClientSecret,
             Scope = _applicationSettings.Value.PlainBridgeIdsScope

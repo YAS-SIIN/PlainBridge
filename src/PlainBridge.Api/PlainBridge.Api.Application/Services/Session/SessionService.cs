@@ -20,7 +20,7 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
         var userId = _httpContextAccessor.HttpContext.User.Claims.SingleOrDefault(claim => claim.Type == "sub");
         if (userId == null || string.IsNullOrEmpty(userId.Value))
         {
-            _logger.LogWarning("User ID claim 'sub' not found in HttpContext.");
+            _logger.LogWarning("User ID claim 'sub' not found in HttpContext. This might be a client credentials token.");
             return await Task.FromResult<UserDto>(null!);
         }
         _logger.LogInformation("Fetching user by external ID: {UserId}", userId.Value);

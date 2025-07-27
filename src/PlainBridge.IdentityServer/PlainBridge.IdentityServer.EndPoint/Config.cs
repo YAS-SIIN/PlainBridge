@@ -6,6 +6,7 @@ namespace PlainBridge.IdentityServer.EndPoint;
 
 public static class Config
 {
+    private const string _mainScope = "PlainBridge";
     public static IEnumerable<IdentityResource> IdentityResources =>
         new IdentityResource[]
         {
@@ -17,7 +18,7 @@ public static class Config
     public static IEnumerable<ApiScope> ApiScopes =>
         new ApiScope[]
         {
-            new ApiScope("PlainBridge"),
+            new ApiScope(_mainScope),
             new ApiScope(IdentityServerConstants.LocalApi.ScopeName) ,
         };
 
@@ -31,7 +32,7 @@ public static class Config
                 ClientName = "Client Credentials Client",
 
                 AllowedGrantTypes = GrantTypes.Code,
-                ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
+                ClientSecrets = { new Secret("secret".Sha256()) },
 
                 // where to redirect to after login
                 RedirectUris = { $"{applcationSettings.PlainBridgeWebUrl}/signin-oidc" },
@@ -40,7 +41,7 @@ public static class Config
                 PostLogoutRedirectUris = { $"{applcationSettings.PlainBridgeWebUrl}/signout-callback-oidc" },
 
                 AllowedScopes = {
-                    "PlainBridge", 
+                    _mainScope, 
                     IdentityServerConstants.StandardScopes.OpenId, 
                     IdentityServerConstants.LocalApi.ScopeName, 
                     IdentityServerConstants.StandardScopes.Profile, 
@@ -54,7 +55,7 @@ public static class Config
             new Client
             {
                 ClientId = "back",
-                ClientSecrets = { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
+                ClientSecrets = { new Secret("secret".Sha256()) },
 
            
                 // no interactive user, use the clientid/secret for authentication
@@ -62,7 +63,7 @@ public static class Config
 
                 // scopes that client has access to
                 AllowedScopes = {
-                    "PlainBridge",
+                    _mainScope,
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.LocalApi.ScopeName,
                     IdentityServerConstants.StandardScopes.Profile,
@@ -97,7 +98,7 @@ public static class Config
                     IdentityServerConstants.StandardScopes.Phone,
                     IdentityServerConstants.StandardScopes.Address,
                     IdentityServerConstants.StandardScopes.OfflineAccess,
-                    "PlainBridge"
+                    _mainScope
                 },
 
                 AllowOfflineAccess = true,

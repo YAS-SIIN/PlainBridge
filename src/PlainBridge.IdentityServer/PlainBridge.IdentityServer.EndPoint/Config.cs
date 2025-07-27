@@ -61,7 +61,17 @@ public static class Config
                 AllowedGrantTypes = GrantTypes.ClientCredentials,
 
                 // scopes that client has access to
-                AllowedScopes = { "PlainBridge", IdentityServerConstants.LocalApi.ScopeName, IdentityServerConstants.StandardScopes.Profile, IdentityServerConstants.StandardScopes.Email }
+                AllowedScopes = {
+                    "PlainBridge",
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.LocalApi.ScopeName,
+                    IdentityServerConstants.StandardScopes.Profile,
+                    IdentityServerConstants.StandardScopes.Email,
+                    IdentityServerConstants.StandardScopes.Phone,
+                    IdentityServerConstants.StandardScopes.Address,
+                    IdentityServerConstants.StandardScopes.OfflineAccess,
+                }
+                 
             },
 
             // BFF client for Backend for Frontend pattern

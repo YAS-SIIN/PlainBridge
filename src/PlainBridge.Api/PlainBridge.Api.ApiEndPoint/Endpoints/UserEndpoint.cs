@@ -29,7 +29,7 @@ public static class UserEndpoint
 
 
         // GetCurrentUser
-        app.MapGet("GetCurrentUser", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, ISessionService sessionService) =>
+        app.MapGet("GetCurrentUser", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)

@@ -126,20 +126,8 @@ public static class AuthenticationExtensions
                 {
                     var tokenp = context.Request.Headers["Authorization"];
                     tokenp = tokenp.ToString().Replace("Bearer ", "");
-                    
-                    // Try to get token from Redis (for user tokens from BFF)
                     var token = await db.StringGetAsync($"tokenptoken:{tokenp}");
-                    
-                    if (!string.IsNullOrEmpty(token))
-                    {
-                        // This is a user token from BFF, use the original token
-                        context.Token = token;
-                    }
-                    else
-                    {
-                        // This might be a client credentials token, let it validate directly
-                        context.Token = tokenp;
-                    }
+                    context.Token = token;
                 }
             };
         })

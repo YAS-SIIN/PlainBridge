@@ -16,10 +16,10 @@ namespace PlainBridge.Api.Application.Services.ServerApplication;
 
 public class ServerApplicationService(ILogger<ServerApplicationService> _logger, MainDbContext _dbContext, IEventBus _eventBus) : IServerApplicationService
 {
-    public async Task<IList<ServerApplicationDto>> GetAllAsync(long userId, CancellationToken cancellationToken)
+    public async Task<IList<ServerApplicationDto>> GetAllAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Getting all server applications for user: {UserId}.", userId);
-        var serverApplication = await _dbContext.ServerApplications.Include(a => a.User).AsNoTracking().Where(x => x.UserId == userId).ToListAsync(cancellationToken);
+        _logger.LogInformation("Getting all server applications.");
+        var serverApplication = await _dbContext.ServerApplications.Include(a => a.User).AsNoTracking().ToListAsync(cancellationToken);
 
         return serverApplication.Select(x => new ServerApplicationDto
         {

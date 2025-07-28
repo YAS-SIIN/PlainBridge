@@ -22,11 +22,8 @@ public static class HostApplicationEndpoint
         // GetAllAsync
         app.MapGet("", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, ISessionService _sessionService) =>
         {
-            var user = await _sessionService.GetCurrentUserAsync(cancellationToken);
-            if (user == null)
-                throw new NotFoundException("user");
-
-            var data = await hostApplicationService.GetAllAsync(user.Id, cancellationToken);
+        
+            var data = await hostApplicationService.GetAllAsync(cancellationToken);
             return Results.Ok(ResultDto<IList<HostApplicationDto>>.ReturnData(
                 data,
                 ResultCodeEnum.Success,

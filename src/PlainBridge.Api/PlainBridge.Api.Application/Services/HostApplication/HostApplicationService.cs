@@ -11,12 +11,11 @@ namespace PlainBridge.Api.Application.Services.HostApplication;
 
 public class HostApplicationService(ILogger<HostApplicationService> _logger, MainDbContext _dbContext, IEventBus _eventBus) : IHostApplicationService
 {
-    public async Task<IList<HostApplicationDto>> GetAllAsync(long userId, CancellationToken cancellationToken)
+    public async Task<IList<HostApplicationDto>> GetAllAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Getting all host applications for user: {UserId}.", userId);
-        var list = await _dbContext.HostApplications.Include(a=>a.User).AsNoTracking().Where(x => x.UserId == userId).ToListAsync(cancellationToken);
+        _logger.LogInformation("Getting all host applications.");
+        var list = await _dbContext.HostApplications.Include(a=>a.User).AsNoTracking().ToListAsync(cancellationToken);
 
-        _logger.LogInformation("Retrieved {Count} host applications for user: {UserId}.", list.Count, userId);
         return list.Select(x => new HostApplicationDto
         {
             Id = x.Id,
@@ -40,7 +39,6 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
             throw new NotFoundException(id);
         }
 
-        _logger.LogInformation("Host application with Id {Id} retrieved.", id);
         return new HostApplicationDto
         {
             Id = hostApp.Id,

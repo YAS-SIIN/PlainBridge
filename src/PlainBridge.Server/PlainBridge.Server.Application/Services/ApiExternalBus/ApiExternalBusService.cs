@@ -30,7 +30,11 @@ public class ApiExternalBusService(ILogger<ApiExternalBusService> _logger, IConn
         external_bus_consumer.ReceivedAsync += async (model, ea) =>
         {
             await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
-            var message = Encoding.UTF8.GetString(ea.Body.ToArray());
+            var message = Encoding.UTF8.GetString(ea.Body.ToArray()).Trim();
+            if (message.StartsWith("\"") && message.EndsWith("\""))
+            {
+                message = message[1..^1];
+            }
             _logger.LogInformation("Received message from external bus: {Message}", message);
 
             try

@@ -11,8 +11,10 @@ var apiEndpoint = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-
     .WithReference(identityserverEndpoint)
     .WithReference(rabbitmq)
     .WithReference(cache)
+    .WaitFor(identityserverEndpoint)
     .WaitFor(cache)
     .WaitFor(rabbitmq)
+    .WaitFor(identityserverEndpoint)
     .PublishAsDockerFile();
  
 
@@ -25,16 +27,19 @@ var serverEndpoint = builder.AddProject<Projects.PlainBridge_Server_ApiEndPoint>
  
 var angularWebUi =
 builder.AddNpmApp("angularWebUi", "../PlainBridge.Web/PlainBridge.Web.UI")
-    .WithUrl("http://localhost:12007")
+    .WithHttpEndpoint(port: 5004, env: "PORT")
     .WithReference(apiEndpoint)
     .WithReference(identityserverEndpoint)
+    .WaitFor(identityserverEndpoint)
+    .WaitFor(serverEndpoint)
+    .WaitFor(apiEndpoint) 
     .WithExternalHttpEndpoints()
-    .PublishAsDockerFile(); 
+    .PublishAsDockerFile();
  
-builder.AddDockerfile("PlainBridge-AppHost", "relative/context/path")
-    .WithReference(apiEndpoint)
-    .WithReference(identityserverEndpoint)
-    .WithReference(serverEndpoint)
-    .WithReference(angularWebUi);   
+//builder.AddDockerfile("PlainBridge-AppHost", "relative/context/path")
+//    .WithReference(apiEndpoint)
+//    .WithReference(identityserverEndpoint)
+//    .WithReference(serverEndpoint)
+//    .WithReference(angularWebUi);   
 
 await builder.Build().RunAsync();

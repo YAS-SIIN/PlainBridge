@@ -72,10 +72,7 @@
               "buildTarget": "PlainBridge.Web.UI:build:development"
             }
           },
-          "defaultConfiguration": "development",
-          "options": {
-            "port": 12007
-          }
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n"

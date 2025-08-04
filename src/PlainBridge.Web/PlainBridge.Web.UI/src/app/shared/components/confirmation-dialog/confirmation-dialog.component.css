@@ -1,0 +1,10 @@
+/* Confirmation dialog styles */
+div[mat-dialog-content] {
+  padding: 20px;
+  min-width: 300px;
+}
+
+div[mat-dialog-actions] {
+  padding: 0 20px 20px;
+  gap: 8px;
+}

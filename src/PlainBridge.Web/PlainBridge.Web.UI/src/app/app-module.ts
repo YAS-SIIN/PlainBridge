@@ -18,10 +18,13 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 // Components
 import { LayoutComponent } from './components/layout/layout.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { ConfirmationDialogComponent } from './shared/components/confirmation-dialog/confirmation-dialog.component';
 
 // Interceptors
 import { AuthInterceptorProvider } from './interceptors/auth.interceptor';
@@ -33,7 +36,8 @@ import { App } from './app';
   declarations: [
     App,
     LayoutComponent,
-    DashboardComponent
+    DashboardComponent,
+    ConfirmationDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +57,9 @@ import { App } from './app';
     MatDialogModule,
     MatSnackBarModule,
     MatMenuModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatTooltipModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

@@ -6,16 +6,6 @@ export interface HostApplicationDto extends BaseEntity {
   url: string;
   port: number;
   isActive: boolean;
-  userId: number;
-  serverApplications?: ServerApplicationDto[];
+  userId: number; 
 }
-
-export interface ServerApplicationDto extends BaseEntity {
-  name: string;
-  description?: string;
-  path: string;
-  isActive: boolean;
-  userId: number;
-  hostApplicationId: number;
-  hostApplication?: HostApplicationDto;
-}
+ 

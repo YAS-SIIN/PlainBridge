@@ -24,3 +24,13 @@ export interface UserProfileDto {
   name: string;
   family: string;
 }
+
+export interface CreateUserDto {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  phoneNumber?: string;
+  name: string;
+  family: string;
+}

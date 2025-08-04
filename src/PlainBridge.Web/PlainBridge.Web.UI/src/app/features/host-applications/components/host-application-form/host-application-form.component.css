@@ -1,0 +1,14 @@
+.host-application-form-container {
+  padding: 24px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+mat-checkbox {
+  margin: 16px 0;
+}

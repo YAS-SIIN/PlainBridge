@@ -1,0 +1,63 @@
+<div class="dashboard-container">
+  <h1>Dashboard</h1>
+  
+  <div class="stats-grid" *ngIf="!loading">
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-card-title>Host Applications</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-number">{{ hostApplicationsCount }}</div>
+        <div class="stat-label">Total Applications</div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary" routerLink="/host-applications">View All</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-card-title>Server Applications</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-number">{{ serverApplicationsCount }}</div>
+        <div class="stat-label">Total Applications</div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary" routerLink="/server-applications">View All</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-card-title>Users</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-number">{{ usersCount }}</div>
+        <div class="stat-label">Total Users</div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary" routerLink="/users">View All</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+    <p>Loading dashboard data...</p>
+  </div>
+
+  <div class="quick-actions" *ngIf="!loading">
+    <h2>Quick Actions</h2>
+    <div class="actions-grid">
+      <button mat-raised-button color="primary" routerLink="/host-applications/new">
+        <mat-icon>add</mat-icon>
+        New Host Application
+      </button>
+      <button mat-raised-button color="accent" routerLink="/server-applications/new">
+        <mat-icon>add</mat-icon>
+        New Server Application
+      </button>
+    </div>
+  </div>
+</div>

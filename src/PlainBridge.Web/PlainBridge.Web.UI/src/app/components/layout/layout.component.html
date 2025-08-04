@@ -1,0 +1,60 @@
+<div class="main-container">
+  <mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <span>PlainBridge</span>
+      <span class="spacer"></span>
+      <div *ngIf="isAuthenticated$ | async; else loginButton">
+        <span *ngIf="currentUser">Welcome, {{currentUser.name}} {{currentUser.family}}</span>
+        <button mat-icon-button [matMenuTriggerFor]="userMenu">
+          <mat-icon>account_circle</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu">
+          <button mat-menu-item routerLink="/profile">
+            <mat-icon>person</mat-icon>
+            <span>Profile</span>
+          </button>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
+      </div>
+      <ng-template #loginButton>
+        <button mat-raised-button color="accent" (click)="login()">Login</button>
+      </ng-template>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="sidenav-container" *ngIf="isAuthenticated$ | async">
+    <mat-sidenav mode="side" opened>
+      <mat-nav-list>
+        <a mat-list-item routerLink="/dashboard" routerLinkActive="active">
+          <mat-icon matListItemIcon>dashboard</mat-icon>
+          <span matListItemTitle>Dashboard</span>
+        </a>
+        <a mat-list-item routerLink="/host-applications" routerLinkActive="active">
+          <mat-icon matListItemIcon>computer</mat-icon>
+          <span matListItemTitle>Host Applications</span>
+        </a>
+        <a mat-list-item routerLink="/server-applications" routerLinkActive="active">
+          <mat-icon matListItemIcon>dns</mat-icon>
+          <span matListItemTitle>Server Applications</span>
+        </a>
+        <a mat-list-item routerLink="/users" routerLinkActive="active">
+          <mat-icon matListItemIcon>people</mat-icon>
+          <span matListItemTitle>Users</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+      <div class="content">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+
+  <div class="content" *ngIf="!(isAuthenticated$ | async)">
+    <router-outlet></router-outlet>
+  </div>
+</div>

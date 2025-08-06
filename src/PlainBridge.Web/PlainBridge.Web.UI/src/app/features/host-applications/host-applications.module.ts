@@ -14,6 +14,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatGridListModule } from '@angular/material/grid-list'; 
 
 import { HostApplicationsRoutingModule } from './host-applications-routing.module';
 import { HostApplicationsListComponent } from './components/host-applications-list/host-applications-list.component';
@@ -28,8 +30,9 @@ import { HostApplicationFormComponent } from './components/host-application-form
     CommonModule,
     ReactiveFormsModule,
     HostApplicationsRoutingModule,
-    
     // Material modules
+    MatExpansionModule,    
+    MatGridListModule,
     MatCardModule,
     MatTableModule,
     MatPaginatorModule,

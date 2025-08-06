@@ -1,7 +1,11 @@
-<div class="server-application-form-container">
-  <mat-card class="mat-elevation-z4">
-    <mat-card-title>{{ isEditMode ? 'Edit' : 'Create' }} Server Application</mat-card-title>
-    
+<div>
+  <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>border_color</mat-icon> {{ isEditMode ? 'Edit' : 'Create' }} Server Application
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
     <mat-card-content>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="fill" class="full-width">
@@ -17,34 +21,25 @@
           <mat-label>Description</mat-label>
           <textarea matInput formControlName="description" placeholder="Optional description"></textarea>
         </mat-form-field>
-
+        
         <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Path</mat-label>
-          <input matInput formControlName="path" placeholder="Application path">
-          <mat-error *ngIf="path?.invalid && (path?.dirty || path?.touched)">
-            <ng-container *ngIf="path?.errors?.['required']">Path is required.</ng-container>
+          <mat-label>Port</mat-label>
+          <input matInput type="number" formControlName="port" placeholder="80">
+          <mat-error *ngIf="form.get('port')?.invalid && form.get('port')?.touched">
+            <span *ngIf="form.get('port')?.errors?.['required']">Port is required</span>
+            <span *ngIf="form.get('port')?.errors?.['min']">Port must be greater than 0</span>
           </mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Host Application</mat-label> 
-          <mat-error *ngIf="hostApplicationId?.invalid && (hostApplicationId?.dirty || hostApplicationId?.touched)">
-            Host Application is required.
-          </mat-error>
-        </mat-form-field>
-
-        <mat-checkbox formControlName="isActive" class="clickable">
-          Active
-        </mat-checkbox>
       </form>
     </mat-card-content>
 
     <mat-card-actions align="end">
-      <button mat-button type="button" (click)="onCancel()">Cancel</button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || loading" (click)="onSubmit()">
+      <button mat-button type="button" color="warn" routerLink="/server">Cancel</button>
+      <button mat-raised-button color="primary" [disabled]="form.invalid || loading" (click)="onSubmit()">
         <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
         {{ isEditMode ? 'Update' : 'Create' }}
       </button>
     </mat-card-actions>
-  </mat-card>
+  </mat-expansion-panel>
 </div>

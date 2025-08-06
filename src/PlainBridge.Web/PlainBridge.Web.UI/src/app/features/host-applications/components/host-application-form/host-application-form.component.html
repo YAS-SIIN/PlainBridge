@@ -1,7 +1,11 @@
-<div class="host-application-form-container">
-  <mat-card class="mat-elevation-z4">
-    <mat-card-title>{{ isEditMode ? 'Edit' : 'Create' }} Host Application</mat-card-title>
-    
+<div>
+  <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>border_color</mat-icon> {{ isEditMode ? 'Edit' : 'Create' }} Host Application
+          </mat-panel-title> 
+        </mat-expansion-panel-header>
+ 
     <mat-card-content>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="fill" class="full-width">
@@ -29,19 +33,18 @@
             <span *ngIf="form.get('port')?.errors?.['min']">Port must be greater than 0</span>
           </mat-error>
         </mat-form-field>
-
-        <mat-checkbox formControlName="isActive" class="full-width">Active</mat-checkbox>
+ 
       </form>
     </mat-card-content>
 
     <mat-card-actions align="end">
-      <button mat-button type="button" routerLink="/host-applications">Cancel</button>
+      <button mat-button type="button" color="warn" routerLink="/host-applications">Cancel</button>
       <button mat-raised-button color="primary" 
               [disabled]="form.invalid || loading" 
               (click)="onSubmit()">
         <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
         {{ isEditMode ? 'Update' : 'Create' }}
       </button>
-    </mat-card-actions>
-  </mat-card>
+    </mat-card-actions> 
+</mat-expansion-panel>
 </div>

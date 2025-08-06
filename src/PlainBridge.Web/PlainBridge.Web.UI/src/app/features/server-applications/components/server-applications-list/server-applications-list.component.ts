@@ -15,7 +15,7 @@ import { ServerApplicationDto } from '../../../../models/server-application.mode
   styleUrls: ['./server-applications-list.component.css']
 })
 export class ServerApplicationsListComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'path', 'isActive', 'hostApplication', 'actions'];
+  displayedColumns: string[] = [ 'appId', 'serverApplicationAppId', 'name', 'internalPort', 'isActive', 'actions'];
   dataSource: MatTableDataSource<ServerApplicationDto> = new MatTableDataSource();
   loading = true;
 

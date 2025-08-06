@@ -3,10 +3,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
-import { HostApplicationService } from '../../../../services/host-application.service';
-import { HostApplicationDto } from '../../../../models';
+import { ServerApplicationService } from '../../../../services/server-application.service'; 
 import { ToastService } from '../../../../services/toast.service';
 import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { ServerApplicationDto } from '../../../../models/server-application.models';
+import { HostApplicationService } from '../../../../services/host-application.service';
 
 @Component({
   selector: 'app-host-applications-list',
@@ -15,8 +16,8 @@ import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../..
   styleUrls: ['./host-applications-list.component.css']
 })
 export class HostApplicationsListComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'url', 'port', 'isActive', 'actions'];
-  dataSource: MatTableDataSource<HostApplicationDto> = new MatTableDataSource();
+  displayedColumns: string[] = ['name', 'url', 'port', 'isActive',  'actions'];
+  dataSource: MatTableDataSource<ServerApplicationDto> = new MatTableDataSource();
   loading = true;
 
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
@@ -40,14 +41,14 @@ export class HostApplicationsListComponent implements OnInit {
   fetchHostApplications(): void {
     this.loading = true;
     this.hostApplicationService.getAllApplications().subscribe({
-      next: (result) => {
+      next: (result: any) => {
         if (result.isSuccess) {
           this.dataSource.data = result.data;
         }
         this.loading = false;
       },
-      error: (error) => {
-        this.toastService.error('Error fetching host applications');
+      error: (error: any) => {
+        this.toastService.error('Error fetching server applications');
         this.loading = false;
       }
     });
@@ -56,15 +57,23 @@ export class HostApplicationsListComponent implements OnInit {
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
-  deleteHostApplication(hostApplication: HostApplicationDto): void {
+  deleteHostApplication(hostApplication: ServerApplicationDto): void {
     const dialogData: ConfirmationDialogData = {
       title: 'Delete Confirmation',
-      message: `Are you sure you want to delete host application ${hostApplication.name}?`
+      message: `Are you sure you want to delete host application "${hostApplication.name}"?`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel'
     };
+
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: dialogData
+      data: dialogData,
+      width: '400px'
     });
 
     dialogRef.afterClosed().subscribe(result => {

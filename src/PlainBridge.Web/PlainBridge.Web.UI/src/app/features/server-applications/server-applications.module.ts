@@ -16,6 +16,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatGridListModule } from '@angular/material/grid-list'; 
 
 import { ServerApplicationsRoutingModule } from './server-applications-routing.module';
 import { ServerApplicationsListComponent } from './components/server-applications-list/server-applications-list.component';
@@ -32,6 +34,8 @@ import { ServerApplicationFormComponent } from './components/server-application-
     ServerApplicationsRoutingModule,
     
     // Material modules
+    MatExpansionModule,    
+    MatGridListModule,
     MatCardModule,
     MatTableModule,
     MatPaginatorModule,

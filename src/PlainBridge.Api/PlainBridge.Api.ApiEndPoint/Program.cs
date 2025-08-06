@@ -24,8 +24,18 @@ builder.Host.UseSerilog((ctx, lc) => lc
     .Enrich.FromLogContext()
     .ReadFrom.Configuration(ctx.Configuration));
 
+
 // Add service defaults & Aspire client integrations.
 builder.AddServiceDefaults();
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        builder => builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .WithExposedHeaders("X-Pagination"));
+});
 
 // Add services to the container.
 builder.Services.AddProblemDetails();
@@ -72,7 +82,7 @@ if (app.Environment.IsDevelopment())
 }
 ;
 
-app.UseCors("AllowCors");
+app.UseCors();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();

@@ -137,14 +137,7 @@ public static class Extensions
 
     public static IServiceCollection AddApiProjectServices(this IServiceCollection services)
     {
-        services.AddCors(options =>
-        {
-            options.AddPolicy("CorsPolicy",
-                builder => builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .WithExposedHeaders("X-Pagination"));
-        });
+        
 
 
         services.AddScoped<IHostApplicationService, HostApplicationService>();

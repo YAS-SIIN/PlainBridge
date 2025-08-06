@@ -7,7 +7,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 const routes: Routes = [
   {
     path: 'sign-in-oidc',
-    loadComponent: () => import('./sign-in-oidc/sign-in-oidc.component').then(m => m.SignInOidcComponent)
+    loadComponent: () => import('./features/sign-in-oidc/sign-in-oidc.component').then(m => m.SignInOidcComponent)
   },
   {
     path: '',

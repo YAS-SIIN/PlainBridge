@@ -28,7 +28,6 @@ export class ServerApplicationFormComponent implements OnInit {
       description: [''],
       path: ['', [Validators.required]],
       isActive: [true],
-      hostApplicationId: ['', [Validators.required]]
     });
   }
 
@@ -116,6 +115,5 @@ export class ServerApplicationFormComponent implements OnInit {
   get name() { return this.form.get('name'); }
   get description() { return this.form.get('description'); }
   get path() { return this.form.get('path'); }
-  get isActive() { return this.form.get('isActive'); }
-  get hostApplicationId() { return this.form.get('hostApplicationId'); }
+  get isActive() { return this.form.get('isActive'); } 
 }

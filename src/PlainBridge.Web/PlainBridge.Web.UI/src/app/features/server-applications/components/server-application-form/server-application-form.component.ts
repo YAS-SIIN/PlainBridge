@@ -31,7 +31,7 @@ export class ServerApplicationFormComponent implements OnInit {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       description: [''],
-      serverApplicationAppId: [''],
+      // serverApplicationAppId: [''],
       internalPort: ['', [Validators.required, Validators.min(1)]],
       serverApplicationType: [ServerApplicationTypeEnum.SharePort, Validators.required]
     });

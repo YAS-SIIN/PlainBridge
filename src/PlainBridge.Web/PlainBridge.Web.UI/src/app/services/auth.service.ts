@@ -47,7 +47,7 @@ export class AuthService {
 
   public logout(): void {
     this.removeToken();
-    this.router.navigate(['/login']);
+    window.location.href = 'https://localhost:5001/bff/login';
   }
 
   public isAuthenticated(): boolean {

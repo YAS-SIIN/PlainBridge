@@ -25,7 +25,7 @@ export class HostApplicationService {
   }
 
   updateApplication(id: number, application: HostApplicationDto): Observable<ResultDto<HostApplicationDto>> {
-    return this.http.put<ResultDto<HostApplicationDto>>(`${this.apiUrl}/${id}`, application);
+    return this.http.patch<ResultDto<HostApplicationDto>>(`${this.apiUrl}/${id}`, application);
   }
 
   deleteApplication(id: number): Observable<ResultDto<any>> {
@@ -34,6 +34,6 @@ export class HostApplicationService {
 
   // Toggle active state
   patchIsActive(id: number, isActive: boolean): Observable<ResultDto<HostApplicationDto>> {
-    return this.http.patch<ResultDto<HostApplicationDto>>(`${this.apiUrl}/${id}/is-active`, { isActive });
+    return this.http.patch<ResultDto<HostApplicationDto>>(`${this.apiUrl}/UpdateState/${id}/${isActive}`, { });
   }
 }

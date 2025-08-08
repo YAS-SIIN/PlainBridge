@@ -71,7 +71,7 @@ public static class HostApplicationEndpoint
         }).WithName("CreateHostApplication");
 
         // UpdateAsync
-        app.MapPut("{id:long}", async (long id, CancellationToken cancellationToken, [FromBody] HostApplicationDto hostApplication, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, ISessionService sessionService) =>
+        app.MapPatch("{id:long}", async (long id, CancellationToken cancellationToken, [FromBody] HostApplicationDto hostApplication, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
@@ -99,7 +99,7 @@ public static class HostApplicationEndpoint
         }).WithName("DeleteHostApplication");
 
         // Toggle isActive -> State
-        app.MapPatch("{id:long}/is-active", async (long id, [FromBody] bool isActive, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService) =>
+        app.MapPatch("UpdateState/{id:long}/{isActive:bool}", async (long id, bool isActive, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService) =>
         {
             await hostApplicationService.UpdateStateAsync(id, isActive, cancellationToken);
             return Results.Ok(ResultDto<HostApplicationDto>.ReturnData(

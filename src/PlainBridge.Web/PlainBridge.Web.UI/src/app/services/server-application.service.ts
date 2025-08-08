@@ -31,4 +31,9 @@ export class ServerApplicationService {
   deleteApplication(id: number): Observable<ResultDto<any>> {
     return this.http.delete<ResultDto<any>>(`${this.apiUrl}/${id}`);
   }
+
+  // Toggle active state
+  patchIsActive(id: number, isActive: boolean): Observable<ResultDto<ServerApplicationDto>> {
+    return this.http.patch<ResultDto<ServerApplicationDto>>(`${this.apiUrl}/${id}/is-active`, { isActive });
+  }
 }

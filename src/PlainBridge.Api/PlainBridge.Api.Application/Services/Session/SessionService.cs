@@ -17,12 +17,32 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
     public async Task<UserDto> GetCurrentUserAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Getting current user from HttpContext.");
+
+         
+        // First, try to find the 'sub' claim (for user authentication)
         var userId = _httpContextAccessor.HttpContext.User.Claims.SingleOrDefault(claim => claim.Type == "sub");
+        
+        // If no 'sub' claim, try ClaimTypes.NameIdentifier (in case of claim mapping)
+        if (userId == null)
+        {
+            userId = _httpContextAccessor.HttpContext.User.Claims.SingleOrDefault(claim => claim.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
+        }
+        
         if (userId == null || string.IsNullOrEmpty(userId.Value))
         {
-            _logger.LogWarning("User ID claim 'sub' not found in HttpContext. This might be a client credentials token.");
+            // Check if this is a client credentials token (has client_id but no sub)
+            var clientId = _httpContextAccessor.HttpContext.User.Claims.SingleOrDefault(claim => claim.Type == "client_id");
+            if (clientId != null)
+            {
+                _logger.LogWarning("Request authenticated with client credentials (client_id: {ClientId}), but no user identity available. User-specific operations not supported.", clientId.Value);
+            }
+            else
+            {
+                _logger.LogWarning("No user identity claim found in HttpContext. User might not be authenticated or using unsupported authentication method.");
+            }
             return await Task.FromResult<UserDto>(null!);
         }
+        
         _logger.LogInformation("Fetching user by external ID: {UserId}", userId.Value);
         var customer = await _userService.GetUserByExternalIdAsync(userId.Value, cancellationToken);
         _logger.LogInformation("User fetched successfully.");

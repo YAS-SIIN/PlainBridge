@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list'; 
@@ -43,6 +44,7 @@ import { HostApplicationFormComponent } from './components/host-application-form
     MatIconModule,
     MatDialogModule,
     MatCheckboxModule,
+    MatSlideToggleModule,
     MatProgressSpinnerModule
   ]
 })

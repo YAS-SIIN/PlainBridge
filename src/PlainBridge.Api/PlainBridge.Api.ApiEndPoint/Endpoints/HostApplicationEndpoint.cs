@@ -86,7 +86,7 @@ public static class HostApplicationEndpoint
                 ResultCodeEnum.Success.ToDisplayName()
             ));
         }).WithName("UpdateHostApplication");
-
+         
         // DeleteAsync
         app.MapDelete("{id:long}", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService) =>
         {
@@ -97,5 +97,17 @@ public static class HostApplicationEndpoint
                 ResultCodeEnum.Success.ToDisplayName()
             ));
         }).WithName("DeleteHostApplication");
+
+        // Toggle isActive -> State
+        app.MapPatch("{id:long}/is-active", async (long id, [FromBody] bool isActive, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService) =>
+        {
+            await hostApplicationService.UpdateStateAsync(id, isActive, cancellationToken);
+            return Results.Ok(ResultDto<HostApplicationDto>.ReturnData(
+                null,
+                ResultCodeEnum.Success,
+                ResultCodeEnum.Success.ToDisplayName()
+            ));
+        }).WithName("PatchHostApplicationIsActive");
     }
+
 }

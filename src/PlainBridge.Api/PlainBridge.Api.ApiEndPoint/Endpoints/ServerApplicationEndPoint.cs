@@ -99,5 +99,17 @@ public static class ServerApplicationEndPoint
                 ResultCodeEnum.Success.ToDisplayName()
             ));
         }).WithName("DeleteServerApplication");
+
+        // Toggle isActive -> State
+        app.MapPatch("{id:long}/is-active", async (long id, [FromBody] bool isActive, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IServerApplicationService serverApplicationService) =>
+        {
+            await serverApplicationService.UpdateStateAsync(id, isActive, cancellationToken);
+            return Results.Ok(ResultDto<ServerApplicationDto>.ReturnData(
+                null,
+                ResultCodeEnum.Success,
+                ResultCodeEnum.Success.ToDisplayName()
+            ));
+        }).WithName("PatchServerApplicationIsActive");
     }
+     
 }

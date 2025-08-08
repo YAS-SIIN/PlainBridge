@@ -99,7 +99,20 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
         var token = "token123";
         _mockITokenService.Setup(x => x.GetSunTokenAsync(userId)).ReturnsAsync(token);
 
-        var appSetting = new ApplicationSettings { PlainBridgeIdsUrl = "https://ids.example.com" };
+        // Replace this line:
+        // var appSetting = new ApplicationSettings { PlainBridgeIdsUrl = "https://ids.example.com" };
+
+        // With the following, setting all required properties:
+        var appSetting = new ApplicationSettings
+        {
+            PlainBridgeIdsClientId = "test-client-id",
+            PlainBridgeIdsClientSecret = "test-client-secret",
+            PlainBridgeIdsScope = "test-scope",
+            PlainBridgeUseHttp = false,
+            PlainBridgeIdsUrl = "https://ids.example.com",
+            PlainBridgeWebUrl = "https://web.example.com",
+            PlainBridgeWebRedirectPage = "/redirect"
+        };
         _mockApplicationSetting.Setup(x => x.Value).Returns(appSetting);
 
         var userInfo = new UserProfileViewDto

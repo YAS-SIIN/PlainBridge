@@ -4,10 +4,11 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { ServerApplicationService } from '../../../../services/server-application.service'; 
-import { ToastService } from '../../../../services/toast.service';
 import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../../shared/components/confirmation-dialog/confirmation-dialog.component';
-import { ServerApplicationDto } from '../../../../models/server-application.models';
-
+import { ServerApplicationDto } from '../../../../models/server-application.models'; 
+import { ApiResponseService } from '../../../../services/api-response.service';
+import { RowStateEnum } from '../../../../models';
+ 
 @Component({
   selector: 'app-server-applications-list',
   standalone: false,
@@ -15,17 +16,18 @@ import { ServerApplicationDto } from '../../../../models/server-application.mode
   styleUrls: ['./server-applications-list.component.css']
 })
 export class ServerApplicationsListComponent implements OnInit {
-  displayedColumns: string[] = [ 'appId', 'serverApplicationAppId', 'name', 'internalPort', 'isActive', 'actions'];
+  displayedColumns: string[] = ['appId', 'serverApplicationAppId', 'internalPort', 'isActive',  'actions'];
   dataSource: MatTableDataSource<ServerApplicationDto> = new MatTableDataSource();
   loading = true;
+  pendingIds = new Set<number>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
   @ViewChild(MatSort) sort: MatSort | null = null;
 
   constructor(
     private serverApplicationService: ServerApplicationService,
-    private toastService: ToastService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private apiResponseService: ApiResponseService
   ) {}
 
   ngOnInit(): void {
@@ -39,15 +41,15 @@ export class ServerApplicationsListComponent implements OnInit {
 
   fetchServerApplications(): void {
     this.loading = true;
-    this.serverApplicationService.getAllApplications().subscribe({
-      next: (result: any) => {
-        if (result.isSuccess) {
-          this.dataSource.data = result.data;
-        }
+    this.apiResponseService.handleResponse(
+      this.serverApplicationService.getAllApplications(),
+      { showSuccessToast: false } // Don't show toast for loading data
+    ).subscribe({
+      next: (data) => {
+        this.dataSource.data = data;
         this.loading = false;
       },
-      error: (error: any) => {
-        this.toastService.error('Error fetching server applications');
+      error: () => {
         this.loading = false;
       }
     });
@@ -77,15 +79,38 @@ export class ServerApplicationsListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.serverApplicationService.deleteApplication(serverApplication.id).subscribe({
+        this.apiResponseService.handleResponse(
+          this.serverApplicationService.deleteApplication(serverApplication.id)
+        ).subscribe({
           next: () => {
-            this.toastService.success('Server application deleted successfully');
             this.fetchServerApplications();
           },
           error: () => {
-            this.toastService.error('Error deleting server application');
+            // Error handling is done by ApiResponseService
           }
         });
+      }
+    });
+  }
+
+  onToggleIsActive(row: ServerApplicationDto, isActive: boolean): void {
+    const prev = row.isActive;
+    row.isActive = isActive ? RowStateEnum.Active : RowStateEnum.Inactive;
+    this.pendingIds.add(row.id);
+
+    this.apiResponseService.handleResponse(
+      this.serverApplicationService.patchIsActive(row.id, isActive),
+      { successMessage: 'Updated', errorMessage: 'Failed to update status' }
+    ).subscribe({
+      next: (updated) => {
+        if (typeof (updated as any).state !== 'undefined') {
+          row.isActive = (updated as any).state === 1 ? RowStateEnum.Active : RowStateEnum.Inactive;
+        }
+        this.pendingIds.delete(row.id);
+      },
+      error: () => {
+        row.isActive = prev;
+        this.pendingIds.delete(row.id);
       }
     });
   }

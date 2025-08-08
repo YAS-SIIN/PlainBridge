@@ -1,10 +1,11 @@
 ﻿
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging; 
+using Microsoft.Extensions.Logging;  
 using PlainBridge.Api.Infrastructure.Data.Context;
 using PlainBridge.Api.Infrastructure.Messaging;
 using PlainBridge.SharedApplication.DTOs;
+using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
 
 namespace PlainBridge.Api.Application.Services.HostApplication;
@@ -24,7 +25,9 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
             UserName = x.User.Username,
             Name = x.Name,
             Domain = x.Domain,
-            InternalUrl = x.InternalUrl
+            InternalUrl = x.InternalUrl,
+            Description = x.Description,
+            State = (RowStateEnum)x.State
         }).ToList();
     }
 
@@ -47,7 +50,9 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
             UserName = hostApp.User.Username,
             Name = hostApp.Name,
             Domain = hostApp.Domain,
-            InternalUrl = hostApp.InternalUrl
+            InternalUrl = hostApp.InternalUrl,
+            Description = hostApp.Description, 
+            State = (RowStateEnum)hostApp.State
         };
     }
 
@@ -67,7 +72,8 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
             UserId = hostApplication.UserId,
             Name = hostApplication.Name,
             Domain = hostApplication.Domain,
-            InternalUrl = hostApplication.InternalUrl
+            InternalUrl = hostApplication.InternalUrl,
+            Description = hostApplication.Description
         };
 
         await _dbContext.HostApplications.AddAsync(app, cancellationToken);
@@ -103,6 +109,21 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
         await _dbContext.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Host application with Id {Id} updated.", hostApplication.Id);
         await _eventBus.PublishAsync<string>("Host_Application_Updated", cancellationToken);
+    }
+
+    public async Task UpdateStateAsync(long id, bool isActive, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Updating host application state. Id: {Id}, IsActive: {IsActive}", id, isActive);
+        var app = await _dbContext.HostApplications.Include(a => a.User).FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+        if (app == null)
+        {
+            _logger.LogWarning("Host application with Id {Id} not found for state update.", id);
+            throw new NotFoundException(id);
+        }
+        app.State = isActive ? Domain.Enums.RowStateEnum.Active : Domain.Enums.RowStateEnum.Inactive;
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _eventBus.PublishAsync<string>("Host_Application_State_Updated", cancellationToken);
+         
     }
 
     public async Task DeleteAsync(long id, CancellationToken cancellationToken)

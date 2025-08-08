@@ -51,11 +51,15 @@
             <td mat-cell *matCellDef="let element">{{ element.internalPort }}</td>
           </ng-container>
 
+ 
           <ng-container matColumnDef="isActive">
             <th mat-header-cell *matHeaderCellDef>Active</th>
             <td mat-cell *matCellDef="let element">
-              <mat-icon *ngIf="element.isActive" color="primary">check_circle</mat-icon>
-              <mat-icon *ngIf="!element.isActive" color="warn">cancel</mat-icon>
+              <mat-slide-toggle color="primary"
+                                [checked]="element.isActive"
+                                [disabled]="loading || pendingIds.has(element.id)"
+                                (change)="onToggleIsActive(element, $event.checked)">
+              </mat-slide-toggle>
             </td>
           </ng-container>
  

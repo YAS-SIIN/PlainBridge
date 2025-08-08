@@ -12,6 +12,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatGridListModule } from '@angular/material/grid-list'; 
 
 import { UsersRoutingModule } from './users-routing.module';
 import { UserRegistrationComponent } from './components/user-registration/user-registration.component';
@@ -26,6 +28,9 @@ import { UserRegistrationComponent } from './components/user-registration/user-r
     UsersRoutingModule,
     
     // Material modules
+    MatExpansionModule,    
+    MatGridListModule,
+    MatCardModule,
     MatCardModule,
     MatTableModule,
     MatPaginatorModule,

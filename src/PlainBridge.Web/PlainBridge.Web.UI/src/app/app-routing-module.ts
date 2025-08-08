@@ -10,6 +10,10 @@ const routes: Routes = [
     loadComponent: () => import('./features/sign-in-oidc/sign-in-oidc.component').then(m => m.SignInOidcComponent)
   },
   {
+    path: 'register',
+    loadChildren: () => import('./features/users/users.module').then(m => m.UsersModule)
+  },
+  {
     path: '',
     component: LayoutComponent,
     children: [
@@ -31,11 +35,6 @@ const routes: Routes = [
       {
         path: 'server-applications',
         loadChildren: () => import('./features/server-applications/server-applications.module').then(m => m.ServerApplicationsModule),
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'users',
-        loadChildren: () => import('./features/users/users.module').then(m => m.UsersModule),
         canActivate: [AuthGuard]
       }
     ]

@@ -3,11 +3,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
-import { ServerApplicationService } from '../../../../services/server-application.service'; 
 import { ToastService } from '../../../../services/toast.service';
 import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../../shared/components/confirmation-dialog/confirmation-dialog.component';
-import { ServerApplicationDto } from '../../../../models/server-application.models';
 import { HostApplicationService } from '../../../../services/host-application.service';
+import { ApiResponseService } from '../../../../services/api-response.service';
+import { HostApplicationDto, RowStateEnum } from '../../../../models';
 
 @Component({
   selector: 'app-host-applications-list',
@@ -17,16 +17,17 @@ import { HostApplicationService } from '../../../../services/host-application.se
 })
 export class HostApplicationsListComponent implements OnInit {
   displayedColumns: string[] = ['name', 'url', 'port', 'isActive',  'actions'];
-  dataSource: MatTableDataSource<ServerApplicationDto> = new MatTableDataSource();
+  dataSource: MatTableDataSource<HostApplicationDto> = new MatTableDataSource();
   loading = true;
+  pendingIds = new Set<number>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
   @ViewChild(MatSort) sort: MatSort | null = null;
 
   constructor(
     private hostApplicationService: HostApplicationService,
-    private toastService: ToastService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private apiResponseService: ApiResponseService
   ) {}
 
   ngOnInit(): void {
@@ -40,15 +41,15 @@ export class HostApplicationsListComponent implements OnInit {
 
   fetchHostApplications(): void {
     this.loading = true;
-    this.hostApplicationService.getAllApplications().subscribe({
-      next: (result: any) => {
-        if (result.isSuccess) {
-          this.dataSource.data = result.data;
-        }
+    this.apiResponseService.handleResponse(
+      this.hostApplicationService.getAllApplications(),
+      { showSuccessToast: false } // Don't show toast for loading data
+    ).subscribe({
+      next: (data) => {
+        this.dataSource.data = data;
         this.loading = false;
       },
-      error: (error: any) => {
-        this.toastService.error('Error fetching server applications');
+      error: () => {
         this.loading = false;
       }
     });
@@ -63,7 +64,7 @@ export class HostApplicationsListComponent implements OnInit {
     }
   }
 
-  deleteHostApplication(hostApplication: ServerApplicationDto): void {
+  deleteHostApplication(hostApplication: HostApplicationDto): void {
     const dialogData: ConfirmationDialogData = {
       title: 'Delete Confirmation',
       message: `Are you sure you want to delete host application "${hostApplication.name}"?`,
@@ -78,15 +79,41 @@ export class HostApplicationsListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.hostApplicationService.deleteApplication(hostApplication.id).subscribe({
+        this.apiResponseService.handleResponse(
+          this.hostApplicationService.deleteApplication(hostApplication.id)
+        ).subscribe({
           next: () => {
-            this.toastService.success('Host application deleted successfully');
             this.fetchHostApplications();
           },
           error: () => {
-            this.toastService.error('Error deleting host application');
+            // Error handling is done by ApiResponseService
           }
         });
+      }
+    });
+  }
+
+  onToggleIsActive(row: HostApplicationDto, isActive: boolean): void {
+    // optimistic update
+    const prev = row.isActive;
+      row.isActive = isActive ? RowStateEnum.Active : RowStateEnum.Inactive;
+    this.pendingIds.add(row.id);
+
+    this.apiResponseService.handleResponse(
+      this.hostApplicationService.patchIsActive(row.id, isActive),
+      { successMessage: 'Updated', errorMessage: 'Failed to update status' }
+    ).subscribe({
+      next: (updated) => {
+        // If backend returns state instead of isActive, normalize
+        if (typeof (updated as any).state !== 'undefined') {
+           row.isActive = (updated as any).state === 1 ? RowStateEnum.Active : RowStateEnum.Inactive;
+        }
+        this.pendingIds.delete(row.id);
+      },
+      error: () => {
+        // revert on error
+        row.isActive = prev;
+        this.pendingIds.delete(row.id);
       }
     });
   }

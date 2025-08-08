@@ -30,7 +30,7 @@ export class LayoutComponent implements OnInit {
   private loadCurrentUser(): void {
     this.userService.getCurrentUser().subscribe({
       next: (result) => {
-        if (result.isSuccess) {
+        if (result.resultCode === 0) {
           this.currentUser = result.data;
         }
       },

@@ -4,7 +4,7 @@ import { UserRegistrationComponent } from './components/user-registration/user-r
 
 const routes: Routes = [ 
   {
-    path: 'register',
+    path: '',
     component: UserRegistrationComponent
   }
 ];

@@ -16,13 +16,13 @@ public enum ResultCodeEnum : int
     RepeatedData = 102,
     
     [Display(Name = "{0} is invalid.")]
-    InvalidData = 102,
+    InvalidData = 103,
     
     [Display(Name = "{0} is null.")]
-    NullData = 103,
+    NullData = 104,
 
     [Display(Name = "This data can't delete.")]
-    NotDelete = 107,
+    NotDelete = 105,
 
     [Display(Name = "Action done successfully.")]
     Success = 0,

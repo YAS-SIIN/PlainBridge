@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HostApplicationService } from '../../../../services/host-application.service';
 import { HostApplicationDto } from '../../../../models';
 import { ToastService } from '../../../../services/toast.service';
+import { ApiResponseService } from '../../../../services/api-response.service';
 
 @Component({
   selector: 'app-host-application-form',
@@ -21,7 +22,7 @@ export class HostApplicationFormComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private hostApplicationService: HostApplicationService,
-    private toastService: ToastService
+    private apiResponseService: ApiResponseService
   ) {
     this.form = this.fb.group({
       name: ['', [Validators.required]],
@@ -41,15 +42,15 @@ export class HostApplicationFormComponent implements OnInit {
 
   private loadHostApplication(id: number): void {
     this.loading = true;
-    this.hostApplicationService.getApplication(id).subscribe({
-      next: (result) => {
-        if (result.isSuccess) {
-          this.form.patchValue(result.data);
-        }
+    this.apiResponseService.handleResponse(
+      this.hostApplicationService.getApplication(id),
+      { showSuccessToast: false } // Don't show toast for loading data
+    ).subscribe({
+      next: (data) => {
+        this.form.patchValue(data);
         this.loading = false;
       },
       error: () => {
-        this.toastService.error('Error loading host application');
         this.loading = false;
       }
     });
@@ -70,14 +71,14 @@ export class HostApplicationFormComponent implements OnInit {
 
   private createHostApplication(hostApplication: HostApplicationDto): void {
     this.loading = true;
-    this.hostApplicationService.createApplication(hostApplication).subscribe({
+    this.apiResponseService.handleResponse(
+      this.hostApplicationService.createApplication(hostApplication)
+    ).subscribe({
       next: () => {
-        this.toastService.success('Host application created successfully');
         this.router.navigate(['/host-applications']);
         this.loading = false;
       },
       error: () => {
-        this.toastService.error('Error creating host application');
         this.loading = false;
       }
     });
@@ -86,15 +87,16 @@ export class HostApplicationFormComponent implements OnInit {
   private updateHostApplication(hostApplication: HostApplicationDto): void {
     this.loading = true;
     const id = this.route.snapshot.paramMap.get('id')!;
-    this.hostApplicationService.updateApplication(Number(id), hostApplication).subscribe({
+    this.apiResponseService.handleResponse(
+      this.hostApplicationService.updateApplication(Number(id), hostApplication)
+    ).subscribe({
       next: () => {
-        this.toastService.success('Host application updated successfully');
         this.router.navigate(['/host-applications']);
         this.loading = false;
       },
       error: () => {
-        this.toastService.error('Error updating host application');
         this.loading = false;
       }
     });
-  }}
+  }
+}

@@ -4,6 +4,7 @@ import { UserService } from '../../../../services/user.service';
 import { ToastService } from '../../../../services/toast.service';
 import { Router } from '@angular/router';
 import { CreateUserDto } from '../../../../models';
+import { AuthService } from '../../../../services';
 
 @Component({
   selector: 'app-user-registration',
@@ -17,6 +18,7 @@ export class UserRegistrationComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private authService: AuthService,
     private userService: UserService,
     private toastService: ToastService,
     private router: Router
@@ -32,7 +34,7 @@ export class UserRegistrationComponent implements OnInit {
     }, { validators: this.passwordMatchValidator });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   onSubmit(): void {
     if (this.registrationForm.invalid) {
@@ -41,11 +43,17 @@ export class UserRegistrationComponent implements OnInit {
     this.loading = true;
     const user = this.registrationForm.value;
 
+ 
+
     this.userService.createUser(user).subscribe({
       next: () => {
         this.toastService.success('User registered successfully');
-        this.router.navigate(['/users']);
         this.loading = false;
+
+        setTimeout(() => {
+          this.authService.login(); // Redirect to login after registration 
+        }, 1000);
+        
       },
       error: () => {
         this.toastService.error('Error registering user');

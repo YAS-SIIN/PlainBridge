@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using PlainBridge.Api.Application.DTOs;
+using PlainBridge.Api.Domain.Entities;
 using PlainBridge.Api.Infrastructure.Data.Context;
 using PlainBridge.Api.Infrastructure.Messaging;
 using PlainBridge.SharedApplication.DTOs;
@@ -28,7 +29,9 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
             UserId = x.UserId,
             UserName = x.User.Username,
             Name = x.Name,
-            InternalPort = x.InternalPort
+            InternalPort = x.InternalPort,
+            Description = x.Description,
+            State = (RowStateEnum)x.State,
         }).ToList();
     }
      
@@ -48,7 +51,9 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
             UserId = serverApp.UserId,
             UserName = serverApp.User.Username,
             Name = serverApp.Name,
-            InternalPort = serverApp.InternalPort
+            InternalPort = serverApp.InternalPort,
+            Description = serverApp.Description,
+            State = (RowStateEnum)serverApp.State
         };
     }
 
@@ -81,6 +86,7 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
             UserId = serverApplication.UserId,
             InternalPort = serverApplication.InternalPort,
             State = (Domain.Enums.RowStateEnum)RowStateEnum.Inactive,
+            Description = serverApplication.Description
         };
 
         await _dbContext.ServerApplications.AddAsync(app, cancellationToken);
@@ -103,10 +109,26 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
 
         app.InternalPort = serverApplication.InternalPort;
         app.Name = serverApplication.Name;
+        app.Description = serverApplication.Description;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         await _eventBus.PublishAsync<string>("Server_Application_Updated", cancellationToken);
         _logger.LogInformation("Server application with Id: {Id} updated.", serverApplication.Id);
+    }
+
+    public async Task UpdateStateAsync(long id, bool isActive, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Updating server application state. Id: {Id}, IsActive: {IsActive}", id, isActive);
+        var app = await _dbContext.ServerApplications.Include(a => a.User).FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+        if (app == null)
+        {
+            _logger.LogWarning("Server application with Id: {Id} not found for state update.", id);
+            throw new NotFoundException(id);
+        }
+        app.State = isActive ? Domain.Enums.RowStateEnum.Active : Domain.Enums.RowStateEnum.Inactive;
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _eventBus.PublishAsync<string>("Server_Application_State_Updated", cancellationToken);
+         
     }
 
     public async Task DeleteAsync(long id, CancellationToken cancellationToken)

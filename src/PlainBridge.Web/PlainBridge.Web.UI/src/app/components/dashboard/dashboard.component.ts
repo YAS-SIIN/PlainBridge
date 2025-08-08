@@ -19,7 +19,7 @@ export class DashboardComponent implements OnInit {
     private hostApplicationService: HostApplicationService,
     private serverApplicationService: ServerApplicationService,
     private userService: UserService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -31,35 +31,30 @@ export class DashboardComponent implements OnInit {
     // Load host applications count
     this.hostApplicationService.getAllApplications().subscribe({
       next: (result) => {
-        if (result.isSuccess) {
+        if (result.resultCode === 0) {
           this.hostApplicationsCount = result.data.length;
         }
+        this.loading = false;
       },
-      error: (error) => console.error('Error loading host applications:', error)
+      error: (error) => {
+        console.error('Error loading host applications:', error);
+        this.loading = false;
+      }
     });
 
     // Load server applications count
     this.serverApplicationService.getAllApplications().subscribe({
       next: (result) => {
-        if (result.isSuccess) {
+        if (result.resultCode === 0) {
           this.serverApplicationsCount = result.data.length;
-        }
-      },
-      error: (error) => console.error('Error loading server applications:', error)
-    });
-
-    // Load users count
-    this.userService.getAllUsers().subscribe({
-      next: (result) => {
-        if (result.isSuccess) {
-          this.usersCount = result.data.length;
         }
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading users:', error);
+        console.error('Error loading server applications:', error);
         this.loading = false;
       }
     });
+
   }
 }

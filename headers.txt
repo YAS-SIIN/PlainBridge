@@ -1,0 +1,23 @@
+HTTP/1.1 302 Found
+Content-Length: 0
+Date: Thu, 07 Aug 2025 23:26:25 GMT
+Server: Kestrel
+Alt-Svc: h3=":5001"; ma=86400
+Location: https://localhost:5003/connect/authorize?client_id=bff&request_uri=urn%3Aietf%3Aparams%3Aoauth%3Arequest_uri%3A9B29282DC1B1EAB47005A335FAD7A3C4BAC14DEC6D7375DC96B39522DADF97F1&x-client-SKU=ID_NET9_0&x-client-ver=8.0.1.0
+Set-Cookie: .AspNetCore.OpenIdConnect.Nonce.CfDJ8LqqoRwYNWlFremmr6njkKiBkxEWhy2rTyGPCHSrEHAi-Lmtncyjd028efCkGlTUqgxKr8l-MzX2o22FdvGe7Tqr6sK6oVcXFd-FBCZpuznxU23XCjCacpKsOOB938hS6JCQF4Waidlmgdc8xzrxdVZLfHgchRLCQ1FjszBxto7kKvKVGe-EQsqTPHhjk7BYl22VPd2vdQbPT0NyJL5Pxxsvp1X3HYGA4AlIW7wX-PdCHGQhLFMohN8gPHMqw4u3gNHSJJgeiiCJk4ez9cDYKIw=N; expires=Thu, 07 Aug 2025 23:41:25 GMT; path=/signin-oidc; secure; samesite=none; httponly
+Set-Cookie: .AspNetCore.Correlation.s5sG7j73UMxrF3cAOBZH6s1_qLYTpz-E3PSOiZrEGHw=N; expires=Thu, 07 Aug 2025 23:41:25 GMT; path=/signin-oidc; secure; samesite=none; httponly
+
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=UTF-8
+Date: Thu, 07 Aug 2025 23:26:25 GMT
+Server: Kestrel
+Alt-Svc: h3=":5003"; ma=86400
+Cache-Control: no-store, no-cache, max-age=0
+Expires: Thu, 01 Jan 1970 00:00:00 GMT
+Pragma: no-cache
+Set-Cookie: .AspNetCore.Identity.Application=CfDJ8LqqoRwYNWlFremmr6njkKj_P6izhFwtychTOdUNJuTjszZ6CesdAxEixcIhXA9h4kmrho1zK6OfSX5GxVDp1OJAiHfw0YU-rbVNJbBF7r-Rg-WRi8KiIMXqsc2_mEk1vZbrlJsYcL0LlT-mlYebYp2GFx07zBNzcd0tI1xDS5CStC3GBt9hjFoGSaAAk4YP90Nn8JdnYrlc60jGdJswKVX_EibO0YLJaZPYOVwYjH0GVVPXCQsF9eona7DIaSO-as8NL8fCu3c19qE8iocoQepBDhRnxqq-HeTRZPJNzoXVj4JCKiOrnz6jTUU2WGKJ8d55sUR2v3R4jxRBeRgkuNs11EDmjVCV7IJBn_UPpFGyvmiwXkcLRkXJ0ZjrK7IOI44sBzYpBI-OqEd0xi2nWz9mRG1LZz9ZiD0kl2TutavW4xQXFlMJRNQyCXPvlE7nV9GINBEuvcFuXztdBPssdhvQGTYWjQ6SrqfImFqPO6PjKSUTfZ14ZosWWJOi73wdrTS1bHMD14kbR9INK7ZTQ0D6Clb1ExuovnKA_co87ZoYNu8l5xXg2lcO2FmhW_dCmYljlPG671ke1jPue7dGL84; path=/; secure; samesite=lax; httponly
+Transfer-Encoding: chunked
+Content-Security-Policy: default-src 'none'; script-src 'sha256-orD0/VhH8hLqrLxKHD/HUEMdwqX6/0ve7c5hspX5VJ8='
+X-Content-Security-Policy: default-src 'none'; script-src 'sha256-orD0/VhH8hLqrLxKHD/HUEMdwqX6/0ve7c5hspX5VJ8='
+Referrer-Policy: no-referrer
+

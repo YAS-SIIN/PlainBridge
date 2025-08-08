@@ -1,3 +1,7 @@
+:host ::ng-deep body {
+  background-color: #2669ce !important;
+}
+
 .user-registration-form-container {
   padding: 24px;
   max-width: 600px;

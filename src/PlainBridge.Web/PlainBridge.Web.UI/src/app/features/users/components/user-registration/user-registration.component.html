@@ -1,73 +1,94 @@
-<div class="user-registration-form-container">
-  <mat-card class="mat-elevation-z4">
-    <mat-card-title>User Registration</mat-card-title>
+<div style="background-color: #2669ce;">
+  <div class="user-registration-form-container">
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>border_color</mat-icon> Registration
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
-    <mat-card-content>
-      <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Username</mat-label>
-          <input matInput formControlName="username" placeholder="Username">
-          <mat-error *ngIf="registrationForm.get('username')?.invalid && (registrationForm.get('username')?.dirty || registrationForm.get('username')?.touched)">
-            <ng-container *ngIf="registrationForm.get('username')?.errors?.['required']">Username is required.</ng-container>
-          </mat-error>
-        </mat-form-field>
+      <mat-card-content>
+        <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Username</mat-label>
+            <input matInput formControlName="username" placeholder="Username">
+            <mat-error
+              *ngIf="registrationForm.get('username')?.invalid && (registrationForm.get('username')?.dirty || registrationForm.get('username')?.touched)">
+              <ng-container *ngIf="registrationForm.get('username')?.errors?.['required']">Username is
+                required.</ng-container>
+            </mat-error>
+          </mat-form-field>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" placeholder="Email">
-          <mat-error *ngIf="registrationForm.get('email')?.invalid && (registrationForm.get('email')?.dirty || registrationForm.get('email')?.touched)">
-            <ng-container *ngIf="registrationForm.get('email')?.errors?.['required']">Email is required.</ng-container>
-            <ng-container *ngIf="registrationForm.get('email')?.errors?.['email']">Invalid email address.</ng-container>
-          </mat-error>
-        </mat-form-field>
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" placeholder="Email">
+            <mat-error
+              *ngIf="registrationForm.get('email')?.invalid && (registrationForm.get('email')?.dirty || registrationForm.get('email')?.touched)">
+              <ng-container *ngIf="registrationForm.get('email')?.errors?.['required']">Email is
+                required.</ng-container>
+              <ng-container *ngIf="registrationForm.get('email')?.errors?.['email']">Invalid email
+                address.</ng-container>
+            </mat-error>
+          </mat-form-field>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>First Name</mat-label>
-          <input matInput formControlName="name" placeholder="First Name">
-          <mat-error *ngIf="registrationForm.get('name')?.invalid && (registrationForm.get('name')?.dirty || registrationForm.get('name')?.touched)">
-            <ng-container *ngIf="registrationForm.get('name')?.errors?.['required']">First name is required.</ng-container>
-          </mat-error>
-        </mat-form-field>
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="name" placeholder="First Name">
+            <mat-error
+              *ngIf="registrationForm.get('name')?.invalid && (registrationForm.get('name')?.dirty || registrationForm.get('name')?.touched)">
+              <ng-container *ngIf="registrationForm.get('name')?.errors?.['required']">First name is
+                required.</ng-container>
+            </mat-error>
+          </mat-form-field>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Last Name</mat-label>
-          <input matInput formControlName="family" placeholder="Last Name">
-          <mat-error *ngIf="registrationForm.get('family')?.invalid && (registrationForm.get('family')?.dirty || registrationForm.get('family')?.touched)">
-            <ng-container *ngIf="registrationForm.get('family')?.errors?.['required']">Last name is required.</ng-container>
-          </mat-error>
-        </mat-form-field>
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="family" placeholder="Last Name">
+            <mat-error
+              *ngIf="registrationForm.get('family')?.invalid && (registrationForm.get('family')?.dirty || registrationForm.get('family')?.touched)">
+              <ng-container *ngIf="registrationForm.get('family')?.errors?.['required']">Last name is
+                required.</ng-container>
+            </mat-error>
+          </mat-form-field>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Phone Number</mat-label>
-          <input matInput formControlName="phoneNumber" placeholder="Phone Number (Optional)">
-        </mat-form-field>
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Phone Number</mat-label>
+            <input matInput formControlName="phoneNumber" placeholder="Phone Number (Optional)">
+          </mat-form-field>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Password</mat-label>
-          <input matInput type="password" formControlName="password" placeholder="Password">
-          <mat-error *ngIf="registrationForm.get('password')?.invalid && (registrationForm.get('password')?.dirty || registrationForm.get('password')?.touched)">
-            <ng-container *ngIf="registrationForm.get('password')?.errors?.['required']">Password is required.</ng-container>
-            <ng-container *ngIf="registrationForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters long.</ng-container>
-          </mat-error>
-        </mat-form-field>
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput type="password" formControlName="password" placeholder="Password">
+            <mat-error
+              *ngIf="registrationForm.get('password')?.invalid && (registrationForm.get('password')?.dirty || registrationForm.get('password')?.touched)">
+              <ng-container *ngIf="registrationForm.get('password')?.errors?.['required']">Password is
+                required.</ng-container>
+              <ng-container *ngIf="registrationForm.get('password')?.errors?.['minlength']">Password must be at least 6
+                characters long.</ng-container>
+            </mat-error>
+          </mat-form-field>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Confirm Password</mat-label>
-          <input matInput type="password" formControlName="confirmPassword" placeholder="Confirm Password">
-          <mat-error *ngIf="registrationForm.errors?.['mismatch'] && (registrationForm.get('confirmPassword')?.dirty || registrationForm.get('confirmPassword')?.touched)">
-            Passwords must match.
-          </mat-error>
-        </mat-form-field>
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Confirm Password</mat-label>
+            <input matInput type="password" formControlName="confirmPassword" placeholder="Confirm Password">
+            <mat-error
+              *ngIf="registrationForm.errors?.['mismatch'] && (registrationForm.get('confirmPassword')?.dirty || registrationForm.get('confirmPassword')?.touched)">
+              Passwords must match.
+            </mat-error>
+          </mat-form-field>
 
-      </form>
-    </mat-card-content>
+        </form>
+      </mat-card-content>
 
-    <mat-card-actions align="end">
-      <button mat-button type="button" (click)="loading = false; registrationForm.reset();">Cancel</button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="registrationForm.invalid || loading" (click)="onSubmit()">
-        <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
-        Register
-      </button>
-    </mat-card-actions>
-  </mat-card>
+      <mat-card-actions align="end">
+        <button mat-button type="button" (click)="loading = false; registrationForm.reset();">Cancel</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="registrationForm.invalid || loading"
+          (click)="onSubmit()">
+          <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+          Register
+        </button>
+      </mat-card-actions>
+
+    </mat-expansion-panel>
+  </div>
 </div>

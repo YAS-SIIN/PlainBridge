@@ -8,6 +8,7 @@
 
     <mat-card-content>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Name</mat-label>
           <input matInput formControlName="name" placeholder="Server application name">
@@ -18,24 +19,38 @@
         </mat-form-field>
 
         <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Description</mat-label>
-          <textarea matInput formControlName="description" placeholder="Optional description"></textarea>
+          <mat-label>Server Application App ID</mat-label>
+          <input matInput formControlName="serverApplicationAppId" placeholder="Server Application App ID">
         </mat-form-field>
         
         <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Port</mat-label>
-          <input matInput type="number" formControlName="port" placeholder="80">
-          <mat-error *ngIf="form.get('port')?.invalid && form.get('port')?.touched">
-            <span *ngIf="form.get('port')?.errors?.['required']">Port is required</span>
-            <span *ngIf="form.get('port')?.errors?.['min']">Port must be greater than 0</span>
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" placeholder="Optional description"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Internal Port</mat-label>
+          <input matInput type="number" formControlName="internalPort" placeholder="80">
+          <mat-error *ngIf="internalPort?.invalid && internalPort?.touched">
+            <span *ngIf="internalPort?.errors?.['required']">Internal port is required</span>
+            <span *ngIf="internalPort?.errors?.['min']">Port must be greater than 0</span>
           </mat-error>
         </mat-form-field>
 
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Server Application Type</mat-label>
+          <mat-select formControlName="serverApplicationType">
+            <mat-option *ngFor="let type of serverApplicationTypes" [value]="type.value">
+              {{ type.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+ 
       </form>
     </mat-card-content>
 
     <mat-card-actions align="end">
-      <button mat-button type="button" color="warn" routerLink="/server">Cancel</button>
+      <button mat-button type="button" color="warn" (click)="onCancel()">Cancel</button>
       <button mat-raised-button color="primary" [disabled]="form.invalid || loading" (click)="onSubmit()">
         <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
         {{ isEditMode ? 'Update' : 'Create' }}

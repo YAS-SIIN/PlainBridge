@@ -27,11 +27,10 @@ public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
         _serverApplicationService = new ServerApplicationService(_mockLoggerServerApplicationService.Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
     }
 
-    [Theory]
-    [InlineData(1)]
-    public async Task GetAllAsync_WhenEveryThingIsOk_ShouldReturnData(long userId)
+    [Fact] 
+    public async Task GetAllAsync_WhenEveryThingIsOk_ShouldReturnData()
     {
-        var result = await _serverApplicationService.GetAllAsync(userId, CancellationToken.None);
+        var result = await _serverApplicationService.GetAllAsync(CancellationToken.None);
         Assert.NotNull(result);
         Assert.True(result.Count > 0);
     }

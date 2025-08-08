@@ -3,11 +3,9 @@ import { BaseEntity } from './base.models';
 export interface ServerApplicationDto extends BaseEntity {
   appId: string;
   serverApplicationAppId: string; 
-  name: string;
-  description?: string;
+  name: string; 
   internalPort: number;
-  serverApplicationType: ServerApplicationTypeEnum;
-  isActive: boolean;
+  serverApplicationType: ServerApplicationTypeEnum; 
   userId: number;
   userName: string;
 }

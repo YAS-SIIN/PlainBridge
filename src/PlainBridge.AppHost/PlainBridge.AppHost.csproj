@@ -18,6 +18,8 @@
     <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.3.1" />
     <PackageReference Include="Aspire.Hosting.Redis" Version="9.3.1" />
     <PackageReference Include="Elastic.Aspire.Hosting.Elasticsearch" Version="9.3.0" />
+    <PackageReference Include="Serilog" Version="4.3.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>

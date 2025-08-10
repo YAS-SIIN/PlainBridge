@@ -1,16 +1,19 @@
 
 using System.Globalization;
+using Elastic.Clients.Elasticsearch;
+using Elastic.Serilog.Sinks;
+using PlainBridge.Api.ApiEndPoint;
 using PlainBridge.Api.ApiEndPoint.Endpoints;
 using PlainBridge.Api.Application.DTOs;
-using Serilog;
-using PlainBridge.Api.ApiEndPoint;
+using Serilog; 
 
 
-Log.Logger = new LoggerConfiguration()
+var simpleLogger = new LoggerConfiguration()
     .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
     .CreateBootstrapLogger();
 
-Log.Information("Starting up");
+simpleLogger.Information("Starting up");
+
 
 try
 { 
@@ -18,16 +21,17 @@ try
      
     builder.AddServiceDefaults();
 
+    builder.AddRabbitMQClient(connectionName: "messaging");
+    builder.AddRedisClient(connectionName: "cache");
+    builder.AddElasticsearchClient(connectionName: "elasticsearch");
+     
     builder.Host.UseSerilog((ctx, services, lc) => lc
-        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", formatProvider: CultureInfo.InvariantCulture)
-        .Enrich.FromLogContext()
-        .ReadFrom.Configuration(ctx.Configuration)
+        .WriteTo.Elasticsearch()
+        .Enrich.FromLogContext() 
         .ReadFrom.Services(services), preserveStaticLogger: true);
 
     builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
 
-    builder.AddRabbitMQClient(connectionName: "messaging");
-    builder.AddRedisClient(connectionName: "cache");
 
     builder.Services.AddApiProjectServices();
 
@@ -56,10 +60,9 @@ try
 }
 catch (Exception ex) when (ex is not HostAbortedException)
 {
-    Log.Fatal(ex, "Unhandled exception");
+    simpleLogger.Fatal(ex, "Unhandled exception");
 }
 finally
 {
-    Log.Information("Shut down complete");
-    Log.CloseAndFlush();
+    simpleLogger.Information("Shut down complete"); 
 }

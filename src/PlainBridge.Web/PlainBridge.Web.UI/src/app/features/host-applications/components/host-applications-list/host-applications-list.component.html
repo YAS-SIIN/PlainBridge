@@ -56,7 +56,7 @@
             <th mat-header-cell *matHeaderCellDef>Active</th>
             <td mat-cell *matCellDef="let element">
               <mat-slide-toggle color="primary" [checked]="element.isActive"
-                [disabled]="loading || pendingIds.has(element.id)" (change)="onToggleIsActive(element, $event.checked)">
+                [disabled]="loading" (change)="onToggleIsActive(element, $event.checked)">
               </mat-slide-toggle>
             </td>
           </ng-container>

@@ -18,8 +18,7 @@ import { HostApplicationDto, RowStateEnum } from '../../../../models';
 export class HostApplicationsListComponent implements OnInit {
   displayedColumns: string[] = ['appId', 'name', 'domain', 'internalUrl', 'isActive',  'actions'];
   dataSource: MatTableDataSource<HostApplicationDto> = new MatTableDataSource();
-  loading = true;
-  pendingIds = new Set<number>();
+  loading = true; 
 
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
   @ViewChild(MatSort) sort: MatSort | null = null;
@@ -98,7 +97,6 @@ export class HostApplicationsListComponent implements OnInit {
     // optimistic update
     const prev = row.isActive;
       row.isActive = isActive ? RowStateEnum.Active : RowStateEnum.Inactive;
-    this.pendingIds.add(row.id);
 
     this.apiResponseService.handleResponse(
       this.hostApplicationService.patchIsActive(row.id, isActive),
@@ -109,12 +107,10 @@ export class HostApplicationsListComponent implements OnInit {
         if (typeof (updated as any).state !== 'undefined') {
            row.isActive = (updated as any).state === 1 ? RowStateEnum.Active : RowStateEnum.Inactive;
         }
-        this.pendingIds.delete(row.id);
       },
       error: () => {
         // revert on error
         row.isActive = prev;
-        this.pendingIds.delete(row.id);
       }
     });
   }

@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Duende.IdentityServer" Version="7.2.4" />
+    <PackageReference Include="Elastic.Clients.Elasticsearch.Aspire" Version="9.3.0" />
+    <PackageReference Include="Elastic.Serilog.Sinks" Version="8.18.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.6" />

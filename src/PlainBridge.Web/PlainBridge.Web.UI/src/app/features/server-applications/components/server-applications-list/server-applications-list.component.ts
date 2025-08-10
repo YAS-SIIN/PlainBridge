@@ -19,7 +19,6 @@ export class ServerApplicationsListComponent implements OnInit {
   displayedColumns: string[] = ['appId', 'name', 'serverApplicationAppId', 'internalPort', 'isActive', 'actions'];
   dataSource: MatTableDataSource<ServerApplicationDto> = new MatTableDataSource();
   loading = true;
-  pendingIds = new Set<number>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
   @ViewChild(MatSort) sort: MatSort | null = null;
@@ -97,7 +96,6 @@ export class ServerApplicationsListComponent implements OnInit {
   onToggleIsActive(row: ServerApplicationDto, isActive: boolean): void {
     const prev = row.isActive;
     row.isActive = isActive ? RowStateEnum.Active : RowStateEnum.Inactive;
-    this.pendingIds.add(row.id);
 
     this.apiResponseService.handleResponse(
       this.serverApplicationService.patchIsActive(row.id, isActive),
@@ -107,11 +105,9 @@ export class ServerApplicationsListComponent implements OnInit {
         if (typeof (updated as any).state !== 'undefined') {
           row.isActive = (updated as any).state === 1 ? RowStateEnum.Active : RowStateEnum.Inactive;
         }
-        this.pendingIds.delete(row.id);
       },
       error: () => {
         row.isActive = prev;
-        this.pendingIds.delete(row.id);
       }
     });
   }

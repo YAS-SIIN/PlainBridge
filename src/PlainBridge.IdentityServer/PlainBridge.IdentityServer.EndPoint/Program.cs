@@ -1,24 +1,28 @@
 using System.Globalization; 
 using PlainBridge.IdentityServer.EndPoint; 
 using PlainBridge.IdentityServer.EndPoint.DTOs;
-using PlainBridge.IdentityServer.EndPoint.Endpoints; 
+using PlainBridge.IdentityServer.EndPoint.Endpoints;
+using Elastic.Serilog.Sinks;
 
 using Serilog;
 
-Log.Logger = new LoggerConfiguration()
+var simpleLogger = new LoggerConfiguration()
     .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
     .CreateBootstrapLogger();
 
-Log.Information("Starting up");
+simpleLogger.Information("Starting up");
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Host.UseSerilog((ctx, lc) => lc
-        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", formatProvider: CultureInfo.InvariantCulture)
+    builder.AddElasticsearchClient(connectionName: "elasticsearch");
+
+    builder.Host.UseSerilog((ctx, services, lc) => lc
+        .WriteTo.Elasticsearch()
         .Enrich.FromLogContext()
-        .ReadFrom.Configuration(ctx.Configuration));
+        .ReadFrom.Services(services), preserveStaticLogger: true);
+
 
     builder.AddServiceDefaults();
 
@@ -59,11 +63,10 @@ try
 }
 catch (Exception ex) when (ex is not HostAbortedException)
 {
-    Log.Fatal(ex, "Unhandled exception");
+    simpleLogger.Fatal(ex, "Unhandled exception");
 }
 finally
 {
-    Log.Information("Shut down complete");
-    Log.CloseAndFlush();
+    simpleLogger.Information("Shut down complete"); 
 }
 

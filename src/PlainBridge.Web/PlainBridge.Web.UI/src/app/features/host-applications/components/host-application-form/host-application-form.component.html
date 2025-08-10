@@ -1,11 +1,11 @@
 <div>
   <mat-expansion-panel [expanded]="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            <mat-icon>border_color</mat-icon> {{ isEditMode ? 'Edit' : 'Create' }} Host Application
-          </mat-panel-title> 
-        </mat-expansion-panel-header>
- 
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>border_color</mat-icon> {{ isEditMode ? 'Edit' : 'Create' }} Host Application
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
     <mat-card-content>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="fill" class="full-width">
@@ -17,34 +17,36 @@
         </mat-form-field>
 
         <mat-form-field appearance="fill" class="full-width">
-          <mat-label>URL</mat-label>
-          <input matInput formControlName="url" placeholder="https://example.com">
-          <mat-error *ngIf="form.get('url')?.invalid && form.get('url')?.touched">
-            <span *ngIf="form.get('url')?.errors?.['required']">URL is required</span>
-            <span *ngIf="form.get('url')?.errors?.['pattern']">Please enter a valid URL</span>
+          <mat-label>Domain</mat-label>
+          <input matInput formControlName="domain" placeholder="example.com">
+          <mat-error *ngIf="form.get('domain')?.invalid && form.get('domain')?.touched">
+            Domain is required
           </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Port</mat-label>
-          <input matInput type="number" formControlName="port" placeholder="80">
-          <mat-error *ngIf="form.get('port')?.invalid && form.get('port')?.touched">
-            <span *ngIf="form.get('port')?.errors?.['required']">Port is required</span>
-            <span *ngIf="form.get('port')?.errors?.['min']">Port must be greater than 0</span>
+          <mat-label>Internal URL</mat-label>
+          <input matInput formControlName="internalUrl" placeholder="https://internal.example.com">
+          <mat-error *ngIf="form.get('internalUrl')?.invalid && form.get('internalUrl')?.touched">
+            Internal URL is required
           </mat-error>
         </mat-form-field>
- 
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" placeholder="Optional description"></textarea>
+        </mat-form-field>
+
       </form>
     </mat-card-content>
 
     <mat-card-actions align="end">
       <button mat-button type="button" color="warn" routerLink="/host-applications">Cancel</button>
-      <button mat-raised-button color="primary" 
-              [disabled]="form.invalid || loading" 
-              (click)="onSubmit()">
+      <button mat-raised-button color="primary" [disabled]="form.invalid || loading || isDetailMode"
+        (click)="onSubmit()">
         <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
-        {{ isEditMode ? 'Update' : 'Create' }}
+        {{ isEditMode ? 'Update' : (isDetailMode ? 'View' : 'Create') }}
       </button>
-    </mat-card-actions> 
-</mat-expansion-panel>
+    </mat-card-actions>
+  </mat-expansion-panel>
 </div>

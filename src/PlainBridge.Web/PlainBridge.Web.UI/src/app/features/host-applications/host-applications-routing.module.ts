@@ -15,6 +15,10 @@ const routes: Routes = [
   {
     path: ':id/edit',
     component: HostApplicationFormComponent
+  },
+  {
+    path: ':id/detail',
+    component: HostApplicationFormComponent
   }
 ];
 

@@ -16,6 +16,7 @@ export class ServerApplicationFormComponent implements OnInit {
   form: FormGroup;
   isEditMode = false;
   loading = false;
+  isDetailMode = false; // Add this flag
   serverApplicationTypes = [
     { value: ServerApplicationTypeEnum.SharePort, label: 'Share Port' },
     { value: ServerApplicationTypeEnum.UsePort, label: 'Use Port' }
@@ -29,7 +30,7 @@ export class ServerApplicationFormComponent implements OnInit {
     private apiResponseService: ApiResponseService
   ) {
     this.form = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2)]],
+      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
       description: [''],
       // serverApplicationAppId: [''],
       internalPort: ['', [Validators.required, Validators.min(1)]],
@@ -38,9 +39,16 @@ export class ServerApplicationFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
+    let pageMode = this.router.url.includes('/detail') ? 'view' : 'edit';
+    if (pageMode === 'view') {
+      this.isDetailMode = true;
+      this.form.disable();
+    } else if (pageMode === 'edit') {
       this.isEditMode = true;
+    }
+
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) { 
       this.loadServerApplication(Number(id));
     }
   }
@@ -54,6 +62,10 @@ export class ServerApplicationFormComponent implements OnInit {
       next: (result) => {
         if (result) {
           this.form.patchValue(result);
+        }
+        // If in detail mode, ensure form stays disabled after patchValue
+        if (this.isDetailMode) {
+          this.form.disable();
         }
         this.loading = false;
       },

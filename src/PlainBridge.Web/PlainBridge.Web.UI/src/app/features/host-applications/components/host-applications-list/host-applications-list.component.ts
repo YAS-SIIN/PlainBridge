@@ -16,7 +16,7 @@ import { HostApplicationDto, RowStateEnum } from '../../../../models';
   styleUrls: ['./host-applications-list.component.css']
 })
 export class HostApplicationsListComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'url', 'port', 'isActive',  'actions'];
+  displayedColumns: string[] = ['name', 'domain', 'internalUrl', 'isActive',  'actions'];
   dataSource: MatTableDataSource<HostApplicationDto> = new MatTableDataSource();
   loading = true;
   pendingIds = new Set<number>();
@@ -117,4 +117,6 @@ export class HostApplicationsListComponent implements OnInit {
       }
     });
   }
+
+  
 }

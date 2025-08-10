@@ -42,60 +42,7 @@ public static class UserEndpoint
                 ResultCodeEnum.Success.ToDisplayName()
             ));
         }).WithName("GetCurrentUser");
-
-        // TEMPORARY: Debug claims endpoint - open to all (no auth required)
-        app.MapGet("debug/claims", (HttpContext httpContext, ILoggerFactory loggerFactory) =>
-        {
-            var logger = loggerFactory.CreateLogger("ClaimsDebug");
-            var claimsDump = string.Join("\n", httpContext.User.Claims.Select(c => $"{c.Type} = {c.Value}"));
-            logger.LogInformation("Claims dump:\n{Claims}", claimsDump);
-            
-            var response = new {
-                IsAuthenticated = httpContext.User.Identity?.IsAuthenticated ?? false,
-                AuthenticationType = httpContext.User.Identity?.AuthenticationType,
-                Name = httpContext.User.Identity?.Name,
-                Claims = httpContext.User.Claims.ToDictionary(c => c.Type, c => c.Value),
-                // Additional debug info
-                RequestHeaders = httpContext.Request.Headers.ToDictionary(h => h.Key, h => h.Value.ToString()),
-                CookiesCount = httpContext.Request.Cookies.Count,
-                HasAuthorizationHeader = httpContext.Request.Headers.ContainsKey("Authorization")
-            };
-            
-            logger.LogInformation("Debug response: {Response}", System.Text.Json.JsonSerializer.Serialize(response));
-            return Results.Ok(response);
-        }).WithName("DebugClaims");
-        
-        // TEMPORARY: Debug claims endpoint with Cookie auth requirement
-        app.MapGet("debug/claims-cookie", (HttpContext httpContext, ILoggerFactory loggerFactory) =>
-        {
-            var logger = loggerFactory.CreateLogger("ClaimsDebug");
-            var claimsDump = string.Join("\n", httpContext.User.Claims.Select(c => $"{c.Type} = {c.Value}"));
-            logger.LogInformation("Cookie auth - Claims dump:\n{Claims}", claimsDump);
-            
-            return Results.Ok(new { 
-                IsAuthenticated = httpContext.User.Identity?.IsAuthenticated ?? false,
-                AuthenticationType = httpContext.User.Identity?.AuthenticationType,
-                Name = httpContext.User.Identity?.Name,
-                Claims = httpContext.User.Claims.ToDictionary(c => c.Type, c => c.Value)
-            });
-        }).RequireAuthorization().WithName("DebugClaimsCookie");
-        
-        // TEMPORARY: Debug claims endpoint with JWT Bearer auth requirement
-        app.MapGet("debug/claims-jwt", (HttpContext httpContext, ILoggerFactory loggerFactory) =>
-        {
-            var logger = loggerFactory.CreateLogger("ClaimsDebug");
-            var claimsDump = string.Join("\n", httpContext.User.Claims.Select(c => $"{c.Type} = {c.Value}"));
-            logger.LogInformation("JWT Bearer auth - Claims dump:\n{Claims}", claimsDump);
-            
-            return Results.Ok(new { 
-                IsAuthenticated = httpContext.User.Identity?.IsAuthenticated ?? false,
-                AuthenticationType = httpContext.User.Identity?.AuthenticationType,
-                Name = httpContext.User.Identity?.Name,
-                Claims = httpContext.User.Claims.ToDictionary(c => c.Type, c => c.Value)
-            });
-        }).RequireAuthorization(new Microsoft.AspNetCore.Authorization.AuthorizeAttribute { AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme }).WithName("DebugClaimsJwt");
-
-
+         
         // CreateAsync
         app.MapPost("", async ([FromBody] UserDto user, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IUserService userService) =>
         { 

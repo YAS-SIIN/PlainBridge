@@ -1,0 +1,10 @@
+.container { display: grid; gap: 16px; padding: 16px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.profile-card, .password-card { width: 100%; }
+.skeleton { display: flex; align-items: center; justify-content: center; min-height: 120px; }
+.strength { display: inline-block; width: 80px; height: 6px; background: #e0e0e0; position: relative; border-radius: 3px; overflow: hidden; }
+.strength::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0; transition: width .3s; background: #f44336; }
+.strength.s1::after { width: 25%; background: #f44336; }
+.strength.s2::after { width: 50%; background: #ff9800; }
+.strength.s3::after { width: 75%; background: #cddc39; }
+.strength.s4::after { width: 100%; background: #4caf50; }

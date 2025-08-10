@@ -36,6 +36,11 @@ const routes: Routes = [
         path: 'server-applications',
         loadChildren: () => import('./features/server-applications/server-applications.module').then(m => m.ServerApplicationsModule),
         canActivate: [AuthGuard]
+      },
+      {
+        path: 'profile',
+        loadChildren: () => import('./features/profile/profile.module').then(m => m.ProfileModule),
+        canActivate: [AuthGuard]
       }
     ]
   }

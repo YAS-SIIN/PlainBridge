@@ -6,4 +6,5 @@ export interface HostApplicationDto extends BaseEntity {
   domain: string;
   internalUrl: string; 
   userId: number; 
+  userName: string;
 }

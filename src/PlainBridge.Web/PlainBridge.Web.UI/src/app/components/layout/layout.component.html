@@ -9,7 +9,7 @@
           <mat-icon>account_circle</mat-icon>
         </button>
         <mat-menu #userMenu="matMenu">
-          <button mat-menu-item routerLink="/profile">
+          <button mat-menu-item [routerLink]="['/profile']">
             <mat-icon>person</mat-icon>
             <span>Profile</span>
           </button>

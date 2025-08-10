@@ -2,7 +2,7 @@
   <mat-expansion-panel [expanded]="true">
     <mat-expansion-panel-header>
       <mat-panel-title>
-        <mat-icon>border_color</mat-icon> {{ isEditMode ? 'Edit' : 'Create' }} Server Application
+        <mat-icon>border_color</mat-icon> {{ isEditMode ? 'Edit' : (isDetailMode ? 'View' : 'Create') }} Server Application
       </mat-panel-title>
     </mat-expansion-panel-header>
 
@@ -24,11 +24,6 @@
         </mat-form-field> -->
         
         <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Description</mat-label>
-          <textarea matInput formControlName="description" placeholder="Optional description"></textarea>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="full-width">
           <mat-label>Internal Port</mat-label>
           <input matInput type="number" formControlName="internalPort" placeholder="80">
           <mat-error *ngIf="internalPort?.invalid && internalPort?.touched">
@@ -46,14 +41,19 @@
           </mat-select>
         </mat-form-field>
  
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" placeholder="Optional description"></textarea>
+        </mat-form-field>
+
       </form>
     </mat-card-content>
 
     <mat-card-actions align="end">
-      <button mat-button type="button" color="warn" (click)="onCancel()">Cancel</button>
-      <button mat-raised-button color="primary" [disabled]="form.invalid || loading" (click)="onSubmit()">
+      <button mat-button type="button" color="warn" (click)="onCancel()" >Cancel</button>
+      <button mat-raised-button color="primary" [disabled]="form.invalid || loading || isDetailMode" (click)="onSubmit()">
         <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
-        {{ isEditMode ? 'Update' : 'Create' }}
+        {{ isEditMode ? 'Update' : (isDetailMode ? 'View' : 'Create') }}
       </button>
     </mat-card-actions>
   </mat-expansion-panel>

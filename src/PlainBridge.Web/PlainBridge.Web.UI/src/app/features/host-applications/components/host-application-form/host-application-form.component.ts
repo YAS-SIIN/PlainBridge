@@ -16,6 +16,7 @@ export class HostApplicationFormComponent implements OnInit {
   form: FormGroup;
   isEditMode = false;
   loading = false;
+  isDetailMode = false;
 
   constructor(
     private fb: FormBuilder,
@@ -25,17 +26,24 @@ export class HostApplicationFormComponent implements OnInit {
     private apiResponseService: ApiResponseService
   ) {
     this.form = this.fb.group({
-      name: ['', [Validators.required]],
-      url: ['', [Validators.required, Validators.pattern('https?://.+')]],
-      port: [80, [Validators.required, Validators.min(1)]],
-      isActive: [true]
+      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+      domain: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+      internalUrl: ['', [Validators.required, Validators.maxLength(200)]],
+      description: ['']
     });
   }
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
+    let pageMode = this.router.url.includes('/detail') ? 'view' : 'edit';
+    if (pageMode === 'view') {
+      this.isDetailMode = true;
+      this.form.disable();
+    } else if (pageMode === 'edit') {
       this.isEditMode = true;
+    }
+
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) { 
       this.loadHostApplication(Number(id));
     }
   }
@@ -44,11 +52,15 @@ export class HostApplicationFormComponent implements OnInit {
     this.loading = true;
     this.apiResponseService.handleResponse(
       this.hostApplicationService.getApplication(id),
-      { showSuccessToast: false } // Don't show toast for loading data
+      { showSuccessToast: false }
     ).subscribe({
       next: (data) => {
         this.form.patchValue(data);
         this.loading = false;
+        // Ensure form stays disabled in detail mode after patchValue
+        if (this.isDetailMode) {
+          this.form.disable();
+        }
       },
       error: () => {
         this.loading = false;

@@ -76,6 +76,11 @@
                       matTooltip="Delete">
                 <mat-icon>delete</mat-icon>
               </button>
+              <button mat-icon-button color="accent"
+                      [routerLink]="['/server-applications', element.id, 'detail']"
+                      matTooltip="View Details">
+                <mat-icon>assignment</mat-icon>
+              </button>
             </td>
           </ng-container>
 

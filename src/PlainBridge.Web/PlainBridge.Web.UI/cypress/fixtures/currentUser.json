@@ -1,0 +1,11 @@
+// GET /api/user/GetCurrentUser fixture
+{
+  "resultCode": 0,
+  "data": {
+    "id": 1,
+    "username": "user1",
+    "name": "John",
+    "family": "Doe",
+    "phoneNumber": "12345"
+  }
+}

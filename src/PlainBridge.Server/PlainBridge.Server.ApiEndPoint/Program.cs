@@ -2,55 +2,56 @@ using System.Globalization;
 using Microsoft.Extensions.Options;
 using PlainBridge.Server.ApiEndPoint;
 using PlainBridge.Server.ApiEndPoint.Middlewares;
-using PlainBridge.Server.Application.DTOs;
-using PlainBridge.Server.Application.Management.WebSocketManagement;
+using PlainBridge.Server.Application.DTOs; 
 using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
+    .CreateBootstrapLogger();
 
-builder.AddServiceDefaults();
+Log.Information("Starting up");
 
-builder.Host.UseSerilog((ctx, lc) => lc
-    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", formatProvider: CultureInfo.InvariantCulture)
-    .Enrich.FromLogContext()
-    .ReadFrom.Configuration(ctx.Configuration));
-
-// Add services to the container.
-
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));  
-builder.Services.AddMemoryCache();
-builder.AddRabbitMQClient(connectionName: "messaging");
-builder.Services.AddServerProjectServices();
-builder.Services.AddHostedService<Worker>();
-
-// Configure Kestrel to support HTTP/3
-builder.WebHost.ConfigureKestrel(options =>
+try
 {
-    options.ListenAnyIP(5002, listenOptions =>
+
+    var builder = WebApplication.CreateBuilder(args);
+
+    builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
+
+    builder.AddServiceDefaults();
+
+    builder.Host.UseSerilog((ctx, lc) => lc
+        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", formatProvider: CultureInfo.InvariantCulture)
+        .Enrich.FromLogContext()
+        .ReadFrom.Configuration(ctx.Configuration));
+
+    // Add services to the container.
+
+
+    builder.AddRabbitMQClient(connectionName: "messaging");
+    // Configure Kestrel to support HTTP/3
+    builder.WebHost.ConfigureKestrel(options =>
     {
-        listenOptions.UseHttps(); // HTTP/3 requires HTTPS
-        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
+        options.ListenAnyIP(5002, listenOptions =>
+        {
+            listenOptions.UseHttps(); // HTTP/3 requires HTTPS
+            listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
+        });
     });
-});
 
-var app = builder.Build();
+    var app = builder.Build();
 
-//app.Services.GetRequiredService<IWebSocketManagement>().();
+    //app.Services.GetRequiredService<IWebSocketManagement>().();
+    app.AddUsers();
+    await app.RunAsync();
 
-app.MapDefaultEndpoints();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
 }
-
-app.UseHttpsRedirection();
-
-app.UseWebSockets();
-app.UseMiddleware<HttpRequestProxyMiddleware>();
-app.UseMiddleware<WebSocketProxyMiddleware>();
- 
-await app.RunAsync();
+catch (Exception ex) when (ex is not HostAbortedException)
+{
+    Log.Fatal(ex, "Unhandled exception");
+}
+finally
+{
+    Log.Information("Shut down complete");
+    Log.CloseAndFlush();
+}

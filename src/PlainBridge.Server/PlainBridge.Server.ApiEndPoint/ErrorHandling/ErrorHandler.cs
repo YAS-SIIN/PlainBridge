@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
-using PlainBridge.SharedApplication.Extentions;
 
-namespace PlainBridge.IdentityServer.EndPoint.ErrorHandling;
+namespace PlainBridge.Server.ApiEndPoint.ErrorHandling;
+
 
 public class ErrorHandler : IExceptionHandler
 {
@@ -46,3 +45,4 @@ public class ErrorHandler : IExceptionHandler
         return true;
     }
 }
+

@@ -121,67 +121,6 @@ public static class Extensions
         return builder;
     }
 
-    public static IServiceCollection AddApiProjectDatabase(this IServiceCollection services)
-    {
-        services.AddDbContext<MainDbContext>(options => options.UseInMemoryDatabase("PlainBridgeApiDBContext"));
-
-        return services;
-    }
-
-    public static IServiceCollection AddIDSProjectDatabase(this IServiceCollection services)
-    {
-        services.AddDbContext<MainDbContext>(options => options.UseInMemoryDatabase("PlainBridgeIDSDBContext"));
-
-        return services;
-    }
-
-    public static IServiceCollection AddApiProjectServices(this IServiceCollection services)
-    {
-        
-
-
-        services.AddScoped<IHostApplicationService, HostApplicationService>();
-        services.AddScoped<IServerApplicationService, ServerApplicationService>();
-        services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IIdentityService, IdentityService>();
-        services.AddScoped<IEventBus, RabbitMqEventBus>();
-        services.AddScoped<ISessionService, SessionService>();
-        services.AddScoped<ITokenService, TokenService>();
-
-        services.AddAuthorization();
-
-        services.AddHttpClient("Api");
-        services
-              .AddBff()
-              .AddRemoteApis();
-        JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
-
-        services.AddHttpContextAccessor();
-
-
-        return services;
-    }
-
-    public static IServiceCollection AddServerProjectServices(this IServiceCollection services)
-    {
-        services.AddScoped<IPlainBridgeApiClientHandler, PlainBridgeApiClientHandler>();
-
-        services.AddScoped<PlainBridge.Server.Application.Services.ServerApplication.IServerApplicationService, PlainBridge.Server.Application.Services.ServerApplication.ServerApplicationService>();
-
-        services.AddScoped<PlainBridge.Server.Application.Services.HostApplication.IHostApplicationService, PlainBridge.Server.Application.Services.HostApplication.HostApplicationService>();
-        services.AddScoped<ICacheManagement, CacheManagement>();
-        services.AddScoped<IApiExternalBusService, ApiExternalBusService>();
-        services.AddScoped<IServerBusService, ServerBusService>();
-        services.AddScoped<IServerApplicationConsumerService, ServerApplicationConsumerService>();
-        services.AddScoped<IHttpRequestProxyService, HttpRequestProxyService>();
-        services.AddScoped<IWebSocketService, WebSocketService>();
-        services.AddScoped<PlainBridge.Server.Application.Services.Identity.IIdentityService, PlainBridge.Server.Application.Services.Identity.IdentityService>();
-        services.AddScoped<ResponseCompletionSourcesManagement>();
-        services.AddHttpClient("Api");
-
-        return services;
-    }
-
     public static IServiceCollection AddHttpServices(this IServiceCollection services)
     {
         services.AddHttpClient("Api");

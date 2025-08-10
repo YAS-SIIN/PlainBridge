@@ -61,5 +61,20 @@ describe('HostApplicationFormComponent', () => {
     component.onSubmit();
     expect(svc.updateApplication).toHaveBeenCalled();
   });
+  it('create path error keeps loading false', () => {
+    spyOn(svc, 'createApplication').and.returnValue(throwError(() => ({ status: 400 })) as any);
+    component.pageMode = 'new';
+    component.form.setValue({ name: 'abc', domain: 'dom', internalUrl: 'http://u', description: '' });
+    component.onSubmit();
+    expect(component.loading).toBeFalse();
+  });
+
+  it('update path error keeps loading false', () => {
+    spyOn(svc, 'updateApplication').and.returnValue(throwError(() => ({ status: 400 })) as any);
+    component.pageMode = 'edit';
+    component.form.setValue({ name: 'abc', domain: 'dom', internalUrl: 'http://u', description: '' });
+    component.onSubmit();
+    expect(component.loading).toBeFalse();
+  });
 });
 

@@ -25,10 +25,10 @@
       ],
       check: {
         global: {
-          statements: 50,
-          branches: 35,
-          functions: 53,
-          lines: 50
+          statements: 70,
+          branches: 45,
+          functions: 62,
+          lines: 70
         }
       }
     },

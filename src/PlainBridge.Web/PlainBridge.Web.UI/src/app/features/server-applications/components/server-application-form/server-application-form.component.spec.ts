@@ -3,7 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { ServerApplicationFormComponent } from './server-application-form.component';
 import { ServerApplicationService } from '../../../../services/server-application.service';
 import { ApiResponseService } from '../../../../services/api-response.service';
@@ -61,6 +61,21 @@ describe('ServerApplicationFormComponent', () => {
     component.form.setValue({ name: 'svc', description: '', internalPort: 1234, serverApplicationType: ServerApplicationTypeEnum.UsePort });
     component.onSubmit();
     expect(svc.updateApplication).toHaveBeenCalled();
+  });
+  it('create path error keeps loading false', () => {
+    spyOn(svc, 'createApplication').and.returnValue(throwError(() => ({ status: 400 })) as any);
+    component.pageMode = 'new';
+    component.form.setValue({ name: 'svc', description: '', internalPort: 1234, serverApplicationType: ServerApplicationTypeEnum.UsePort });
+    component.onSubmit();
+    expect(component.loading).toBeFalse();
+  });
+
+  it('update path error keeps loading false', () => {
+    spyOn(svc, 'updateApplication').and.returnValue(throwError(() => ({ status: 400 })) as any);
+    component.pageMode = 'edit';
+    component.form.setValue({ name: 'svc', description: '', internalPort: 1234, serverApplicationType: ServerApplicationTypeEnum.UsePort });
+    component.onSubmit();
+    expect(component.loading).toBeFalse();
   });
 });
 

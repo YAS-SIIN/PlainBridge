@@ -5,7 +5,8 @@
 
 /* Global styles */
 html, body { 
-  height: 100%; 
+  height: 100%;   
+  background-color: #2669ce !important;
   margin: 0; 
   font-family: Roboto, "Helvetica Neue", sans-serif; 
 }
@@ -45,26 +46,40 @@ html, body {
   height: 100px;
 }
 
-/* Toast notification styles */
-.toast-success {
-  background-color: #4caf50 !important;
-  color: white !important;
+/* Toast notification styles (Angular Material MatSnackBar) */
+/*
+  panelClass applied: toast-success | toast-error | toast-warning | toast-info
+  Angular Material MDC snackbar reads colors from CSS variables on the container.
+*/
+.mat-mdc-snack-bar-container.toast-success {
+  --mdc-snackbar-container-color: #2e7d32; /* green */
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-mdc-snack-bar-button-color: #ffffff;
 }
 
-.toast-error {
-  background-color: #f44336 !important;
-  color: white !important;
+.mat-mdc-snack-bar-container.toast-error {
+  --mdc-snackbar-container-color: #c62828; /* red */
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-mdc-snack-bar-button-color: #ffffff;
 }
 
-.toast-warning {
-  background-color: #ff9800 !important;
-  color: white !important;
+.mat-mdc-snack-bar-container.toast-warning {
+  --mdc-snackbar-container-color: #ef6c00; /* orange */
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-mdc-snack-bar-button-color: #ffffff;
 }
 
-.toast-info {
-  background-color: #2196f3 !important;
-  color: white !important;
+.mat-mdc-snack-bar-container.toast-info {
+  --mdc-snackbar-container-color: #1565c0; /* blue */
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-mdc-snack-bar-button-color: #ffffff;
 }
+
+/* Fallback for environments not honoring the CSS vars above */
+.mat-mdc-snack-bar-container.toast-success .mdc-snackbar__surface { background-color: #2e7d32 !important; color: #ffffff !important; }
+.mat-mdc-snack-bar-container.toast-error   .mdc-snackbar__surface { background-color: #c62828 !important; color: #ffffff !important; }
+.mat-mdc-snack-bar-container.toast-warning .mdc-snackbar__surface { background-color: #ef6c00 !important; color: #ffffff !important; }
+.mat-mdc-snack-bar-container.toast-info    .mdc-snackbar__surface { background-color: #1565c0 !important; color: #ffffff !important; }
 
  
 .table-container {

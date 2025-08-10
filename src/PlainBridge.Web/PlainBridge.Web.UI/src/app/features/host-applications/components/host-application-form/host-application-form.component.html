@@ -2,7 +2,7 @@
   <mat-expansion-panel [expanded]="true">
     <mat-expansion-panel-header>
       <mat-panel-title>
-        <mat-icon>border_color</mat-icon> {{ isEditMode ? 'Edit' : 'Create' }} Host Application
+        <mat-icon>border_color</mat-icon> {{ pageMode === 'edit' ? 'Update' : (pageMode === 'view' ? 'View' : 'Create') }} Host Application
       </mat-panel-title>
     </mat-expansion-panel-header>
 
@@ -42,10 +42,10 @@
 
     <mat-card-actions align="end">
       <button mat-button type="button" color="warn" routerLink="/host-applications">Cancel</button>
-      <button mat-raised-button color="primary" [disabled]="form.invalid || loading || isDetailMode"
+      <button mat-raised-button color="primary" [disabled]="form.invalid || loading || pageMode === 'view'"
         (click)="onSubmit()">
         <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
-        {{ isEditMode ? 'Update' : (isDetailMode ? 'View' : 'Create') }}
+        {{ pageMode === 'edit' ? 'Update' : (pageMode === 'view' ? 'View' : 'Create') }}
       </button>
     </mat-card-actions>
   </mat-expansion-panel>

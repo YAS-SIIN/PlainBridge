@@ -14,9 +14,8 @@ import { ApiResponseService } from '../../../../services/api-response.service';
 })
 export class ServerApplicationFormComponent implements OnInit {
   form: FormGroup;
-  isEditMode = false;
+  pageMode: string = '';
   loading = false;
-  isDetailMode = false; // Add this flag
   serverApplicationTypes = [
     { value: ServerApplicationTypeEnum.SharePort, label: 'Share Port' },
     { value: ServerApplicationTypeEnum.UsePort, label: 'Use Port' }
@@ -39,13 +38,7 @@ export class ServerApplicationFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    let pageMode = this.router.url.includes('/detail') ? 'view' : 'edit';
-    if (pageMode === 'view') {
-      this.isDetailMode = true;
-      this.form.disable();
-    } else if (pageMode === 'edit') {
-      this.isEditMode = true;
-    }
+    this.pageMode = this.router.url.includes('/detail') ? 'view' : this.router.url.includes('/edit') ? 'edit' : 'new';
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) { 
@@ -64,7 +57,7 @@ export class ServerApplicationFormComponent implements OnInit {
           this.form.patchValue(result);
         }
         // If in detail mode, ensure form stays disabled after patchValue
-        if (this.isDetailMode) {
+        if (this.pageMode === 'view') {
           this.form.disable();
         }
         this.loading = false;
@@ -83,9 +76,9 @@ export class ServerApplicationFormComponent implements OnInit {
 
     const serverApplication: ServerApplicationDto = { ...this.form.value };
 
-    if (this.isEditMode) {
+    if (this.pageMode === 'edit') {
       this.updateServerApplication(serverApplication);
-    } else {
+    } else if (this.pageMode === 'new') {
       this.createServerApplication(serverApplication);
     }
   }
@@ -96,10 +89,12 @@ export class ServerApplicationFormComponent implements OnInit {
       this.serverApplicationService.createApplication(serverApplication)
     ).subscribe({
       next: () => {
+        debugger
         this.router.navigate(['/server-applications']);
         this.loading = false;
       },
       error: () => {
+        debugger
         this.loading = false;
       }
     });
@@ -110,12 +105,14 @@ export class ServerApplicationFormComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.apiResponseService.handleResponse(
       this.serverApplicationService.updateApplication(id, serverApplication)
-    ).subscribe({
+    ).subscribe({ 
       next: () => {
+        debugger
         this.router.navigate(['/server-applications']);
         this.loading = false;
       },
       error: () => {
+        debugger
         this.loading = false;
       }
     });

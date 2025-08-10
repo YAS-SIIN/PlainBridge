@@ -107,6 +107,12 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
             throw new NotFoundException(nameof(ServerApplication), new List<KeyValuePair<string, object>> { new KeyValuePair<string, object>(nameof(ServerApplicationDto.Id), serverApplication.Id) });
         }
 
+        if (serverApplication.InternalPort < 1 || serverApplication.InternalPort > 65535)
+        {
+            _logger.LogError("Port range is not valid: {Port}", serverApplication.InternalPort);
+            throw new ApplicationException("Port range is not valid");
+        }
+
         app.InternalPort = serverApplication.InternalPort;
         app.Name = serverApplication.Name;
         app.Description = serverApplication.Description;

@@ -16,7 +16,7 @@ import { HostApplicationDto, RowStateEnum } from '../../../../models';
   styleUrls: ['./host-applications-list.component.css']
 })
 export class HostApplicationsListComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'domain', 'internalUrl', 'isActive',  'actions'];
+  displayedColumns: string[] = ['appId', 'name', 'domain', 'internalUrl', 'isActive',  'actions'];
   dataSource: MatTableDataSource<HostApplicationDto> = new MatTableDataSource();
   loading = true;
   pendingIds = new Set<number>();
@@ -80,7 +80,8 @@ export class HostApplicationsListComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.apiResponseService.handleResponse(
-          this.hostApplicationService.deleteApplication(hostApplication.id)
+          this.hostApplicationService.deleteApplication(hostApplication.id),
+          { successMessage: 'Deleted', errorMessage: 'Failed to delete status' }
         ).subscribe({
           next: () => {
             this.fetchHostApplications();

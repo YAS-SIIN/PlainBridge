@@ -15,8 +15,7 @@ public static class UserEndpoint
 {
     public static void MapUserEndpoint(this IEndpointRouteBuilder builder)
     {
-        var app = builder.MapGroup("User")
-            .RequireAuthorization(new Microsoft.AspNetCore.Authorization.AuthorizeAttribute { AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme });
+        var app = builder.MapGroup("User");
         // GetAllAsync
         app.MapGet("", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IUserService userService) =>
         { 
@@ -26,7 +25,7 @@ public static class UserEndpoint
                 ResultCodeEnum.Success,
                 ResultCodeEnum.Success.ToDisplayName()
             ));
-        }).WithName("GetAllUsers");
+        }).WithName("GetAllUsers").RequireAuthorization(new Microsoft.AspNetCore.Authorization.AuthorizeAttribute { AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme });
 
 
         // GetCurrentUser
@@ -41,8 +40,9 @@ public static class UserEndpoint
                 ResultCodeEnum.Success,
                 ResultCodeEnum.Success.ToDisplayName()
             ));
-        }).WithName("GetCurrentUser");
-         
+        }).WithName("GetCurrentUser")
+        .RequireAuthorization(new Microsoft.AspNetCore.Authorization.AuthorizeAttribute { AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme });
+
         // CreateAsync
         app.MapPost("", async ([FromBody] UserDto user, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IUserService userService) =>
         { 
@@ -68,7 +68,8 @@ public static class UserEndpoint
                 ResultCodeEnum.Success,
                 ResultCodeEnum.Success.ToDisplayName()
             ));
-        }).WithName("ChangePassword");
+        }).WithName("ChangePassword")
+        .RequireAuthorization(new Microsoft.AspNetCore.Authorization.AuthorizeAttribute { AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme });
 
 
         // UpdateAsync
@@ -85,6 +86,7 @@ public static class UserEndpoint
                 ResultCodeEnum.Success,
                 ResultCodeEnum.Success.ToDisplayName()
             ));
-        }).WithName("UpdateUser");
+        }).WithName("UpdateUser")
+        .RequireAuthorization(new Microsoft.AspNetCore.Authorization.AuthorizeAttribute { AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme });
     }
 }

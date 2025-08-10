@@ -32,10 +32,13 @@ export class LayoutComponent implements OnInit {
       next: (result) => {
         if (result.resultCode === 0) {
           this.currentUser = result.data;
+        } else {
+          this.authService.logout();
         }
       },
       error: (error) => {
         console.error('Error loading current user:', error);
+        this.authService.logout();
       }
     });
   }

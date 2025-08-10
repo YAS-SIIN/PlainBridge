@@ -12,8 +12,8 @@ public enum ResultCodeEnum : int
     [Display(Name = "Error happened.")]
     Error = 101,  
 
-    [Display(Name = "{0} is repeated.")]
-    RepeatedData = 102,
+    [Display(Name = "{0} is duplicated.")]
+    DuplicatedData = 102,
     
     [Display(Name = "{0} is invalid.")]
     InvalidData = 103,

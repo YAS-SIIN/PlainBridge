@@ -13,10 +13,9 @@ import { ApiResponseService } from '../../../../services/api-response.service';
   styleUrls: ['./host-application-form.component.css']
 })
 export class HostApplicationFormComponent implements OnInit {
-  form: FormGroup;
-  isEditMode = false;
+  form: FormGroup; 
   loading = false;
-  isDetailMode = false;
+  pageMode: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -34,13 +33,7 @@ export class HostApplicationFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    let pageMode = this.router.url.includes('/detail') ? 'view' : 'edit';
-    if (pageMode === 'view') {
-      this.isDetailMode = true;
-      this.form.disable();
-    } else if (pageMode === 'edit') {
-      this.isEditMode = true;
-    }
+    this.pageMode = this.router.url.includes('/detail') ? 'view' : this.router.url.includes('/edit') ? 'edit' : 'new';
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) { 
@@ -58,7 +51,7 @@ export class HostApplicationFormComponent implements OnInit {
         this.form.patchValue(data);
         this.loading = false;
         // Ensure form stays disabled in detail mode after patchValue
-        if (this.isDetailMode) {
+        if (this.pageMode === 'view') {
           this.form.disable();
         }
       },
@@ -74,9 +67,9 @@ export class HostApplicationFormComponent implements OnInit {
     }
     const hostApplication: HostApplicationDto = { ...this.form.value };
 
-    if (this.isEditMode) {
+    if (this.pageMode === 'edit') {
       this.updateHostApplication(hostApplication);
-    } else {
+    } else if (this.pageMode === 'new') {
       this.createHostApplication(hostApplication);
     }
   }

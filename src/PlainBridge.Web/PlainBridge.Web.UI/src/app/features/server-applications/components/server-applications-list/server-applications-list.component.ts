@@ -3,12 +3,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
-import { ServerApplicationService } from '../../../../services/server-application.service'; 
+import { ServerApplicationService } from '../../../../services/server-application.service';
 import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../../shared/components/confirmation-dialog/confirmation-dialog.component';
-import { ServerApplicationDto } from '../../../../models/server-application.models'; 
+import { ServerApplicationDto } from '../../../../models/server-application.models';
 import { ApiResponseService } from '../../../../services/api-response.service';
 import { RowStateEnum } from '../../../../models';
- 
+
 @Component({
   selector: 'app-server-applications-list',
   standalone: false,
@@ -16,7 +16,7 @@ import { RowStateEnum } from '../../../../models';
   styleUrls: ['./server-applications-list.component.css']
 })
 export class ServerApplicationsListComponent implements OnInit {
-  displayedColumns: string[] = ['appId', 'serverApplicationAppId', 'internalPort', 'isActive',  'actions'];
+  displayedColumns: string[] = ['appId', 'name', 'serverApplicationAppId', 'internalPort', 'isActive', 'actions'];
   dataSource: MatTableDataSource<ServerApplicationDto> = new MatTableDataSource();
   loading = true;
   pendingIds = new Set<number>();
@@ -28,7 +28,7 @@ export class ServerApplicationsListComponent implements OnInit {
     private serverApplicationService: ServerApplicationService,
     private dialog: MatDialog,
     private apiResponseService: ApiResponseService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.fetchServerApplications();
@@ -80,7 +80,8 @@ export class ServerApplicationsListComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.apiResponseService.handleResponse(
-          this.serverApplicationService.deleteApplication(serverApplication.id)
+          this.serverApplicationService.deleteApplication(serverApplication.id),
+          { successMessage: 'Deleted', errorMessage: 'Failed to delete status' }
         ).subscribe({
           next: () => {
             this.fetchServerApplications();

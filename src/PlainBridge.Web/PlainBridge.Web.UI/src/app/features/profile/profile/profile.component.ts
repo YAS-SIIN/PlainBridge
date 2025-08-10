@@ -4,6 +4,7 @@ import { UserService } from '../../../services/user.service';
 import { ApiResponseService } from '../../../services/api-response.service';
 import { ToastService } from '../../../services/toast.service';
 import { UserDto, UserProfileDto, ChangeUserPasswordDto } from '../../../models';
+import { AuthService } from '../../../services';
 
 @Component({
   selector: 'app-profile',
@@ -28,7 +29,7 @@ export class ProfileComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private api: ApiResponseService,
+    private apiResponseService: ApiResponseService,
     private toast: ToastService
   ) {}
 
@@ -72,7 +73,7 @@ export class ProfileComponent implements OnInit {
           this.toast.error(result.resultDescription || 'Failed to load profile');
         }
       },
-      error: () => {
+      error: () => { 
         this.loading = false;
         this.toast.error('Failed to load profile');
       }
@@ -94,7 +95,7 @@ export class ProfileComponent implements OnInit {
     } as UserDto;
 
     this.savingProfile = true;
-    this.api.handleResponse(this.userService.updateUser(this.user.id, dto), { successMessage: 'Profile updated' }).subscribe({
+    this.apiResponseService.handleResponse(this.userService.updateUser(this.user.id, dto), { successMessage: 'Profile updated' }).subscribe({
       next: () => { this.savingProfile = false; },
       error: () => { this.savingProfile = false; }
     });
@@ -115,7 +116,7 @@ export class ProfileComponent implements OnInit {
     };
 
     this.changingPassword = true;
-    this.api.handleResponse(this.userService.changePassword(dto), { successMessage: 'Password changed successfully' }).subscribe({
+    this.apiResponseService.handleResponse(this.userService.changePassword(dto), { successMessage: 'Password changed successfully' }).subscribe({
       next: () => {
         this.changingPassword = false;
         this.passwordForm.reset();

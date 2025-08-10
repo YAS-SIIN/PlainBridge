@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Options;
+using PlainBridge.IdentityServer.EndPoint.DTOs;
 
 namespace PlainBridge.IdentityServer.EndPoint.Pages.Login;
 
@@ -74,12 +76,18 @@ public class Index : PageModel
                 await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
 
                 // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                if (context.IsNativeClient())
+                if (Input.Button == "register")
+                {
+                    ApplicationSettings applicationSettings = HttpContext.RequestServices.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+                    return Redirect($"{applicationSettings.PlainBridgeWebUrl}/register" ?? "~/");
+                }
+                else if (context.IsNativeClient())
                 {
                     // The client is native, so this change in how to
                     // return the response is for better UX for the end user.
                     return this.LoadingPage(Input.ReturnUrl);
                 }
+
 
                 return Redirect(Input.ReturnUrl ?? "~/");
             }
@@ -172,7 +180,7 @@ public class Index : PageModel
             var scheme = await _schemeProvider.GetSchemeAsync(context.IdP);
             if (scheme != null)
             {
-                var local = context.IdP == Duende.IdentityServer.IdentityServerConstants.LocalIdentityProvider;
+                var local = context.IdP == IdentityServerConstants.LocalIdentityProvider;
 
                 // this is meant to short circuit the UI and only trigger the one external IdP
                 View = new ViewModel

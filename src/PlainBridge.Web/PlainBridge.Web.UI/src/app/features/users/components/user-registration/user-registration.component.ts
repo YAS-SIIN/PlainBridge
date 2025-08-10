@@ -4,7 +4,7 @@ import { UserService } from '../../../../services/user.service';
 import { ToastService } from '../../../../services/toast.service';
 import { Router } from '@angular/router';
 import { CreateUserDto } from '../../../../models';
-import { AuthService } from '../../../../services';
+import { ApiResponseService, AuthService } from '../../../../services';
 
 @Component({
   selector: 'app-user-registration',
@@ -20,6 +20,7 @@ export class UserRegistrationComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private userService: UserService,
+    private apiResponseService: ApiResponseService,
     private toastService: ToastService,
     private router: Router
   ) {
@@ -43,9 +44,10 @@ export class UserRegistrationComponent implements OnInit {
     this.loading = true;
     const user = this.registrationForm.value;
 
- 
 
-    this.userService.createUser(user).subscribe({
+    this.apiResponseService.handleResponse(
+      this.userService.createUser(user)
+    ).subscribe({
       next: () => {
         this.toastService.success('User registered successfully');
         this.loading = false;
@@ -53,7 +55,7 @@ export class UserRegistrationComponent implements OnInit {
         setTimeout(() => {
           this.authService.login(); // Redirect to login after registration 
         }, 1000);
-        
+
       },
       error: () => {
         this.toastService.error('Error registering user');

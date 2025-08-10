@@ -2,27 +2,33 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var cache = builder.AddRedis("cache");
 var rabbitmq = builder.AddRabbitMQ("messaging").WithManagementPlugin();
+var elasticsearch = builder.AddElasticsearch("elasticsearch");
 
 var identityserverEndpoint = builder.AddProject<Projects.PlainBridge_IdentityServer_EndPoint>("identityserver-endpoint")
-    .WithUrl("https://localhost:5003");
+    .WithUrl("https://localhost:5003")
+    .PublishAsDockerFile();
 
 var apiEndpoint = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-endpoint")
     .WithUrl("https://localhost:5001")
     .WithReference(identityserverEndpoint)
     .WithReference(rabbitmq)
     .WithReference(cache)
+    .WithReference(elasticsearch)
     .WaitFor(identityserverEndpoint)
     .WaitFor(cache)
-    .WaitFor(rabbitmq)
-    .WaitFor(identityserverEndpoint)
+    .WaitFor(rabbitmq) 
+    .WaitFor(elasticsearch) 
     .PublishAsDockerFile();
  
 
 var serverEndpoint = builder.AddProject<Projects.PlainBridge_Server_ApiEndPoint>("server-endpoint")
     .WithUrl("https://localhost:5002")
     .WithReference(apiEndpoint)
-    .WithReference(rabbitmq) 
+    .WithReference(rabbitmq)
+    .WithReference(elasticsearch) 
+    .WaitFor(cache)
     .WaitFor(rabbitmq)
+    .WaitFor(elasticsearch)
     .PublishAsDockerFile();
  
 var angularWebUi =
@@ -31,7 +37,6 @@ builder.AddNpmApp("angularWebUi", "../PlainBridge.Web/PlainBridge.Web.UI")
     .WithReference(apiEndpoint)
     .WithReference(identityserverEndpoint)
     .WaitFor(identityserverEndpoint)
-    .WaitFor(serverEndpoint)
     .WaitFor(apiEndpoint) 
     .WithExternalHttpEndpoints()
     .PublishAsDockerFile();

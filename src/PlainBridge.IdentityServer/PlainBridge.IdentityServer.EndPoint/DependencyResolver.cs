@@ -1,19 +1,12 @@
-﻿using System.Globalization;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Duende.Bff.Yarp;
+﻿using System.Globalization; 
+using System.Text; 
 using Duende.IdentityServer;
 using Duende.IdentityServer.Licensing;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using PlainBridge.Api.ApiEndPoint.ErrorHandling;
-using PlainBridge.Api.Application.Services.Session;
-using PlainBridge.Api.Application.Services.Token;
-using PlainBridge.Api.Application.Services.User;
-using PlainBridge.Api.Infrastructure.Data.Context;
-using PlainBridge.Api.Infrastructure.Messaging;
 using PlainBridge.IdentityServer.EndPoint.DTOs;
+using PlainBridge.IdentityServer.EndPoint.ErrorHandling;
 using PlainBridge.IdentityServer.EndPoint.Infrastructure.Data;
 using Serilog;
 
@@ -23,11 +16,12 @@ public static class DependencyResolver
 {
     public static IServiceCollection AddIDSProjectServices(this IServiceCollection services)
     {
-
-
+          
         var appSettings = services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSettings>>();
 
         services.AddRazorPages();
+        services.AddIDSProjectDatabase();
+        services.AddProblemDetails();
 
         var isBuilder = services.AddIdentityServer(options =>
         {
@@ -70,15 +64,15 @@ public static class DependencyResolver
         services.AddExceptionHandler<ErrorHandler>();
 
         services.AddLocalApiAuthentication();
-        services.AddIDSProjectDatabase();
 
+        services.AddHttpServices();
 
         return services;
     }
 
     public static IServiceCollection AddIDSProjectDatabase(this IServiceCollection services)
     {
-        services.AddDbContext<MainDbContext>(options => options.UseInMemoryDatabase("PlainBridgeIDSDBContext"));
+        services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("PlainBridgeIDSDBContext"));
 
         return services;
     }
@@ -87,6 +81,7 @@ public static class DependencyResolver
 
     public static WebApplication AddUsers(this WebApplication app)
     { 
+
         app.UseExceptionHandler();
         app.UseSerilogRequestLogging();
         if (app.Environment.IsDevelopment())

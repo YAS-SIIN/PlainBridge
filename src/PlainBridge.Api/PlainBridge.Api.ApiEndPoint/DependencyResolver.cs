@@ -1,8 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using Duende.Bff.Yarp;
+using Duende.IdentityModel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PlainBridge.Api.ApiEndPoint.ErrorHandling;
@@ -21,8 +23,7 @@ using StackExchange.Redis;
 namespace PlainBridge.Api.ApiEndPoint;
 
 public static class DependencyResolver
-{
-
+{ 
     public static IServiceCollection AddApiProjectServices(this IServiceCollection services)
     {
 
@@ -38,7 +39,7 @@ public static class DependencyResolver
         });
 
         // Add services to the container.
-        services.AddApiProjectServices();
+        services.AddApiProjectDatabase();
         services.AddProblemDetails();
         services.AddOpenApi();
         services.AddAuthentication(appSettings.Value);
@@ -54,7 +55,6 @@ public static class DependencyResolver
 
         services.AddAuthorization();
 
-        services.AddHttpClient("Api");
         services
               .AddBff()
               .AddRemoteApis();
@@ -62,6 +62,7 @@ public static class DependencyResolver
 
         services.AddHttpContextAccessor();
 
+        services.AddHttpServices();
 
         return services;
     }

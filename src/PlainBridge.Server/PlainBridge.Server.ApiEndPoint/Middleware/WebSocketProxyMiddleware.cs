@@ -3,7 +3,7 @@ using PlainBridge.Server.Application.Management.WebSocketManagement;
 using PlainBridge.Server.Application.Services.ServerApplication;
 using PlainBridge.Server.Application.Services.WebSocket;
 
-namespace PlainBridge.Server.ApiEndPoint.Middlewares;
+namespace PlainBridge.Server.ApiEndPoint.Middleware;
 
 public class WebSocketProxyMiddleware(RequestDelegate _next, ILogger<WebSocketProxyMiddleware> _logger, IServiceProvider _serviceProvider)
 {

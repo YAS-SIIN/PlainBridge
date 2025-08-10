@@ -2,6 +2,7 @@
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
+using PlainBridge.SharedApplication.Extentions;
 
 namespace PlainBridge.Server.ApiEndPoint.ErrorHandling;
 

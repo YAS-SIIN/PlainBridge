@@ -1,7 +1,5 @@
-using System.Globalization;
-using Microsoft.Extensions.Options;
-using PlainBridge.Server.ApiEndPoint;
-using PlainBridge.Server.ApiEndPoint.Middlewares;
+using System.Globalization; 
+using PlainBridge.Server.ApiEndPoint; 
 using PlainBridge.Server.Application.DTOs; 
 using Serilog;
 
@@ -27,6 +25,7 @@ try
 
     // Add services to the container.
 
+    builder.Services.AddServerProjectServices();
 
     builder.AddRabbitMQClient(connectionName: "messaging");
     // Configure Kestrel to support HTTP/3
@@ -43,6 +42,7 @@ try
 
     //app.Services.GetRequiredService<IWebSocketManagement>().();
     app.AddUsers();
+
     await app.RunAsync();
 
 }

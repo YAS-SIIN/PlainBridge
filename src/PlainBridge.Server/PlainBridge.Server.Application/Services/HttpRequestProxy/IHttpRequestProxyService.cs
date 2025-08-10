@@ -1,8 +1,7 @@
 ﻿
-namespace PlainBridge.Server.Application.Services.HttpRequestProxy
+namespace PlainBridge.Server.Application.Services.HttpRequestProxy;
+
+public interface IHttpRequestProxyService
 {
-    public interface IHttpRequestProxyService
-    {
-        Task InitializeConsumerAsync(CancellationToken cancellationToken);
-    }
+    Task InitializeConsumerAsync(CancellationToken cancellationToken);
 }

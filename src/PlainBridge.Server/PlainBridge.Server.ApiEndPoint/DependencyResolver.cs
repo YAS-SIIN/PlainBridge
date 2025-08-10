@@ -1,14 +1,17 @@
-﻿using PlainBridge.Server.ApiEndPoint.Middlewares;
-using PlainBridge.Server.Application.DTOs;
+﻿ 
+using Serilog; 
 using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
+using PlainBridge.Server.ApiEndPoint.ErrorHandling;
 using PlainBridge.Server.Application.Management.Cache;
-using PlainBridge.Server.Application.Management.ResponseCompletionSources;
 using PlainBridge.Server.Application.Services.ApiExternalBus;
-using PlainBridge.Server.Application.Services.AppProjectConsumer;
-using PlainBridge.Server.Application.Services.HttpRequestProxy;
 using PlainBridge.Server.Application.Services.ServerBus;
+using PlainBridge.Server.Application.Services.HttpRequestProxy;
+using PlainBridge.Server.Application.Services.AppProjectConsumer;
+using PlainBridge.Server.Application.Services.HostApplication;
 using PlainBridge.Server.Application.Services.WebSocket;
-using Serilog;
+using PlainBridge.Server.Application.Management.ResponseCompletionSources;
+using PlainBridge.Server.ApiEndPoint.Middleware;
+using PlainBridge.Server.Application.Services.ServerApplication;
 
 namespace PlainBridge.Server.ApiEndPoint;
 
@@ -19,9 +22,25 @@ public static class DependencyResolver
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         services.AddOpenApi();
-        services.AddMemoryCache();
-        services.AddServerProjectServices();
+        services.AddExceptionHandler<ErrorHandler>();
+        services.AddMemoryCache(); 
         services.AddHostedService<Worker>();
+        services.AddHttpServices();
+        services.AddProblemDetails();
+
+        services.AddScoped<IPlainBridgeApiClientHandler, PlainBridgeApiClientHandler>();
+
+        services.AddScoped<IServerApplicationService, ServerApplicationService>(); 
+        services.AddScoped<IHostApplicationService, HostApplicationService>();
+        services.AddScoped<ICacheManagement, CacheManagement>();
+        services.AddScoped<IApiExternalBusService, ApiExternalBusService>();
+        services.AddScoped<IServerBusService, ServerBusService>();
+        services.AddScoped<IServerApplicationConsumerService, ServerApplicationConsumerService>();
+        services.AddScoped<IHttpRequestProxyService, HttpRequestProxyService>();
+        services.AddScoped<IWebSocketService, WebSocketService>();
+        services.AddScoped<Application.Services.Identity.IIdentityService, Application.Services.Identity.IdentityService>();
+        services.AddScoped<ResponseCompletionSourcesManagement>();
+        services.AddHttpServices();
 
         return services;
     }

@@ -13,26 +13,23 @@ Log.Logger = new LoggerConfiguration()
 Log.Information("Starting up");
 
 try
-{
-
-
+{ 
     var builder = WebApplication.CreateBuilder(args);
+     
+    builder.AddServiceDefaults();
 
-    var log = builder.Host.UseSerilog((ctx, lc) => lc
+    builder.Host.UseSerilog((ctx, services, lc) => lc
         .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", formatProvider: CultureInfo.InvariantCulture)
         .Enrich.FromLogContext()
-        .ReadFrom.Configuration(ctx.Configuration));
-
-
-    // Add service defaults & Aspire client integrations.
-    builder.AddServiceDefaults();
+        .ReadFrom.Configuration(ctx.Configuration)
+        .ReadFrom.Services(services), preserveStaticLogger: true);
 
     builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
 
-    builder.Services.AddApiProjectDatabase();
-
     builder.AddRabbitMQClient(connectionName: "messaging");
     builder.AddRedisClient(connectionName: "cache");
+
+    builder.Services.AddApiProjectServices();
 
     // Configure Kestrel to support HTTP/3
     builder.WebHost.ConfigureKestrel(options =>
@@ -45,20 +42,17 @@ try
     });
 
     var app = builder.Build();
-
-
-
+     
     app.MapGroup("").MapLoginEndpoint();
     app.MapGroup("api/").MapHostApplicationEndpoint();
     app.MapGroup("api/").MapServerApplicationEndpoint();
     app.MapGroup("api/").MapUserEndpoint();
-
+     
 
     app.AddUsers();
 
     await app.RunAsync();
-
-
+     
 }
 catch (Exception ex) when (ex is not HostAbortedException)
 {

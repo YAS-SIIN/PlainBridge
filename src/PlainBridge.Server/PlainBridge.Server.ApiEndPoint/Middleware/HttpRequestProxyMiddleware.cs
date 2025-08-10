@@ -8,7 +8,7 @@ using PlainBridge.Server.Application.Services.ServerApplication;
 using PlainBridge.SharedApplication.DTOs;
 using RabbitMQ.Client; 
 
-namespace PlainBridge.Server.ApiEndPoint.Middlewares;
+namespace PlainBridge.Server.ApiEndPoint.Middleware;
 
 public class HttpRequestProxyMiddleware(RequestDelegate _next, ILogger<HttpRequestProxyMiddleware> _logger, IServiceProvider _serviceProvider, IConnection _connection)
 { 

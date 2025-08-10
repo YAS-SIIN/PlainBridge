@@ -27,7 +27,6 @@ try
      
     builder.Host.UseSerilog((ctx, services, lc) => lc
         .WriteTo.Elasticsearch()
-        .Enrich.FromLogContext() 
         .ReadFrom.Services(services), preserveStaticLogger: true);
 
     builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));

@@ -40,7 +40,7 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "PlainBridge.Web.UI", "src\P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Server.UnitTests", "tests\PlainBridge.Server.UnitTests\PlainBridge.Server.UnitTests.csproj", "{56141240-B7DE-4084-B15B-6DB8E3FA1828}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.IdentityServer.IntegrationTests", "PlainBridge.IdentityServer.IntegrationTests\PlainBridge.IdentityServer.IntegrationTests.csproj", "{AD624F28-CF02-4C11-B3F2-0AEC65CF0C6B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.IdentityServer.IntegrationTests", "tests\PlainBridge.IdentityServer.IntegrationTests\PlainBridge.IdentityServer.IntegrationTests.csproj", "{AD624F28-CF02-4C11-B3F2-0AEC65CF0C6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

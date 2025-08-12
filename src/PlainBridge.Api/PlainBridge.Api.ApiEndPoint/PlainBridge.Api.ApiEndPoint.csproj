@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.RabbitMQ.Client.v7" Version="9.4.0" />
-    <PackageReference Include="Aspire.StackExchange.Redis" Version="9.4.0" />
+    <PackageReference Include="Aspire.RabbitMQ.Client.v7" Version="9.4.1" />
+    <PackageReference Include="Aspire.StackExchange.Redis" Version="9.4.1" />
     <PackageReference Include="Elastic.Clients.Elasticsearch.Aspire" Version="9.3.0" />
     <PackageReference Include="Elastic.Serilog.Sinks" Version="8.18.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.8" />

@@ -40,6 +40,8 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "PlainBridge.Web.UI", "src\P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Server.UnitTests", "tests\PlainBridge.Server.UnitTests\PlainBridge.Server.UnitTests.csproj", "{56141240-B7DE-4084-B15B-6DB8E3FA1828}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.IdentityServer.IntegrationTests", "PlainBridge.IdentityServer.IntegrationTests\PlainBridge.IdentityServer.IntegrationTests.csproj", "{AD624F28-CF02-4C11-B3F2-0AEC65CF0C6B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +102,10 @@ Global
 		{56141240-B7DE-4084-B15B-6DB8E3FA1828}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56141240-B7DE-4084-B15B-6DB8E3FA1828}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56141240-B7DE-4084-B15B-6DB8E3FA1828}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD624F28-CF02-4C11-B3F2-0AEC65CF0C6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD624F28-CF02-4C11-B3F2-0AEC65CF0C6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD624F28-CF02-4C11-B3F2-0AEC65CF0C6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD624F28-CF02-4C11-B3F2-0AEC65CF0C6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -122,6 +128,7 @@ Global
 		{8BE12F00-E4A9-480E-B5A7-4109AE43B087} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{0F04302C-307C-B6D9-3921-29C25579EDA5} = {8BE12F00-E4A9-480E-B5A7-4109AE43B087}
 		{56141240-B7DE-4084-B15B-6DB8E3FA1828} = {F78BFF6E-5711-4394-8C2E-2BF79B2E899E}
+		{AD624F28-CF02-4C11-B3F2-0AEC65CF0C6B} = {F78BFF6E-5711-4394-8C2E-2BF79B2E899E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4E8B8F9B-822C-426B-B920-DFA6BA23C3D1}

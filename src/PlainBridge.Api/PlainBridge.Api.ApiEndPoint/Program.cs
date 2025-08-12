@@ -1,6 +1,8 @@
 
 using System.Globalization;
 using Elastic.Clients.Elasticsearch;
+using Elastic.CommonSchema;
+using Elastic.Ingest.Elasticsearch;
 using Elastic.Serilog.Sinks;
 using PlainBridge.Api.ApiEndPoint;
 using PlainBridge.Api.ApiEndPoint.Endpoints;
@@ -24,10 +26,17 @@ try
     builder.AddRabbitMQClient(connectionName: "messaging");
     builder.AddRedisClient(connectionName: "cache");
     builder.AddElasticsearchClient(connectionName: "elasticsearch");
-     
+
+    var esClient = builder.Services.BuildServiceProvider().GetRequiredService<ElasticsearchClient>();
+ 
+    var elasticConfig = new ElasticsearchSinkOptions(esClient.Transport) { BootstrapMethod = BootstrapMethod.Failure };
+
     builder.Host.UseSerilog((ctx, services, lc) => lc
-        .WriteTo.Elasticsearch()
-        .ReadFrom.Services(services), preserveStaticLogger: true);
+        .ReadFrom.Services(services)
+        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", formatProvider: CultureInfo.InvariantCulture)
+        .WriteTo.Elasticsearch(elasticConfig), 
+        preserveStaticLogger: true);
+        //.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", formatProvider: CultureInfo.InvariantCulture)
 
     builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
 

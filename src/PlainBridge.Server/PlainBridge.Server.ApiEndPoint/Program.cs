@@ -1,7 +1,9 @@
 using System.Globalization; 
+using Elastic.Clients.Elasticsearch;
+using Elastic.Ingest.Elasticsearch;
+using Elastic.Serilog.Sinks;
 using PlainBridge.Server.ApiEndPoint; 
 using PlainBridge.Server.Application.DTOs;
-using Elastic.Serilog.Sinks;
 using Serilog;
 
 var simpleLogger = new LoggerConfiguration()
@@ -21,10 +23,16 @@ try
 
     builder.AddElasticsearchClient(connectionName: "elasticsearch");
 
+
+    var esClient = builder.Services.BuildServiceProvider().GetRequiredService<ElasticsearchClient>();
+
+    var elasticConfig = new ElasticsearchSinkOptions(esClient.Transport) { BootstrapMethod = BootstrapMethod.Failure };
+     
     builder.Host.UseSerilog((ctx, services, lc) => lc
-        .WriteTo.Elasticsearch()
-        .Enrich.FromLogContext()
-        .ReadFrom.Services(services), preserveStaticLogger: true);
+        .ReadFrom.Services(services)
+        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", formatProvider: CultureInfo.InvariantCulture)
+        .WriteTo.Elasticsearch(elasticConfig),
+        preserveStaticLogger: true);
 
 
     // Add services to the container.

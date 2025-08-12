@@ -19,6 +19,8 @@ try
 
     var identityserverEndpoint = builder.AddProject<Projects.PlainBridge_IdentityServer_EndPoint>("identityserver-endpoint")
         .WithUrl("https://localhost:5003")
+        .WithReference(elasticsearch)
+        .WaitFor(elasticsearch)
         .PublishAsDockerFile();
 
     var apiEndpoint = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-endpoint")

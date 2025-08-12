@@ -1,9 +1,10 @@
 using System.Globalization; 
+using Elastic.Clients.Elasticsearch;
+using Elastic.Ingest.Elasticsearch;
+using Elastic.Serilog.Sinks;
 using PlainBridge.IdentityServer.EndPoint; 
 using PlainBridge.IdentityServer.EndPoint.DTOs;
 using PlainBridge.IdentityServer.EndPoint.Endpoints;
-using Elastic.Serilog.Sinks;
-
 using Serilog;
 
 var simpleLogger = new LoggerConfiguration()
@@ -16,15 +17,21 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
+    builder.AddServiceDefaults();
+
     builder.AddElasticsearchClient(connectionName: "elasticsearch");
 
+    var esClient = builder.Services.BuildServiceProvider().GetRequiredService<ElasticsearchClient>();
+
+    var elasticConfig = new ElasticsearchSinkOptions(esClient.Transport) { BootstrapMethod = BootstrapMethod.Failure };
+
     builder.Host.UseSerilog((ctx, services, lc) => lc
-        .WriteTo.Elasticsearch()
-        .Enrich.FromLogContext()
-        .ReadFrom.Services(services), preserveStaticLogger: true);
+        .ReadFrom.Services(services)
+        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", formatProvider: CultureInfo.InvariantCulture)
+        .WriteTo.Elasticsearch(elasticConfig),
+        preserveStaticLogger: true);
 
 
-    builder.AddServiceDefaults();
 
     builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
      

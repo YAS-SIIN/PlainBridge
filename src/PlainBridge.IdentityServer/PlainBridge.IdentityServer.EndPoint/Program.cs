@@ -1,11 +1,15 @@
-using System.Globalization; 
+using System.Globalization;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Ingest.Elasticsearch;
 using Elastic.Serilog.Sinks;
-using PlainBridge.IdentityServer.EndPoint; 
+using PlainBridge.IdentityServer.EndPoint;
 using PlainBridge.IdentityServer.EndPoint.DTOs;
 using PlainBridge.IdentityServer.EndPoint.Endpoints;
 using Serilog;
+
+
+
+// ... existing usings ...
 
 var simpleLogger = new LoggerConfiguration()
     .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
@@ -21,20 +25,27 @@ try
 
     builder.AddElasticsearchClient(connectionName: "elasticsearch");
 
-    var esClient = builder.Services.BuildServiceProvider().GetRequiredService<ElasticsearchClient>();
 
-    var elasticConfig = new ElasticsearchSinkOptions(esClient.Transport) { BootstrapMethod = BootstrapMethod.Failure };
+    builder.Host.UseSerilog((ctx, services, lc) =>
+    {
+        lc.ReadFrom.Services(services)
+          .WriteTo.Console(
+              outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
+              formatProvider: CultureInfo.InvariantCulture);
 
-    builder.Host.UseSerilog((ctx, services, lc) => lc
-        .ReadFrom.Services(services)
-        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", formatProvider: CultureInfo.InvariantCulture)
-        .WriteTo.Elasticsearch(elasticConfig),
-        preserveStaticLogger: true);
+        if (!ctx.HostingEnvironment.IsDevelopment())
+        {
+            var esClient = services.GetRequiredService<ElasticsearchClient>();
+            var elasticConfig = new ElasticsearchSinkOptions(esClient.Transport) { BootstrapMethod = BootstrapMethod.Failure };
+
+            lc.WriteTo.Elasticsearch(elasticConfig);
+        }
+    }, preserveStaticLogger: true);
 
 
 
     builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
-     
+
     builder.Services.AddIDSProjectServices();
 
     // if you want to use server-side sessions: https://blog.duendesoftware.com/posts/20220406_session_management/
@@ -59,7 +70,7 @@ try
             listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
         });
     });
-  
+
     var app = builder.Build();
 
     app.MapGroup("api/")
@@ -74,6 +85,8 @@ catch (Exception ex) when (ex is not HostAbortedException)
 }
 finally
 {
-    simpleLogger.Information("Shut down complete"); 
+    simpleLogger.Information("Shut down complete");
 }
 
+
+public partial class Program { }

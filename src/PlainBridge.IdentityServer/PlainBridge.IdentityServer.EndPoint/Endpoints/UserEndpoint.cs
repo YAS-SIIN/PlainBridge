@@ -55,7 +55,6 @@ public static class UserEndpoint
             var user = await _userManager.FindByIdAsync(model.UserId.ToString());
             if (user == null) throw new NotFoundException("User not found");
 
-
             var claims = await _userManager.GetClaimsAsync(user);
 
             await _userManager.ReplaceClaimAsync(user, claims.Single(x => x.Type == JwtClaimTypes.GivenName), new Claim(JwtClaimTypes.GivenName, model.Name));

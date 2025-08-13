@@ -12,7 +12,7 @@ using PlainBridge.SharedApplication.Exceptions;
 
 namespace PlainBridge.Api.UnitTests.Application.Services;
 
-[Collection("TestRun")]
+[Collection("ApiUnitTestRun")]
 public class HostApplicationServiceTests : IClassFixture<TestRunFixture>
 {
     private readonly TestRunFixture _fixture;

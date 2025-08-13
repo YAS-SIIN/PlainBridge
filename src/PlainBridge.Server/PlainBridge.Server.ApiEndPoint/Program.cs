@@ -23,19 +23,23 @@ try
 
     builder.AddElasticsearchClient(connectionName: "elasticsearch");
 
-
-    var esClient = builder.Services.BuildServiceProvider().GetRequiredService<ElasticsearchClient>();
-
-    var elasticConfig = new ElasticsearchSinkOptions(esClient.Transport) { BootstrapMethod = BootstrapMethod.Failure };
      
-    builder.Host.UseSerilog((ctx, services, lc) => lc
-        .ReadFrom.Services(services)
-        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", formatProvider: CultureInfo.InvariantCulture)
-        .WriteTo.Elasticsearch(elasticConfig),
-        preserveStaticLogger: true);
+    builder.Host.UseSerilog((ctx, services, lc) =>
+    {
+        lc.ReadFrom.Services(services)
+          .WriteTo.Console(
+              outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
+              formatProvider: CultureInfo.InvariantCulture);
 
+        if (!ctx.HostingEnvironment.IsDevelopment())
+        {
+            var esClient = services.GetRequiredService<ElasticsearchClient>();
+            var elasticConfig = new ElasticsearchSinkOptions(esClient.Transport) { BootstrapMethod = BootstrapMethod.Failure };
 
-    // Add services to the container.
+            lc.WriteTo.Elasticsearch(elasticConfig);
+        }
+    }, preserveStaticLogger: true);
+      
 
     builder.Services.AddServerProjectServices();
 

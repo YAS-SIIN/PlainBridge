@@ -26,17 +26,23 @@ try
     builder.AddRabbitMQClient(connectionName: "messaging");
     builder.AddRedisClient(connectionName: "cache");
     builder.AddElasticsearchClient(connectionName: "elasticsearch");
+     
+    builder.Host.UseSerilog((ctx, services, lc) =>
+    {
+        lc.ReadFrom.Services(services)
+          .WriteTo.Console(
+              outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
+              formatProvider: CultureInfo.InvariantCulture);
 
-    var esClient = builder.Services.BuildServiceProvider().GetRequiredService<ElasticsearchClient>();
- 
-    var elasticConfig = new ElasticsearchSinkOptions(esClient.Transport) { BootstrapMethod = BootstrapMethod.Failure };
+        if (!ctx.HostingEnvironment.IsDevelopment())
+        {
+            var esClient = services.GetRequiredService<ElasticsearchClient>();
+            var elasticConfig = new ElasticsearchSinkOptions(esClient.Transport) { BootstrapMethod = BootstrapMethod.Failure };
 
-    builder.Host.UseSerilog((ctx, services, lc) => lc
-        .ReadFrom.Services(services)
-        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", formatProvider: CultureInfo.InvariantCulture)
-        .WriteTo.Elasticsearch(elasticConfig), 
-        preserveStaticLogger: true);
-        //.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", formatProvider: CultureInfo.InvariantCulture)
+            lc.WriteTo.Elasticsearch(elasticConfig);
+        }
+    }, preserveStaticLogger: true);
+
 
     builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
 

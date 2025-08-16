@@ -1,14 +1,16 @@
 ﻿
 
-using System.Net.WebSockets; 
+using System.Net.WebSockets;
+using Microsoft.Extensions.Logging;
 
-namespace PlainBridge.Server.Application.Management.WebSocketManagement;
 
-public class WebSocketManagement(WebSocket _websocket) : IWebSocketManagement
+namespace PlainBridge.Client.Application.Management.WebSocket;
+
+public class WebSocketManagement(ILogger<WebSocketManagement> _logger, ClientWebSocket _websocket) : IWebSocketManagement
 {
     public ClientWebSocketOptions Options => throw new NotImplementedException();
 
-    public Task ConnectAsync(Uri uri, CancellationToken cancellationToken = default!) => throw new NotImplementedException();
+    public async Task ConnectAsync(Uri uri, CancellationToken cancellationToken = default!) => await _websocket.ConnectAsync(uri, cancellationToken);
 
     public async Task<WebSocketReceiveResult> ReceiveAsync(ArraySegment<byte> buffer, CancellationToken cancellationToken = default!) => await _websocket.ReceiveAsync(buffer, cancellationToken);
 

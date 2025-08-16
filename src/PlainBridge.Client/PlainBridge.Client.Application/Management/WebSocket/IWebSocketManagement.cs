@@ -1,6 +1,6 @@
 ﻿using System.Net.WebSockets;
 
-namespace PlainBridge.Server.Application.Management.WebSocketManagement;
+namespace PlainBridge.Client.Application.Management.WebSocket;
 
 public interface IWebSocketManagement
 {

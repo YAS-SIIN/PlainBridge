@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using PlainBridge.Server.Application.DTOs;
 using PlainBridge.Server.Application.Management.Cache;
 using PlainBridge.Server.Application.Management.WebSocketManagement;
+using PlainBridge.SharedApplication.Contracts;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Exceptions;
 

@@ -5,12 +5,7 @@ using Microsoft.Extensions.Options;
 using PlainBridge.Server.Application.DTOs;
 using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 using PlainBridge.Server.Application.Management.Cache;
-using PlainBridge.SharedApplication.DTOs;
-using PlainBridge.SharedApplication.Enums;
-using PlainBridge.SharedApplication.Exceptions;
-
-using System;
-using System.Threading.Tasks;
+using PlainBridge.SharedApplication.Enums; 
 
 namespace PlainBridge.Server.Application.Services.ServerApplication;
 

@@ -2,11 +2,11 @@
 using Microsoft.Extensions.Caching.Hybrid; 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using PlainBridge.Server.Application.DTOs;
-using PlainBridge.Server.Application.Management.WebSocketManagement; 
+using PlainBridge.Client.Application.DTOs;
+using PlainBridge.Client.Application.Management.WebSocket; 
 using PlainBridge.SharedApplication.DTOs;
 
-namespace PlainBridge.Server.Application.Management.Cache;
+namespace PlainBridge.Client.Application.Management.Cache;
 
 public class CacheManagement(ILogger<CacheManagement> _logger, HybridCache _memoryCache, IOptions<ApplicationSettings> _appSettings) : ICacheManagement
 {

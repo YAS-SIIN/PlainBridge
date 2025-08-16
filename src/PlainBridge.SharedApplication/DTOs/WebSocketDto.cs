@@ -2,7 +2,7 @@
 
 using System.Net.WebSockets;
 
-namespace PlainBridge.Server.Application.DTOs;
+namespace PlainBridge.SharedApplication.DTOs;
 
 public record WebSocketDto
 {

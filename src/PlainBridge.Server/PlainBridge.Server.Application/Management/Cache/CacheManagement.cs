@@ -17,8 +17,8 @@ public class CacheManagement(ILogger<CacheManagement> _logger, HybridCache _memo
 {
     HybridCacheEntryOptions options = new HybridCacheEntryOptions
     {
-        Expiration = TimeSpan.Parse(_appSettings.Value.DistributedCacheExpirationTime),
-        LocalCacheExpiration = TimeSpan.Parse(_appSettings.Value.MemoryCacheExpirationTime),
+        Expiration = TimeSpan.Parse(_appSettings.Value.HybridDistributedCacheExpirationTime),
+        LocalCacheExpiration = TimeSpan.Parse(_appSettings.Value.HybridMemoryCacheExpirationTime),
 
     };
 

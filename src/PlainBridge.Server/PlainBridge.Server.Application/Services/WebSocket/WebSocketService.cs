@@ -84,7 +84,8 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
                 var host = Encoding.UTF8.GetString((byte[])hostByteArray);
 
                 var requestModel = JsonSerializer.Deserialize<WebSocketDto>(response);
-                if (!_cacheManagement.TryGetWebSocket(host, out IWebSocketManagement webSocket))
+                var webSocket = await _cacheManagement.SetGetWebSocketAsync(host, cancellationToken: cancellationToken);
+                if (webSocket is null || webSocket == default)
                     throw new NotFoundException("WebSocket not found");
 
                 var arraySegment = new ArraySegment<byte>(requestModel?.Payload!, 0, requestModel?.PayloadCount ?? 0);

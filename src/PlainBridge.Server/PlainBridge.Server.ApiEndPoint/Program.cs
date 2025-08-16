@@ -21,8 +21,8 @@ try
 
     builder.AddServiceDefaults();
 
+    builder.AddRabbitMQClient(connectionName: "messaging");
     builder.AddElasticsearchClient(connectionName: "elasticsearch");
-
      
     builder.Host.UseSerilog((ctx, services, lc) =>
     {
@@ -43,7 +43,6 @@ try
 
     builder.Services.AddServerProjectServices();
 
-    builder.AddRabbitMQClient(connectionName: "messaging");
     // Configure Kestrel to support HTTP/3
     builder.WebHost.ConfigureKestrel(options =>
     {

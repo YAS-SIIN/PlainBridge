@@ -4,7 +4,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Http.Extensions;
 using PlainBridge.Server.Application.DTOs;
 using PlainBridge.Server.Application.Management.ResponseCompletionSources;
-using PlainBridge.Server.Application.Services.ServerApplication;
+using PlainBridge.Server.Application.Services.HostApplication; 
 using PlainBridge.SharedApplication.DTOs;
 using RabbitMQ.Client; 
 
@@ -17,18 +17,18 @@ public class HttpRequestProxyMiddleware(RequestDelegate _next, ILogger<HttpReque
     public async Task Invoke(HttpContext context, CancellationToken cancellationToken)
     {
         using var scope = _serviceProvider.CreateScope();
-        var hostApplicationService = scope.ServiceProvider.GetRequiredService<IServerApplicationService>();
+        var hostApplicationService = scope.ServiceProvider.GetRequiredService<IHostApplicationService>();
         var responseCompletionSourcesManagement = scope.ServiceProvider.GetRequiredService<ResponseCompletionSourcesManagement>();
         var applicationSettings = scope.ServiceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<ApplicationSettings>>().Value;
         
         var requestId = Guid.NewGuid().ToString();
         var host = context.Request.Host;
 
-        var hostApplication = hostApplicationService.GetByHost(host.Value);
-        var projectHost = $"{hostApplication.Domain}{applicationSettings.DefaultDomain}";
+        var hostApplication = await hostApplicationService.GetByHostAsync(host.Value, cancellationToken);
+        var hostApplicationHost = $"{hostApplication.Domain}{applicationSettings.DefaultDomain}";
 
         if (!context.WebSockets.IsWebSocketRequest)
-            await HandleHttpRequest(context, requestId, hostApplication, projectHost, responseCompletionSourcesManagement, cancellationToken);
+            await HandleHttpRequest(context, requestId, hostApplication, hostApplicationHost, responseCompletionSourcesManagement, cancellationToken);
         else
             await _next(context);
     }

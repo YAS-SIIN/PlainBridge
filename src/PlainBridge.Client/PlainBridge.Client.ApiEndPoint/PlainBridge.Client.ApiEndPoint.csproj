@@ -10,12 +10,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.RabbitMQ.Client.v7" Version="9.4.1" />
+    <PackageReference Include="Elastic.Clients.Elasticsearch.Aspire" Version="9.3.0" />
+    <PackageReference Include="Elastic.Serilog.Sinks" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.8" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+    <PackageReference Include="Serilog" Version="4.3.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\PlainBridge.ServiceDefaults\PlainBridge.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\PlainBridge.Client.Application\PlainBridge.Client.Application.csproj" />
   </ItemGroup>
 
 </Project>

@@ -16,23 +16,19 @@ try
 
     var cache = builder.AddRedis("cache");
     var rabbitmq = builder.AddRabbitMQ("messaging").WithManagementPlugin();
-    var elasticsearch = builder.AddElasticsearch("elasticsearch");
+    IResourceBuilder<ElasticsearchResource> elasticsearch = default!;
 
     var identityserverEndpoint = builder.AddProject<Projects.PlainBridge_IdentityServer_EndPoint>("identityserver-endpoint")
-        .WithUrl("https://localhost:5003")
-        .WithReference(elasticsearch)
-        .WaitFor(elasticsearch)
+        .WithUrl("https://localhost:5003") 
         .PublishAsDockerFile();
-
+     
     var apiEndpoint = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-endpoint")
         .WithUrl("https://localhost:5001")
         .WithReference(rabbitmq)
-        .WithReference(cache)
-        .WithReference(elasticsearch)
+        .WithReference(cache) 
         .WithReference(identityserverEndpoint)
         .WaitFor(cache)
-        .WaitFor(rabbitmq)
-        .WaitFor(elasticsearch)
+        .WaitFor(rabbitmq) 
         .WaitFor(identityserverEndpoint)
         .PublishAsDockerFile();
 
@@ -40,12 +36,10 @@ try
     var serverEndpoint = builder.AddProject<Projects.PlainBridge_Server_ApiEndPoint>("server-endpoint")
         .WithUrl("https://localhost:5002")
         .WithReference(cache)
-        .WithReference(rabbitmq)
-        .WithReference(elasticsearch)
+        .WithReference(rabbitmq) 
         .WithReference(apiEndpoint)
         .WaitFor(cache)
-        .WaitFor(rabbitmq)
-        .WaitFor(elasticsearch)
+        .WaitFor(rabbitmq) 
         .WaitFor(apiEndpoint)
         .PublishAsDockerFile();
 
@@ -59,19 +53,39 @@ try
         .WithExternalHttpEndpoints()
         .PublishAsDockerFile();
 
+    var clientEndpoint = builder.AddProject<Projects.PlainBridge_Client_ApiEndPoint>("client-apiendpoint")
+    .WithUrl("https://localhost:5002")
+    .WithReference(cache)
+    .WithReference(rabbitmq) 
+    .WithReference(serverEndpoint)
+    .WaitFor(cache)
+    .WaitFor(rabbitmq) 
+    .WaitFor(serverEndpoint)
+    .PublishAsDockerFile();
 
 
-    builder.AddProject<Projects.PlainBridge_Client_ApiEndPoint>("client-apiendpoint")
-        .WithUrl("https://localhost:5002")
-        .WithReference(cache)
-        .WithReference(rabbitmq)
+    if (!builder.Environment.IsDevelopment())
+    {
+        elasticsearch = builder.AddElasticsearch("elasticsearch");
+
+        identityserverEndpoint
         .WithReference(elasticsearch)
-        .WithReference(serverEndpoint)
-        .WaitFor(cache)
-        .WaitFor(rabbitmq)
-        .WaitFor(elasticsearch)
-        .WaitFor(serverEndpoint)
-        .PublishAsDockerFile();
+        .WaitFor(elasticsearch);
+         
+        apiEndpoint
+            .WithReference(elasticsearch)
+            .WaitFor(elasticsearch);
+
+        serverEndpoint
+            .WithReference(elasticsearch)
+            .WaitFor(elasticsearch);
+
+        clientEndpoint
+            .WithReference(elasticsearch)
+            .WaitFor(elasticsearch);
+         
+    }
+
 
     //builder.AddDockerfile("PlainBridge-AppHost", "relative/context/path")
     //    .WithReference(apiEndpoint)

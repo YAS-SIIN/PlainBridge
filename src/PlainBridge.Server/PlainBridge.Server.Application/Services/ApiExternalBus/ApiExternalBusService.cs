@@ -44,19 +44,17 @@ public class ApiExternalBusService(ILogger<ApiExternalBusService> _logger, IConn
                     case "Host_Application_Created":
                     case "Host_Application_Deleted":
                     case "Host_Application_Updated":
+                    case "Host_Application_State_Updated":
                         _logger.LogInformation("Updating Host Application due to message: {Message}", message);
                         await _hostApplicationService.UpdateHostApplicationAsync(cancellationToken);
                         break;
                     case "Server_Application_Created":
                     case "Server_Application_Deleted":
                     case "Server_Application_Updated":
+                    case "Server_Application_State_Updated":
                         _logger.LogInformation("Updating Server Application due to message: {Message}", message);
                         await _serverApplicationService.UpdateServerApplicationAsync(cancellationToken);
-                        break; 
-                    case "Host_Application_State_Updated":
-                    case "Server_Application_State_Updated":
-                        _logger.LogWarning("State updated");
-                        break;
+                        break;  
                     default:
                         _logger.LogWarning("Received unknown message type: {Message}", message);
                         throw new NotImplementedException();

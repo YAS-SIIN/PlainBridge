@@ -1,18 +1,20 @@
 ﻿ 
-using Serilog; 
-using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
+using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Options;
 using PlainBridge.Server.ApiEndPoint.ErrorHandling;
+using PlainBridge.Server.ApiEndPoint.Middleware;
+using PlainBridge.Server.Application.DTOs;
+using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 using PlainBridge.Server.Application.Management.Cache;
+using PlainBridge.Server.Application.Management.ResponseCompletionSources;
 using PlainBridge.Server.Application.Services.ApiExternalBus;
-using PlainBridge.Server.Application.Services.ServerBus;
-using PlainBridge.Server.Application.Services.HttpRequestProxy;
 using PlainBridge.Server.Application.Services.AppProjectConsumer;
 using PlainBridge.Server.Application.Services.HostApplication;
-using PlainBridge.Server.Application.Services.WebSocket;
-using PlainBridge.Server.Application.Management.ResponseCompletionSources;
-using PlainBridge.Server.ApiEndPoint.Middleware;
+using PlainBridge.Server.Application.Services.HttpRequestProxy;
 using PlainBridge.Server.Application.Services.ServerApplication;
-using Microsoft.Extensions.Caching.Hybrid;
+using PlainBridge.Server.Application.Services.ServerBus;
+using PlainBridge.Server.Application.Services.WebSocket;
+using Serilog; 
 
 namespace PlainBridge.Server.ApiEndPoint;
 
@@ -22,6 +24,7 @@ public static class DependencyResolver
     {
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+        var appSettings = services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSettings>>();
         services.AddOpenApi();
         services.AddExceptionHandler<ErrorHandler>();
         services.AddMemoryCache(); 
@@ -46,14 +49,14 @@ public static class DependencyResolver
         services.AddHybridCache(options =>
         {
             // Maximum size of cached items
-            options.MaximumPayloadBytes = 1024 * 1024 * 10; // 10MB
-            options.MaximumKeyLength = 512;
+            options.MaximumPayloadBytes = appSettings.Value.HybridCacheMaximumPayloadBytes;
+            options.MaximumKeyLength = appSettings.Value.HybridCacheMaximumKeyLength;
 
             // Default timeouts
             options.DefaultEntryOptions = new HybridCacheEntryOptions
             {
-                Expiration = TimeSpan.FromMinutes(30),
-                LocalCacheExpiration = TimeSpan.FromMinutes(30)
+                Expiration = TimeSpan.Parse(appSettings.Value.HybridDistributedCacheExpirationTime),
+                LocalCacheExpiration = TimeSpan.Parse(appSettings.Value.HybridMemoryCacheExpirationTime)
             };
         });
 

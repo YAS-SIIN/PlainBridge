@@ -14,7 +14,7 @@ public class ServerBusService(ILogger<ServerBusService> _logger, IConnection _co
     public async Task InitializeConsumerAsync(CancellationToken cancellationToken)
     {
         var queueName = "server_bus";
-        using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
+        var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
         await channel.QueueDeclareAsync(queueName, false, false, false, null, cancellationToken: cancellationToken);
 

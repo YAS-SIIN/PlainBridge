@@ -13,7 +13,7 @@ public class RabbitMqEventBus(ILogger<RabbitMqEventBus> _logger, IConnection _co
     public async Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken) where TEvent : class
     {
         if (@event == null) throw new ArgumentNullException(typeof(TEvent).Name);
-        using var channel = await _connection.CreateChannelAsync();
+        var channel = await _connection.CreateChannelAsync();
 
         var exchangeName = "external_bus";
         var queueName = $"api_to_server_external_bus";

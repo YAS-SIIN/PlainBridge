@@ -23,7 +23,7 @@ public class ServerApplicationConsumerService(ILogger<ServerApplicationConsumerS
     private async Task InitializeRequestConsumerAsync(CancellationToken cancellationToken)
     {
         var queueName = "server_network_requests";
-        using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
+        var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
         await channel.QueueDeclareAsync(queueName, false, false, false, null, cancellationToken: cancellationToken);
 
         var consumer = new AsyncEventingBasicConsumer(channel);
@@ -89,7 +89,7 @@ public class ServerApplicationConsumerService(ILogger<ServerApplicationConsumerS
     private async Task InitializeResponseConsumerAsync(CancellationToken cancellationToken)
     {
         var queueName = "server_network_responses";
-        using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
+        var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
         await channel.QueueDeclareAsync(queueName, false, false, false, null, cancellationToken: cancellationToken);
 

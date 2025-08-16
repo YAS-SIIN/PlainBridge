@@ -18,7 +18,7 @@ public class ApiExternalBusService(ILogger<ApiExternalBusService> _logger, IConn
         var queueName = $"api_to_server_external_bus";
         _logger.LogInformation("Initializing ApiExternalBusService and declaring queue: {QueueName}", queueName);
 
-        using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
+        var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
         await channel.QueueDeclareAsync(queue: queueName,
             durable: false,
             exclusive: false,
@@ -52,6 +52,10 @@ public class ApiExternalBusService(ILogger<ApiExternalBusService> _logger, IConn
                     case "Server_Application_Updated":
                         _logger.LogInformation("Updating Server Application due to message: {Message}", message);
                         await _serverApplicationService.UpdateHostApplicationAsync(cancellationToken);
+                        break; 
+                    case "Host_Application_State_Updated":
+                    case "Server_Application_State_Updated":
+                        _logger.LogWarning("State updated");
                         break;
                     default:
                         _logger.LogWarning("Received unknown message type: {Message}", message);

@@ -16,12 +16,13 @@ import { RowStateEnum } from '../../../../models';
   styleUrls: ['./server-applications-list.component.css']
 })
 export class ServerApplicationsListComponent implements OnInit {
-  displayedColumns: string[] = ['appId', 'name', 'serverApplicationAppId', 'internalPort', 'isActive', 'actions'];
+  displayedColumns: string[] = ['appId', 'name', 'serverApplicationAppId', 'internalPort', 'state', 'actions'];
   dataSource: MatTableDataSource<ServerApplicationDto> = new MatTableDataSource();
   loading = true;
 
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
   @ViewChild(MatSort) sort: MatSort | null = null;
+  RowStateEnum: any = RowStateEnum;
 
   constructor(
     private serverApplicationService: ServerApplicationService,
@@ -94,8 +95,8 @@ export class ServerApplicationsListComponent implements OnInit {
   }
 
   onToggleIsActive(row: ServerApplicationDto, isActive: boolean): void {
-    const prev = row.isActive;
-    row.isActive = isActive ? RowStateEnum.Active : RowStateEnum.Inactive;
+    const prev = row.state;
+    row.state = isActive ? RowStateEnum.Active : RowStateEnum.Inactive;
 
     this.apiResponseService.handleResponse(
       this.serverApplicationService.patchIsActive(row.id, isActive),
@@ -103,11 +104,11 @@ export class ServerApplicationsListComponent implements OnInit {
     ).subscribe({
       next: (updated) => {
         if (typeof (updated as any).state !== 'undefined') {
-          row.isActive = (updated as any).state === 1 ? RowStateEnum.Active : RowStateEnum.Inactive;
+          row.state = (updated as any).state === 1 ? RowStateEnum.Active : RowStateEnum.Inactive;
         }
       },
       error: () => {
-        row.isActive = prev;
+        row.state = prev;
       }
     });
   }

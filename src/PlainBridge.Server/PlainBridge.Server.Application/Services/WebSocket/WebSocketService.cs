@@ -59,7 +59,7 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
     public async Task InitializeConsumerAsync(CancellationToken cancellationToken)
     {
         var queueName = "websocket_client_bus";
-        using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
+        var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
 
         await channel.QueueDeclareAsync(queue: queueName,
@@ -106,7 +106,7 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
     {
         var queueName = $"{username}_websocket_server_bus";
         var exchangeName = "websocket_bus";
-        using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
+        var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
         await channel.ExchangeDeclareAsync(exchange: exchangeName,
             type: "direct",
@@ -130,7 +130,7 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
     {
         var queueName = $"{username}_websocket_server_bus";
         var exchangeName = "websocket_bus";
-        using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
+        var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
         var properties = new BasicProperties
         {

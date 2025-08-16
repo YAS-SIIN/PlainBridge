@@ -25,7 +25,7 @@ public class HttpRequestProxyService(ILogger<HttpRequestProxyService> _logger, I
         var queueName = "response_bus";
         var exchangeName = "response";
 
-        using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
+        var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
         await channel.ExchangeDeclareAsync(exchange: exchangeName,
             type: "direct",

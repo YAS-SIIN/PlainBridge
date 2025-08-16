@@ -1,4 +1,4 @@
-import { BaseEntity } from './base.models';
+import { BaseEntity, RowStateEnum } from './base.models';
 
 export interface HostApplicationDto extends BaseEntity {
   appId: string; 
@@ -7,4 +7,5 @@ export interface HostApplicationDto extends BaseEntity {
   internalUrl: string; 
   userId: number; 
   userName: string;
+  state: RowStateEnum;
 }

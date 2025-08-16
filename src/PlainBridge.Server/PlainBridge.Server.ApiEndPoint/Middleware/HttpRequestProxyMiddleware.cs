@@ -93,7 +93,7 @@ public class HttpRequestProxyMiddleware(RequestDelegate _next, ILogger<HttpReque
         var queueName = $"{username}_request_bus";
         var exchangeName = "request";
 
-        using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
+        var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
         if (!_initializedQueues.ContainsKey(username))
         {
             await channel.ExchangeDeclareAsync(exchange: exchangeName,

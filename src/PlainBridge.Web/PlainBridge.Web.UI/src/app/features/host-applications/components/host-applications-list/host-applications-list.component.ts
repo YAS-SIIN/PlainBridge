@@ -16,9 +16,10 @@ import { HostApplicationDto, RowStateEnum } from '../../../../models';
   styleUrls: ['./host-applications-list.component.css']
 })
 export class HostApplicationsListComponent implements OnInit {
-  displayedColumns: string[] = ['appId', 'name', 'domain', 'internalUrl', 'isActive',  'actions'];
+  displayedColumns: string[] = ['appId', 'name', 'domain', 'internalUrl', 'state',  'actions'];
   dataSource: MatTableDataSource<HostApplicationDto> = new MatTableDataSource();
   loading = true; 
+  RowStateEnum: any = RowStateEnum;
 
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
   @ViewChild(MatSort) sort: MatSort | null = null;
@@ -95,8 +96,8 @@ export class HostApplicationsListComponent implements OnInit {
 
   onToggleIsActive(row: HostApplicationDto, isActive: boolean): void {
     // optimistic update
-    const prev = row.isActive;
-      row.isActive = isActive ? RowStateEnum.Active : RowStateEnum.Inactive;
+    const prev = row.state;
+    row.state = isActive ? RowStateEnum.Active : RowStateEnum.Inactive;
 
     this.apiResponseService.handleResponse(
       this.hostApplicationService.patchIsActive(row.id, isActive),
@@ -105,12 +106,12 @@ export class HostApplicationsListComponent implements OnInit {
       next: (updated) => {
         // If backend returns state instead of isActive, normalize
         if (typeof (updated as any).state !== 'undefined') {
-           row.isActive = (updated as any).state === 1 ? RowStateEnum.Active : RowStateEnum.Inactive;
+           row.state = (updated as any).state === 1 ? RowStateEnum.Active : RowStateEnum.Inactive;
         }
       },
       error: () => {
         // revert on error
-        row.isActive = prev;
+        row.state = prev;
       }
     });
   }

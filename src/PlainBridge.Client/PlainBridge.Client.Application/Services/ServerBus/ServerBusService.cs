@@ -8,7 +8,7 @@ namespace PlainBridge.Client.Application.Services.ServerBus;
 
 public class ServerBusService(ILogger<ServerBusService> _logger, IConnection _connection) : IServerBusService
 {
-    public async Task RequestAppProjects(string username, CancellationToken cancellationToken)
+    public async Task RequestServerApplicationsAsync(string username, CancellationToken cancellationToken)
     {
         var exchangeName = "server_bus";
         var queueName = "server_bus";
@@ -19,7 +19,7 @@ public class ServerBusService(ILogger<ServerBusService> _logger, IConnection _co
         await channel.QueueDeclareAsync(queueName, false, false, false, null, cancellationToken: cancellationToken);
         await channel.QueueBindAsync(queueName, exchangeName, string.Empty, null, cancellationToken: cancellationToken);
 
-        var body = Encoding.UTF8.GetBytes("GET_APPPROJECTS");
+        var body = Encoding.UTF8.GetBytes("GET_SERVERAPPLICATIONS");
 
         var properties = new BasicProperties
         {

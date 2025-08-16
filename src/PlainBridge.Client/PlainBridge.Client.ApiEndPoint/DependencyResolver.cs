@@ -1,6 +1,9 @@
 ﻿using System.Net.WebSockets;
 using PlainBridge.Client.Application.Handler.WebSocket;
+using PlainBridge.Client.Application.Services.ClientBus;
 using PlainBridge.Client.Application.Services.ServerBus;
+using PlainBridge.Client.Application.Services.SharePortSocket;
+using PlainBridge.Client.Application.Services.UsePortSocket;
 using PlainBridge.Client.Application.Services.WebSocket;
 using PlainBridge.Server.Application.Helpers.Http;
 
@@ -14,6 +17,9 @@ public static class DependencyResolver
         services.AddScoped<IServerBusService, ServerBusService>();
         services.AddScoped<IWebSocketHandler, WebSocketHandler>();
         services.AddScoped<IHttpHelper, HttpHelper>();
+        services.AddScoped<IClientBusService, ClientBusService>();
+        services.AddScoped<ISharePortSocketService, SharePortSocketService>();
+        services.AddScoped<IUsePortSocketService, UsePortSocketService>();
 
         services.AddScoped<ClientWebSocket>(a=>
         {

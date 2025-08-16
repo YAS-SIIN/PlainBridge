@@ -3,5 +3,5 @@ namespace PlainBridge.Client.Application.Services.ServerBus;
 
 public interface IServerBusService
 {
-    Task RequestAppProjects(string username, CancellationToken cancellationToken);
+    Task RequestServerApplicationsAsync(string username, CancellationToken cancellationToken);
 }

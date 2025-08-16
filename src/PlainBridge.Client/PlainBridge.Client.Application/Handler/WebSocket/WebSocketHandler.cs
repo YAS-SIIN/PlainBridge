@@ -13,7 +13,7 @@ namespace PlainBridge.Client.Application.Handler.WebSocket;
 public class WebSocketHandler(ILogger<WebSocketHandler> _logger, IWebSocketService _webSocketService, IConnection _connection) : IWebSocketHandler
 {
 
-    public async Task InitializeWebSocketConsumer(string username, CancellationToken cancellationToken)
+    public async Task InitializeWebSocketConsumerAsync(string username, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Starting websocket request handler ...");
 

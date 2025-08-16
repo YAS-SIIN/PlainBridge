@@ -13,7 +13,7 @@ namespace PlainBridge.Client.Application.Handler.HttpRequest;
 
 public class HttpRequestHandler(ILogger<HttpRequestHandler> _logger, IConnection _connection, IHttpHelper _httpHelper) : IHttpRequestHandler
 {
-    public async Task InitializeHttpRequestConsumer(string username, CancellationToken cancellationToken)
+    public async Task InitializeHttpRequestConsumerAsync(string username, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Starting http request handler ...");
 

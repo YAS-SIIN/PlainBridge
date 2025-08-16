@@ -2,5 +2,5 @@
 
 public interface IWebSocketHandler
 {
-    Task InitializeWebSocketConsumer(string username, CancellationToken cancellationToken);
+    Task InitializeWebSocketConsumerAsync(string username, CancellationToken cancellationToken);
 }

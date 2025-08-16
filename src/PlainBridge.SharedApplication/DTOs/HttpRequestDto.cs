@@ -1,6 +1,7 @@
-﻿ 
+﻿
 
-namespace PlainBridge.Server.Application.DTOs;
+namespace PlainBridge.SharedApplication.DTOs;
+
 
 public record HttpRequestDto
 {

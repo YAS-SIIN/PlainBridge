@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
+using PlainBridge.Api.ApiEndPoint.Abstractions;
 using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.Services.Token;
@@ -8,9 +9,9 @@ using PlainBridge.SharedApplication.Exceptions;
 
 namespace PlainBridge.Api.ApiEndPoint.Endpoints;
 
-public static class LoginEndpoint
+public class LoginEndpoint : IEndpoint
 {
-    public static void MapLoginEndpoint(this IEndpointRouteBuilder builder)
+    public void MapEndpoint(IEndpointRouteBuilder builder)
     {
         var app = builder.MapGroup(""); 
         app.MapBffManagementEndpoints();

@@ -61,12 +61,7 @@ try
 
     var app = builder.Build();
      
-    app.MapGroup("").MapLoginEndpoint();
-    app.MapGroup("api/").MapHostApplicationEndpoint();
-    app.MapGroup("api/").MapServerApplicationEndpoint();
-    app.MapGroup("api/").MapUserEndpoint();
-     
-
+      
     app.AddUsers();
 
     await app.RunAsync();

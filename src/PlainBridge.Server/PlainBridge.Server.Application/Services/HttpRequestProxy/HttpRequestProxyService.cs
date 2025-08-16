@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using PlainBridge.Server.Application.DTOs;
 using PlainBridge.Server.Application.Management.ResponseCompletionSources;
 using PlainBridge.Server.Application.Services.ApiExternalBus;
-
+using PlainBridge.SharedApplication.DTOs;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -59,10 +59,10 @@ public class HttpRequestProxyService(ILogger<HttpRequestProxyService> _logger, I
                 //var response = Encoding.UTF8.GetString(ea.Body.ToArray());
 
                 // Retrieve the response completion source and complete it
-                if (RetrieveResponseCompletionSource(responseID, out var responseCompletionSource))
+                if (RetrieveResponseCompletionSource(responseID!, out var responseCompletionSource))
                 {
                     var httpResponse = JsonSerializer.Deserialize<HttpResponseDto>(Encoding.UTF8.GetString(ea.Body.ToArray()));
-                    responseCompletionSource.SetResult(httpResponse);
+                    responseCompletionSource.SetResult(httpResponse!);
                 }
             }
             catch

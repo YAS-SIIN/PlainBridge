@@ -1,8 +1,8 @@
 ﻿
 using System.Net;
 
-namespace PlainBridge.Server.Application.DTOs;
-
+namespace PlainBridge.SharedApplication.DTOs;
+ 
 public record HttpResponseDto
 {
     public string ContentType { get; set; }

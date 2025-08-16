@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
-
-using PlainBridge.Api.Application.DTOs; 
+using PlainBridge.Api.ApiEndPoint.Abstractions;
+using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.Services.User;
 using PlainBridge.SharedApplication.DTOs;
@@ -11,14 +11,14 @@ using PlainBridge.SharedApplication.Extentions;
 
 namespace PlainBridge.Api.ApiEndPoint.Endpoints;
 
-public static class UserEndpoint
+public class UserEndpoint : IEndpoint
 {
-    public static void MapUserEndpoint(this IEndpointRouteBuilder builder)
+    public void MapEndpoint(IEndpointRouteBuilder builder)
     {
-        var app = builder.MapGroup("User");
+        var app = builder.MapGroup("api/User");
         // GetAllAsync
         app.MapGet("", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IUserService userService) =>
-        { 
+        {
             var data = await userService.GetAllAsync(cancellationToken);
             return Results.Ok(ResultDto<IList<UserDto>>.ReturnData(
                 data,
@@ -34,7 +34,7 @@ public static class UserEndpoint
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
                 throw new NotFoundException("user");
-             
+
             return Results.Ok(ResultDto<UserDto>.ReturnData(
                 user,
                 ResultCodeEnum.Success,
@@ -45,7 +45,7 @@ public static class UserEndpoint
 
         // CreateAsync
         app.MapPost("", async ([FromBody] UserDto user, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IUserService userService) =>
-        { 
+        {
             var id = await userService.CreateAsync(user, cancellationToken);
             return Results.Created($"/user/{id}", ResultDto<Guid>.ReturnData(
                 id,

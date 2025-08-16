@@ -4,9 +4,11 @@ using Duende.IdentityModel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using PlainBridge.Api.ApiEndPoint.Abstractions;
 using PlainBridge.Api.ApiEndPoint.ErrorHandling;
 using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.HostApplication;
@@ -54,6 +56,7 @@ public static class DependencyResolver
         services.AddScoped<ITokenService, TokenService>();
 
         services.AddAuthorization();
+        services.AddEndpoints();
 
         services
               .AddBff()
@@ -73,6 +76,23 @@ public static class DependencyResolver
 
         return services;
     }
+
+    public static IServiceCollection AddEndpoints(this IServiceCollection services)
+    {
+        var assembly = typeof(IAssemblyMarker).Assembly;
+
+        ServiceDescriptor[] serviceDescriptors = assembly
+            .DefinedTypes
+            .Where(type => type is { IsAbstract: false, IsInterface: false } &&
+                           type.IsAssignableTo(typeof(IEndpoint)))
+            .Select(type => ServiceDescriptor.Transient(typeof(IEndpoint), type))
+            .ToArray();
+
+        services.TryAddEnumerable(serviceDescriptors);
+
+        return services;
+    }
+
 
     public static IServiceCollection AddAuthentication(this IServiceCollection services, ApplicationSettings appSettings)
     {
@@ -154,6 +174,7 @@ public static class DependencyResolver
         }
 
         app.UseCors();
+        app.MapEndpoints();
 
         app.UseDefaultFiles();
         app.UseStaticFiles();
@@ -162,6 +183,18 @@ public static class DependencyResolver
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseBff();
+
+        return app;
+    }
+    public static IApplicationBuilder MapEndpoints(this WebApplication app)
+    {
+        IEnumerable<IEndpoint> endpoints = app.Services
+                                              .GetRequiredService<IEnumerable<IEndpoint>>();
+
+        foreach (IEndpoint endpoint in endpoints)
+        {
+            endpoint.MapEndpoint(app);
+        }
 
         return app;
     }

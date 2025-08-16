@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using PlainBridge.Api.ApiEndPoint.Abstractions;
 using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.ServerApplication;
 using PlainBridge.Api.Application.Services.Session;
@@ -12,11 +12,11 @@ using PlainBridge.SharedApplication.Extentions;
 
 namespace PlainBridge.Api.ApiEndPoint.Endpoints;
 
-public static class ServerApplicationEndPoint
+public class ServerApplicationEndPoint : IEndpoint
 {
-    public static void MapServerApplicationEndpoint(this IEndpointRouteBuilder builder)
+    public void MapEndpoint(IEndpointRouteBuilder builder)
     {
-        var app = builder.MapGroup("ServerApplication")
+        var app = builder.MapGroup("api/ServerApplication")
             .RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme });
 
         // GetAllAsync

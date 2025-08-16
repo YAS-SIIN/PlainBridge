@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.Token;
 using PlainBridge.Api.Application.Services.User;
+using PlainBridge.SharedApplication.DTOs;
 using System.Text.Json;
 
 namespace PlainBridge.Api.Application.Services.Session;

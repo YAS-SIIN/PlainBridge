@@ -1,5 +1,5 @@
-﻿using PlainBridge.Server.Application.DTOs;
-
+﻿
+using PlainBridge.SharedApplication.DTOs;
 using System.Collections.Concurrent;
 
 namespace PlainBridge.Server.Application.Management.ResponseCompletionSources;

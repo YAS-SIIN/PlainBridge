@@ -45,13 +45,13 @@ public class ApiExternalBusService(ILogger<ApiExternalBusService> _logger, IConn
                     case "Host_Application_Deleted":
                     case "Host_Application_Updated":
                         _logger.LogInformation("Updating Host Application due to message: {Message}", message);
-                        await _hostApplicationService.UpdateServerApplicationAsync(cancellationToken);
+                        await _hostApplicationService.UpdateHostApplicationAsync(cancellationToken);
                         break;
                     case "Server_Application_Created":
                     case "Server_Application_Deleted":
                     case "Server_Application_Updated":
                         _logger.LogInformation("Updating Server Application due to message: {Message}", message);
-                        await _serverApplicationService.UpdateHostApplicationAsync(cancellationToken);
+                        await _serverApplicationService.UpdateServerApplicationAsync(cancellationToken);
                         break; 
                     case "Host_Application_State_Updated":
                     case "Server_Application_State_Updated":
@@ -72,10 +72,10 @@ public class ApiExternalBusService(ILogger<ApiExternalBusService> _logger, IConn
         };
 
         _logger.LogInformation("Updating Host Application cache on initialization.");
-        await _hostApplicationService.UpdateServerApplicationAsync(cancellationToken);
+        await _hostApplicationService.UpdateHostApplicationAsync(cancellationToken);
 
         _logger.LogInformation("Updating Server Application cache on initialization.");
-        await _serverApplicationService.UpdateHostApplicationAsync(cancellationToken);
+        await _serverApplicationService.UpdateServerApplicationAsync(cancellationToken);
 
         _logger.LogInformation("Starting to consume messages from queue: {QueueName}", queueName);
         await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: external_bus_consumer, cancellationToken);

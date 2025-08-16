@@ -10,46 +10,31 @@ using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
 
 using System;
+using System.Threading.Tasks;
 
 namespace PlainBridge.Server.Application.Services.ServerApplication;
 
 public class ServerApplicationService(ILogger<ServerApplicationService> _logger, IPlainBridgeApiClientHandler _plainBridgeApiClientHandler, IOptions<ApplicationSettings> _applicationSetting, ICacheManagement _cache) : IServerApplicationService
-{
-    public HostApplicationDto GetByHost(string host)
+{ 
+    public async Task UpdateServerApplicationAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Getting HostApplication by host: {Host}", host);
-        if (string.IsNullOrEmpty(host))
-        {
-            _logger.LogError("Host parameter is null or empty.");
-            throw new ArgumentNullException(nameof(host));
-        }
+        _logger.LogInformation("Updating server applications from API.");
+        var serverApplications = await _plainBridgeApiClientHandler.GetServerApplicationsAsync(CancellationToken.None);
 
-        if (!_cache.TryGetHostApplication(host, out HostApplicationDto hostApplication))
-        {
-            _logger.LogWarning("Host application not found for host: {Host}", host);
-            throw new NotFoundException("Host application not found");
-        }
-        _logger.LogInformation("Host application found for host: {Host}", host);
-        return hostApplication;
-    }
-
-    public async Task UpdateHostApplicationAsync(CancellationToken cancellationToken)
-    {
-        _logger.LogInformation("Updating host applications from API.");
-        var hostApplications = await _plainBridgeApiClientHandler.GetHostApplicationsAsync(CancellationToken.None);
-
-        if (hostApplications == null)
+        if (serverApplications == null)
         {
             _logger.LogWarning("No host applications received from API.");
             return;
         }
 
-        foreach (var project in hostApplications.Where(x => x.State == RowStateEnum.Active))
-        {
-            var projectHost = project.GetProjectHost(_applicationSetting.Value.DefaultDomain);
-            _cache.SetHostApplication(projectHost, project);
-            _logger.LogInformation("Host application cached: {ProjectHost}", projectHost);
+        foreach (var serverApplication in serverApplications.Where(x => x.State == RowStateEnum.Active))
+        { 
+            await _cache.SetGetServerApplicationAsync(serverApplication!.UserName!, serverApplication.InternalPort, serverApplication, cancellationToken);
+            await _cache.SetGetServerApplicationAsync(serverApplication.AppId, serverApplication, cancellationToken);
+
+            _logger.LogInformation("Server application cached: {ServerApplication}", serverApplication);
         }
         _logger.LogInformation("Host applications update completed.");
     }
+
 }

@@ -1,0 +1,6 @@
+@PlainBridge.Client.ApiEndPoint_HostAddress = http://localhost:5034
+
+GET {{PlainBridge.Client.ApiEndPoint_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

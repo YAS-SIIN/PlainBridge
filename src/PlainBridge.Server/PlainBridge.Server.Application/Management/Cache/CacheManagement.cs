@@ -1,29 +1,51 @@
 ﻿
 
+using System.Net.WebSockets;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-
+using Microsoft.Extensions.Options;
+using PlainBridge.Server.Application.DTOs;
 using PlainBridge.Server.Application.Management.WebSocketManagement;
 using PlainBridge.SharedApplication.DTOs;
 
-using System.Net.WebSockets;
-
 namespace PlainBridge.Server.Application.Management.Cache;
 
-public class CacheManagement(ILogger<CacheManagement> _logger, IMemoryCache _memoryCache) : ICacheManagement
-{ 
+public class CacheManagement(ILogger<CacheManagement> _logger, HybridCache _memoryCache, IOptions<ApplicationSettings> _appSettings) : ICacheManagement
+{
+    HybridCacheEntryOptions options = new HybridCacheEntryOptions
+    {
+        Expiration = TimeSpan.Parse(_appSettings.Value.DistributedCacheExpirationTime),
+        LocalCacheExpiration = TimeSpan.Parse(_appSettings.Value.MemoryCacheExpirationTime),
 
-    public HostApplicationDto SetHostApplication(string host, HostApplicationDto value) => _memoryCache.Set($"hostApplication:{host}", value);
-    public bool TryGetHostApplication(string host, out HostApplicationDto value) => _memoryCache.TryGetValue($"hostApplication:{host}", out value);
+    };
 
-    public ServerApplicationDto SetServerApplication(Guid viewId, ServerApplicationDto value) => _memoryCache.Set($"serverApplication:viewId:{viewId}", value);
+    public async Task<HostApplicationDto> SetGetHostApplicationAsync(string host, HostApplicationDto value = default!, CancellationToken cancellationToken = default) => await _memoryCache.GetOrCreateAsync<HostApplicationDto>(
+            $"hostApplication:{host}",
+            async ct => value,
+            options,
+            cancellationToken: cancellationToken);
 
-    public ServerApplicationDto SetServerApplication(string username, int port, ServerApplicationDto value) => _memoryCache.Set($"serverApplication:username:{username}:port:{port}", value);
-    public bool TryGetServerApplication(string username, int port, out ServerApplicationDto value) => _memoryCache.TryGetValue($"serverApplication:username:{username}:port:{port}", out value);
-    public bool TryGetServerApplication(Guid viewId, out ServerApplicationDto value) => _memoryCache.TryGetValue($"serverApplication:viewId:{viewId}", out value);
+    public async Task<ServerApplicationDto> SetGetServerApplicationAsync(Guid appId, ServerApplicationDto value = default!, CancellationToken cancellationToken = default! ) => await
+        _memoryCache.GetOrCreateAsync($"serverApplication:appId:{appId}",
+            async ct => value,
+            options,
+            cancellationToken: cancellationToken);
 
-    public IWebSocketManagement SetWebSocket(string host, IWebSocketManagement value) => _memoryCache.Set($"webSocket:{host}", value);
-    public bool TryGetWebSocket(string host, out IWebSocketManagement value) => _memoryCache.TryGetValue($"webSocket:{host}", out value);
-    public void RemoveWebSocket(string host) => _memoryCache.Remove($"webSocket:{host}");
+    public async Task<ServerApplicationDto> SetGetServerApplicationAsync(string username, int port, ServerApplicationDto value = default!, CancellationToken cancellationToken = default!) => await
+        _memoryCache.GetOrCreateAsync($"serverApplication:username:{username}:port:{port}",
+            async ct => value,
+            options,
+            cancellationToken: cancellationToken);
+
+    public async Task<IWebSocketManagement> SetGetWebSocketAsync(string host, IWebSocketManagement value = default!, CancellationToken cancellationToken = default!) => await
+        _memoryCache.GetOrCreateAsync($"webSocket:{host}",
+            async ct => value,
+            options,
+            cancellationToken: cancellationToken);
+
+    public async Task RemoveWebSocketAsync(string host, CancellationToken cancellationToken = default!) => await _memoryCache.RemoveAsync($"webSocket:{host}", cancellationToken);
 
 }

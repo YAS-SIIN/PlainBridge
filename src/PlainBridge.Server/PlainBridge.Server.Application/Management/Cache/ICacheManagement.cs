@@ -5,13 +5,9 @@ namespace PlainBridge.Server.Application.Management.Cache;
 
 public interface ICacheManagement
 {
-    HostApplicationDto SetHostApplication(string host, HostApplicationDto value);
-    ServerApplicationDto SetServerApplication(Guid viewId, ServerApplicationDto value);
-    ServerApplicationDto SetServerApplication(string username, int port, ServerApplicationDto value);
-    IWebSocketManagement SetWebSocket(string host, IWebSocketManagement value);
-    bool TryGetHostApplication(string host, out HostApplicationDto value);
-    bool TryGetServerApplication(Guid viewId, out ServerApplicationDto value);
-    bool TryGetServerApplication(string username, int port, out ServerApplicationDto value);
-    bool TryGetWebSocket(string host, out IWebSocketManagement value);
-    void RemoveWebSocket(string host);
+    Task<HostApplicationDto> SetGetHostApplicationAsync(string host, HostApplicationDto value = default!, CancellationToken cancellationToken = default!);
+    Task<ServerApplicationDto> SetGetServerApplicationAsync(Guid appId, ServerApplicationDto value = default!, CancellationToken cancellationToken = default!);
+    Task<ServerApplicationDto> SetGetServerApplicationAsync(string username, int port, ServerApplicationDto value = default!, CancellationToken cancellationToken = default!);
+    Task<IWebSocketManagement> SetGetWebSocketAsync(string host, IWebSocketManagement value = default!, CancellationToken cancellationToken = default!);
+    Task RemoveWebSocketAsync(string host, CancellationToken cancellationToken = default!);
 }

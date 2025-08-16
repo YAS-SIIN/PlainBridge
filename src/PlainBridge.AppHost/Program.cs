@@ -9,6 +9,7 @@ var simpleLogger = new LoggerConfiguration()
 
 simpleLogger.Information("Starting up");
 
+
 try
 {
     var builder = DistributedApplication.CreateBuilder(args);
@@ -25,25 +26,27 @@ try
 
     var apiEndpoint = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-endpoint")
         .WithUrl("https://localhost:5001")
-        .WithReference(identityserverEndpoint)
         .WithReference(rabbitmq)
         .WithReference(cache)
         .WithReference(elasticsearch)
-        .WaitFor(identityserverEndpoint)
+        .WithReference(identityserverEndpoint)
         .WaitFor(cache)
         .WaitFor(rabbitmq)
         .WaitFor(elasticsearch)
+        .WaitFor(identityserverEndpoint)
         .PublishAsDockerFile();
 
 
     var serverEndpoint = builder.AddProject<Projects.PlainBridge_Server_ApiEndPoint>("server-endpoint")
         .WithUrl("https://localhost:5002")
-        .WithReference(apiEndpoint)
+        .WithReference(cache)
         .WithReference(rabbitmq)
         .WithReference(elasticsearch)
+        .WithReference(apiEndpoint)
         .WaitFor(cache)
         .WaitFor(rabbitmq)
         .WaitFor(elasticsearch)
+        .WaitFor(apiEndpoint)
         .PublishAsDockerFile();
 
     var angularWebUi =
@@ -54,6 +57,20 @@ try
         .WaitFor(identityserverEndpoint)
         .WaitFor(apiEndpoint)
         .WithExternalHttpEndpoints()
+        .PublishAsDockerFile();
+
+
+
+    builder.AddProject<Projects.PlainBridge_Client_ApiEndPoint>("client-apiendpoint")
+        .WithUrl("https://localhost:5002")
+        .WithReference(cache)
+        .WithReference(rabbitmq)
+        .WithReference(elasticsearch)
+        .WithReference(serverEndpoint)
+        .WaitFor(cache)
+        .WaitFor(rabbitmq)
+        .WaitFor(elasticsearch)
+        .WaitFor(serverEndpoint)
         .PublishAsDockerFile();
 
     //builder.AddDockerfile("PlainBridge-AppHost", "relative/context/path")

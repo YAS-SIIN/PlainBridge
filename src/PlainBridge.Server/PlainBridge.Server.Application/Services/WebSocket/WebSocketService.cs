@@ -24,7 +24,7 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
 
     public async Task HandleWebSocketAsync(IWebSocketManagement webSocketManagement, HostApplicationDto hostApplication, CancellationToken cancellationToken)
     {
-        _cacheManagement.SetWebSocket(hostApplication.GetProjectHost(_applicationSettings.Value.DefaultDomain), webSocketManagement);
+        await _cacheManagement.SetGetWebSocketAsync(hostApplication.GetProjectHost(_applicationSettings.Value.DefaultDomain), webSocketManagement, cancellationToken);
         await InitializeRabbitMQAsync(hostApplication?.UserName!, cancellationToken);
 
 
@@ -51,7 +51,7 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
         }
         finally
         {
-            _cacheManagement.RemoveWebSocket(hostApplication.GetProjectHost(_applicationSettings.Value.DefaultDomain));
+           await  _cacheManagement.RemoveWebSocketAsync(hostApplication!.GetProjectHost(_applicationSettings.Value.DefaultDomain), cancellationToken);
         }
     }
 

@@ -12,6 +12,7 @@ using PlainBridge.Server.Application.Services.WebSocket;
 using PlainBridge.Server.Application.Management.ResponseCompletionSources;
 using PlainBridge.Server.ApiEndPoint.Middleware;
 using PlainBridge.Server.Application.Services.ServerApplication;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace PlainBridge.Server.ApiEndPoint;
 
@@ -41,6 +42,20 @@ public static class DependencyResolver
         services.AddScoped<Application.Services.Identity.IIdentityService, Application.Services.Identity.IdentityService>();
         services.AddScoped<ResponseCompletionSourcesManagement>();
         services.AddHttpServices();
+
+        services.AddHybridCache(options =>
+        {
+            // Maximum size of cached items
+            options.MaximumPayloadBytes = 1024 * 1024 * 10; // 10MB
+            options.MaximumKeyLength = 512;
+
+            // Default timeouts
+            options.DefaultEntryOptions = new HybridCacheEntryOptions
+            {
+                Expiration = TimeSpan.FromMinutes(30),
+                LocalCacheExpiration = TimeSpan.FromMinutes(30)
+            };
+        });
 
         return services;
     }

@@ -1,38 +1,45 @@
 ﻿
-using Microsoft.Extensions.Logging; 
+using System;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using PlainBridge.Server.Application.DTOs;
 using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 using PlainBridge.Server.Application.Management.Cache;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
-
-using System;
+using PlainBridge.SharedApplication.Exceptions;
 namespace PlainBridge.Server.Application.Services.HostApplication;
 
-public class HostApplicationService(ILogger<HostApplicationService> _logger, IPlainBridgeApiClientHandler _plainBridgeApiClientHandler, ICacheManagement _cache) : IHostApplicationService
+public class HostApplicationService(ILogger<HostApplicationService> _logger, IPlainBridgeApiClientHandler _plainBridgeApiClientHandler, ICacheManagement _cache, IOptions<ApplicationSettings> _appSettings) : IHostApplicationService
 {
 
 
-    public HostApplicationDto GetByHost(string host)
+    public async Task<HostApplicationDto> GetByHostAsync(string host, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(host))
             throw new ArgumentNullException(nameof(host));
 
-        if (!_cache.TryGetHostApplication(host, out HostApplicationDto serverApplicationS)) throw new ApplicationException("Project not found");
-        return serverApplicationS;
+        var hostApplication = await _cache.SetGetHostApplicationAsync(host, cancellationToken: cancellationToken);
+        if (hostApplication is null || hostApplication == default)
+        {
+            _logger.LogWarning("Host application not found for host: {Host}", host);
+            throw new NotFoundException("Host application not found");
+        }
+
+        return hostApplication;
     }
 
-    public async Task UpdateServerApplicationAsync(CancellationToken cancellationToken)
+    public async Task UpdateHostApplicationAsync(CancellationToken cancellationToken)
     {
-        var serverApplications = await _plainBridgeApiClientHandler.GetServerApplicationsAsync(CancellationToken.None);
-
-        var serverApplicationDictionary = new Dictionary<string, HostApplicationDto>();
-        if (serverApplications is not null && serverApplications.Any())
+        var hostApplications = await _plainBridgeApiClientHandler.GetHostApplicationsAsync(CancellationToken.None);
+         
+        if (hostApplications is not null && hostApplications.Any())
         {
-            foreach (var serverApplication in serverApplications.Where(x => x.State == RowStateEnum.Active))
+            foreach (var hostApplication in hostApplications.Where(x => x.State == RowStateEnum.Active))
             {
-                _cache.SetServerApplication(serverApplication.UserName, serverApplication.InternalPort, serverApplication);
-                _cache.SetServerApplication(serverApplication.AppId, serverApplication);
+                await _cache.SetGetHostApplicationAsync(hostApplication.GetProjectHost(_appSettings.Value.DefaultDomain), hostApplication, cancellationToken); 
             }
         }
     }

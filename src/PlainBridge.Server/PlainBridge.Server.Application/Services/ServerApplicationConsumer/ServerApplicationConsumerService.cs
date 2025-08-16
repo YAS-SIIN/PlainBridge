@@ -52,20 +52,22 @@ public class ServerApplicationConsumerService(ILogger<ServerApplicationConsumerS
             {
                 useportConnectionId = Encoding.UTF8.GetString(connectionIdBytes);
             }
-             
-            if (!_cacheManagement.TryGetServerApplication(useportUsername, usePort, out var appProject))
+
+            var serverApplication = await _cacheManagement.SetGetServerApplicationAsync(useportUsername, usePort);
+            if (serverApplication is null || serverApplication == default)
             {
                 await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
                 return;
             }
 
-            if (!appProject.ServerApplicationAppId.HasValue)
+            if (!serverApplication.ServerApplicationAppId.HasValue)
             {
                 await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
                 return;
             }
 
-            if (!_cacheManagement.TryGetServerApplication(appProject.ServerApplicationAppId.Value, out var destinationServerApplication))
+            var destinationServerApplication = await _cacheManagement.SetGetServerApplicationAsync(serverApplication.ServerApplicationAppId.Value);
+            if (destinationServerApplication is null || destinationServerApplication == default)
             {
                 await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
                 return;
@@ -121,7 +123,8 @@ public class ServerApplicationConsumerService(ILogger<ServerApplicationConsumerS
                 useportConnectionId = Encoding.UTF8.GetString(connectionIdBytes);
             }
              
-            if (!_cacheManagement.TryGetServerApplication(useportUsername, usePort, out var appProject))
+            var serverApplication = await _cacheManagement.SetGetServerApplicationAsync(useportUsername, usePort);  
+            if (serverApplication is null || serverApplication == default)
             {
                 await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
                 return;

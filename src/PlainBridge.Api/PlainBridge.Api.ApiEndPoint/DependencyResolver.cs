@@ -1,9 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using Duende.Bff.Yarp;
 using Duende.IdentityModel;
+using Elastic.CommonSchema;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -25,7 +27,7 @@ using StackExchange.Redis;
 namespace PlainBridge.Api.ApiEndPoint;
 
 public static class DependencyResolver
-{ 
+{
     public static IServiceCollection AddApiProjectServices(this IServiceCollection services)
     {
 
@@ -46,7 +48,7 @@ public static class DependencyResolver
         services.AddOpenApi();
         services.AddAuthentication(appSettings.Value);
         services.AddExceptionHandler<ErrorHandler>();
-        
+
         services.AddScoped<IHostApplicationService, HostApplicationService>();
         services.AddScoped<IServerApplicationService, ServerApplicationService>();
         services.AddScoped<IUserService, UserService>();
@@ -54,6 +56,21 @@ public static class DependencyResolver
         services.AddScoped<IEventBus, RabbitMqEventBus>();
         services.AddScoped<ISessionService, SessionService>();
         services.AddScoped<ITokenService, TokenService>();
+
+
+        services.AddHybridCache(options =>
+        {
+            // Maximum size of cached items
+            options.MaximumPayloadBytes = appSettings.Value.HybridCacheMaximumPayloadBytes;
+            options.MaximumKeyLength = appSettings.Value.HybridCacheMaximumKeyLength;
+
+            // Default timeouts
+            options.DefaultEntryOptions = new HybridCacheEntryOptions
+            {
+                Expiration = TimeSpan.Parse(appSettings.Value.HybridDistributedCacheExpirationTime),
+                LocalCacheExpiration = TimeSpan.Parse(appSettings.Value.HybridMemoryCacheExpirationTime)
+            };
+        });
 
         services.AddAuthorization();
         services.AddEndpoints();
@@ -66,6 +83,8 @@ public static class DependencyResolver
         services.AddHttpContextAccessor();
 
         services.AddHttpServices();
+
+
 
         return services;
     }
@@ -97,7 +116,7 @@ public static class DependencyResolver
     public static IServiceCollection AddAuthentication(this IServiceCollection services, ApplicationSettings appSettings)
     {
         var serviceProvider = services.BuildServiceProvider();
-        var connectionMultiplexer = serviceProvider.GetRequiredService<IConnectionMultiplexer>(); 
+        var hybridCache = serviceProvider.GetRequiredService<HybridCache>();
 
         // This is crucial - prevents the JWT handler from mapping 'sub' claim to ClaimTypes.NameIdentifier
         JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
@@ -123,15 +142,13 @@ public static class DependencyResolver
                 ValidateAudience = false
             };
 
-            var db = connectionMultiplexer.GetDatabase(10);
-
             options.Events = new JwtBearerEvents
             {
                 OnMessageReceived = async context =>
                 {
                     var tokenp = context.Request.Headers["Authorization"];
                     tokenp = tokenp.ToString().Replace("Bearer ", "");
-                    var token = await db.StringGetAsync($"tokenptoken:{tokenp}");
+                    var token = await hybridCache.GetOrCreateAsync($"tokenptoken:{tokenp}", async ct => (string)default!);
                     context.Token = token;
                 }
             };

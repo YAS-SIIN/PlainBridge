@@ -20,7 +20,7 @@ public class UsePortSocketService(ILogger<UsePortSocketService> logger, IConnect
     {
         foreach (var appProject in serverApplications.Where(x => x.ServerApplicationType == ServerApplicationTypeEnum.UsePort))
         {
-            var tcpListener = await _cacheManagement.SetGetTcpListenerAsync(appProject.InternalPort.ToString(), cancellationToken: cancellationToken);
+            var tcpListener = await _cacheManagement.SetGetTcpListenerAsync(appProject.InternalPort, cancellationToken: cancellationToken);
 
             if (tcpListener is not null && tcpListener != default) continue;
 
@@ -28,7 +28,7 @@ public class UsePortSocketService(ILogger<UsePortSocketService> logger, IConnect
             tcpListener.Server.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, false);
             tcpListener.Start();
 
-            await _cacheManagement.SetGetTcpListenerAsync(appProject.InternalPort.ToString(), tcpListener, cancellationToken: cancellationToken);
+            await _cacheManagement.SetGetTcpListenerAsync(appProject.InternalPort, tcpListener, cancellationToken: cancellationToken);
 
             var task = Task.Run(async () =>
             {
@@ -40,7 +40,7 @@ public class UsePortSocketService(ILogger<UsePortSocketService> logger, IConnect
 
                     var handleIncommingRequestsTask = Task.Run(async () => await HandleTcpClientIncommingRequestsAsync(username, appProject.InternalPort, connectionId, clientStream, cancellationToken));
 
-                    await _cacheManagement.SetGetUsePortModelAsync(appProject.InternalPort.ToString(), connectionId, new(client, handleIncommingRequestsTask), cancellationToken: cancellationToken);
+                    await _cacheManagement.SetGetUsePortModelAsync(appProject.InternalPort, connectionId, new(client, handleIncommingRequestsTask), cancellationToken: cancellationToken);
                 }
             });
         }
@@ -111,7 +111,7 @@ public class UsePortSocketService(ILogger<UsePortSocketService> logger, IConnect
             var useportPort = int.Parse(ea.BasicProperties!.Headers["useport_port"]!.ToString() ?? string.Empty);
             var useportConnectionId = Encoding.UTF8.GetString(ea.BasicProperties!.Headers["useport_connectionid"]! as byte[]);
 
-            var useportModel = await _cacheManagement.SetGetUsePortModelAsync(useportPort.ToString(), useportConnectionId, cancellationToken: cancellationToken);
+            var useportModel = await _cacheManagement.SetGetUsePortModelAsync(useportPort, useportConnectionId, cancellationToken: cancellationToken);
             if (useportModel is null || useportModel == default)
             {
                 await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);

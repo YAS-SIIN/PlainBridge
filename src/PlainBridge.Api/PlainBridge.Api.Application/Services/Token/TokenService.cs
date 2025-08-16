@@ -1,26 +1,18 @@
 ﻿
-using Microsoft.IdentityModel.Tokens;
-
-using StackExchange.Redis;
-
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
+using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 
 namespace PlainBridge.Api.Application.Services.Token;
 
-public class TokenService : ITokenService
-{
-    private readonly IConnectionMultiplexer _connectionMultiplexer;
-
-    private readonly IDatabase _db;
-
-    public TokenService(IConnectionMultiplexer connectionMultiplexer)
-    {
-        _connectionMultiplexer = connectionMultiplexer;
-        _db = _connectionMultiplexer.GetDatabase(10);
-    }
-
+public class TokenService(HybridCache _hybridCache) : ITokenService
+{ 
+     
+ 
     public JwtSecurityToken ParseToken(string token)
     {
         var handler = new JwtSecurityTokenHandler();
@@ -51,38 +43,34 @@ public class TokenService : ITokenService
         return tokenString;
     }
 
-    public async Task SetTokenPSubAsync(string tokenp, string sub) => await _db.StringSetAsync($"tokenpsub:{tokenp}", sub);
+    public async Task<string?> SetGetTokenPSubAsync(string tokenp, string value = default!, CancellationToken cancellationToken = default!) => await _hybridCache.GetOrCreateAsync($"tokenpsub:{tokenp}",
+            async ct => value,
+            cancellationToken: cancellationToken);
 
+     
 
-    public async Task<string?> GetTokenPSubAsync(string tokenp) => await _db.StringGetAsync($"tokenpsub:{tokenp}");
+    public async Task<string?> SetGetSubTokenAsync(string sub, string value = default!, CancellationToken cancellationToken = default!) => await _hybridCache.GetOrCreateAsync($"subtoken:{sub}",
+            async ct => value,
+            cancellationToken: cancellationToken);
 
+      
+    public async Task SetGetSubTokenPAsync(string sub, string value = default!, CancellationToken cancellationToken = default!) => await _hybridCache.GetOrCreateAsync($"subtokenp:{sub}",
+            async ct => value,
+            cancellationToken: cancellationToken);
 
-    public async Task SetSubTokenAsync(string sub, string token) => await _db.StringSetAsync($"subtoken:{sub}", token);
+     
+    public async Task<string?> SetGetTokenPTokenAsync(string tokenp, string value = default!, CancellationToken cancellationToken = default!) => await _hybridCache.GetOrCreateAsync($"tokenptoken:{tokenp}",
+            async ct => value,
+            cancellationToken: cancellationToken);
 
+     
+    public async Task<string?> SetGetSubIdTokenAsync(string sub, string value = default!, CancellationToken cancellationToken = default!) => await _hybridCache.GetOrCreateAsync($"subidtoken:{sub}",
+            async ct => value,
+            cancellationToken: cancellationToken);
+     
 
-    public async Task<string?> GetSunTokenAsync(string sub) => await _db.StringGetAsync($"subtoken:{sub}");
+    public async Task<string?> SetGetTokenPRefreshTokenAsync(string tokenp, string value = default!, CancellationToken cancellationToken = default!) => await _hybridCache.GetOrCreateAsync($"tokenprefreshtoken:{tokenp}", async ct => value, cancellationToken: cancellationToken);
 
-
-    public async Task SetSubTokenPAsync(string sub, string tokenp) => await _db.StringSetAsync($"subtokenp:{sub}", tokenp);
-
-
-    public async Task<string?> GetSubTokenPAsync(string sub) => await _db.StringGetAsync($"subtokenp:{sub}");
-
-
-    public async Task SetTokenPTokenAsync(string tokenp, string token) => await _db.StringSetAsync($"tokenptoken:{tokenp}", token);
-
-
-    public async Task<string?> GetTokenPTokenAsync(string tokenp) => await _db.StringGetAsync($"tokenptoken:{tokenp}");
-
-    public async Task SetSubIdTokenAsync(string sub, string idToken) => await _db.StringSetAsync($"subidtoken:{sub}", idToken);
-
-
-    public async Task<string?> GetSubIdTokenAsync(string sub) => await _db.StringGetAsync($"subidtoken:{sub}");
-
-
-    public async Task SetTokenPRefreshTokenAsync(string tokenp, string refreshToken) => await _db.StringSetAsync($"tokenprefreshtoken:{tokenp}", refreshToken);
-
-
-    public async Task<string?> GetTokenPRefreshTokenAsync(string tokenp) => await _db.StringGetAsync($"tokenprefreshtoken:{tokenp}");
+     
 
 }

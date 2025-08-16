@@ -36,12 +36,12 @@ public class LoginEndpoint : IEndpoint
 
             _logger.LogInformation($"{sub} logged in, Token: {token}, TokenP: {tokenp}");
 
-            await tokenService.SetTokenPSubAsync(tokenp, sub);
-            await tokenService.SetSubTokenAsync(sub, token);
-            await tokenService.SetSubTokenPAsync(sub, tokenp);
-            await tokenService.SetTokenPTokenAsync(tokenp, token);
-            await tokenService.SetSubIdTokenAsync(sub, idToken!);
-            await tokenService.SetTokenPRefreshTokenAsync(tokenp, refreshToken!);
+            await tokenService.SetGetTokenPSubAsync(tokenp, sub);
+            await tokenService.SetGetSubTokenPAsync(sub, token);
+            await tokenService.SetGetSubTokenPAsync(sub, tokenp);
+            await tokenService.SetGetTokenPTokenAsync(tokenp, token);
+            await tokenService.SetGetSubIdTokenAsync(sub, idToken!);
+            await tokenService.SetGetTokenPRefreshTokenAsync(tokenp, refreshToken!);
 
             try
             {

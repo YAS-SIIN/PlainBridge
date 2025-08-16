@@ -24,7 +24,7 @@ public class ServerBusService(ILogger<ServerBusService> _logger, IConnection _co
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body); 
             var username = string.Empty;
-            if (ea.BasicProperties.Headers.TryGetValue("username", out var usernameObj) && usernameObj is byte[] usernameBytes)
+            if (ea.BasicProperties!.Headers!.TryGetValue("username", out var usernameObj) && usernameObj is byte[] usernameBytes)
             {
                 username = Encoding.UTF8.GetString(usernameBytes);
             }

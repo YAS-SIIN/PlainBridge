@@ -77,10 +77,10 @@ public class WebSocketService(ILogger<WebSocketService> _logger, IWebSocketManag
 
                 var properties = new BasicProperties
                 {
-                    Headers = new Dictionary<string, object>
+                    Headers = new Dictionary<string, object?>
                     {
                         { "IntUrl", "" },
-                        { "Host", host }
+                        { "Host", host! }
                     }
                 };
 

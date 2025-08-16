@@ -8,7 +8,7 @@ using PlainBridge.SharedApplication.Exceptions;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace PlainBridge.Client.Application.Handler;
+namespace PlainBridge.Client.Application.Handler.WebSocket;
 
 public class WebSocketHandler(ILogger<WebSocketHandler> _logger, IWebSocketService _webSocketService, IConnection _connection) : IWebSocketHandler
 {
@@ -18,8 +18,7 @@ public class WebSocketHandler(ILogger<WebSocketHandler> _logger, IWebSocketServi
         _logger.LogInformation("Starting websocket request handler ...");
 
         var serverBusQueueName = $"{username}_websocket_server_bus";
-
-
+         
         var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
         await channel.QueueDeclareAsync(queue: serverBusQueueName,
@@ -68,20 +67,26 @@ public class WebSocketHandler(ILogger<WebSocketHandler> _logger, IWebSocketServi
             type: "direct",
             durable: false,
             autoDelete: false,
-            arguments: null);
+            arguments: null,
+            cancellationToken: cancellationToken);
 
         await channel.QueueDeclareAsync(queue: queueName,
                  durable: false,
                  exclusive: false,
                  autoDelete: false,
-                 arguments: null);
+                 arguments: null,
+                 cancellationToken: cancellationToken);
 
         await channel.QueueBindAsync(queue: queueName,
             exchange: exchangeName,
             routingKey: queueName,
-            arguments: null);
+            arguments: null, 
+            cancellationToken: cancellationToken);
 
         // Start consumer
-        await channel.BasicConsumeAsync(queue: serverBusQueueName, autoAck: false, consumer: consumer);
+        await channel.BasicConsumeAsync(queue: serverBusQueueName, 
+            autoAck: false, 
+            consumer: consumer, 
+            cancellationToken: cancellationToken);
     }
 }

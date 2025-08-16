@@ -123,7 +123,7 @@ public class HttpRequestProxyMiddleware(RequestDelegate _next, ILogger<HttpReque
         var properties = new BasicProperties
         {
             MessageId = requestId,
-            Headers = new Dictionary<string, object>
+            Headers = new Dictionary<string, object?>
             {
                 { "IntUrl", internalUrl },
                 { "Host", projectHost }

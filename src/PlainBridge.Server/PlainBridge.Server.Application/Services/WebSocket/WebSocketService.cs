@@ -136,10 +136,10 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
 
         var properties = new BasicProperties
         {
-            Headers = new Dictionary<string, object>
+            Headers = new Dictionary<string, object?>
             {
-                { "IntUrl", internalUrl },
-                { "Host", projectHost }
+                { "IntUrl", internalUrl! },
+                { "Host", projectHost! }
             }
         };
 

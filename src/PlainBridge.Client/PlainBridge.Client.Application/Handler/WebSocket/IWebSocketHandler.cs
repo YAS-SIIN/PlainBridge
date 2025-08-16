@@ -1,5 +1,4 @@
-﻿
-namespace PlainBridge.Client.Application.Handler;
+﻿namespace PlainBridge.Client.Application.Handler.WebSocket;
 
 public interface IWebSocketHandler
 {

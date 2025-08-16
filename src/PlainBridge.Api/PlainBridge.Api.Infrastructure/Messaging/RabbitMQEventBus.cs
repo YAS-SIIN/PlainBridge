@@ -37,17 +37,15 @@ public class RabbitMqEventBus(ILogger<RabbitMqEventBus> _logger, IConnection _co
             arguments: null);
 
         var body = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(@event);
-
-#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
+         
         var properties = new BasicProperties
         {
-            Headers = new Dictionary<string, object>
+            Headers = new Dictionary<string, object?>
             {
                 { "IntUrl", "internalUrl" },
                 { "Host", "projectHost" }
             }
-        };
-#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
+        }; 
 
         // Specify the type argument explicitly to resolve CS0411
         //await channel.BasicPublishAsync<BasicProperties>(

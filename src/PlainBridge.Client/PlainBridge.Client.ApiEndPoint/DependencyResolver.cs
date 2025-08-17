@@ -3,9 +3,11 @@ using System.Net.WebSockets;
 using Duende.IdentityModel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using PlainBridge.Client.ApiEndPoint.Endpoints;
 using PlainBridge.Client.Application.DTOs;
 using PlainBridge.Client.Application.Handler.WebSocket;
 using PlainBridge.Client.Application.Services.ClientBus;
@@ -15,6 +17,7 @@ using PlainBridge.Client.Application.Services.Signal;
 using PlainBridge.Client.Application.Services.UsePortSocket;
 using PlainBridge.Client.Application.Services.WebSocket;
 using PlainBridge.Server.Application.Helpers.Http;
+using Serilog;
 
 namespace PlainBridge.Client.ApiEndPoint;
 
@@ -23,6 +26,20 @@ public static class DependencyResolver
     public static IServiceCollection AddClientProjectServices(this IServiceCollection services)
     {
         var appSettings = services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSettings>>();
+
+        services.AddHybridCache(options =>
+        {
+            // Maximum size of cached items
+            options.MaximumPayloadBytes = appSettings.Value.HybridCacheMaximumPayloadBytes;
+            options.MaximumKeyLength = appSettings.Value.HybridCacheMaximumKeyLength;
+
+            // Default timeouts
+            options.DefaultEntryOptions = new HybridCacheEntryOptions
+            {
+                Expiration = TimeSpan.Parse(appSettings.Value.HybridDistributedCacheExpirationTime),
+                LocalCacheExpiration = TimeSpan.Parse(appSettings.Value.HybridMemoryCacheExpirationTime)
+            };
+        });
 
         services.AddScoped<IWebSocketService, WebSocketService>();
         services.AddScoped<IServerBusService, ServerBusService>();
@@ -43,21 +60,21 @@ public static class DependencyResolver
         });
 
 
-        services.AddHybridCache(options =>
-        {
-            // Maximum size of cached items
-            options.MaximumPayloadBytes = appSettings.Value.HybridCacheMaximumPayloadBytes;
-            options.MaximumKeyLength = appSettings.Value.HybridCacheMaximumKeyLength;
+        services.AddAuthentication();
 
-            // Default timeouts
-            options.DefaultEntryOptions = new HybridCacheEntryOptions
-            {
-                Expiration = TimeSpan.Parse(appSettings.Value.HybridDistributedCacheExpirationTime),
-                LocalCacheExpiration = TimeSpan.Parse(appSettings.Value.HybridMemoryCacheExpirationTime)
-            };
+
+        services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                ForwardedHeaders.XForwardedProto;
+            // Only loopback proxies are allowed by default.
+            // Clear that restriction because forwarders are enabled by explicit
+            // configuration.
+            options.KnownNetworks.Clear();
+            options.KnownProxies.Clear();
         });
 
-        services.AddAuthentication();
+
         return services;
     }
 
@@ -98,4 +115,52 @@ public static class DependencyResolver
         return services;
     }
 
+    public static WebApplication AddUsers(this WebApplication app)
+    {
+
+        app.UseForwardedHeaders();
+        app.UseExceptionHandler();
+        app.UseSerilogRequestLogging();
+
+        app.UseForwardedHeaders();
+
+        // Configure the HTTP request pipeline.
+        if (!app.Environment.IsDevelopment())
+        {
+            app.UseExceptionHandler("/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
+        }
+
+        
+        app.UseRouting();
+
+        if (app.Environment.IsDevelopment())
+        {
+            app.MapOpenApi();
+        } else
+        {
+            app.UseExceptionHandler("/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
+        }
+
+        app.MapGroup("api/")
+            .MapLoginEndpoint();
+
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+
+        app.UseCors(); 
+
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
+
+        app.MapDefaultEndpoints();
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.UseBff();
+
+        return app;
+    }
 }

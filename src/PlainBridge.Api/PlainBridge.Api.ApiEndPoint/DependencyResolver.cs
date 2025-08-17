@@ -42,6 +42,20 @@ public static class DependencyResolver
                     .WithExposedHeaders("X-Pagination"));
         });
 
+        services.AddHybridCache(options =>
+        {
+            // Maximum size of cached items
+            options.MaximumPayloadBytes = appSettings.Value.HybridCacheMaximumPayloadBytes;
+            options.MaximumKeyLength = appSettings.Value.HybridCacheMaximumKeyLength;
+
+            // Default timeouts
+            options.DefaultEntryOptions = new HybridCacheEntryOptions
+            {
+                Expiration = TimeSpan.Parse(appSettings.Value.HybridDistributedCacheExpirationTime),
+                LocalCacheExpiration = TimeSpan.Parse(appSettings.Value.HybridMemoryCacheExpirationTime)
+            };
+        });
+
         // Add services to the container.
         services.AddApiProjectDatabase();
         services.AddProblemDetails();
@@ -56,21 +70,7 @@ public static class DependencyResolver
         services.AddScoped<IEventBus, RabbitMqEventBus>();
         services.AddScoped<ISessionService, SessionService>();
         services.AddScoped<ITokenService, TokenService>();
-
-
-        services.AddHybridCache(options =>
-        {
-            // Maximum size of cached items
-            options.MaximumPayloadBytes = appSettings.Value.HybridCacheMaximumPayloadBytes;
-            options.MaximumKeyLength = appSettings.Value.HybridCacheMaximumKeyLength;
-
-            // Default timeouts
-            options.DefaultEntryOptions = new HybridCacheEntryOptions
-            {
-                Expiration = TimeSpan.Parse(appSettings.Value.HybridDistributedCacheExpirationTime),
-                LocalCacheExpiration = TimeSpan.Parse(appSettings.Value.HybridMemoryCacheExpirationTime)
-            };
-        });
+         
 
         services.AddAuthorization();
         services.AddEndpoints();

@@ -25,6 +25,23 @@ public static class DependencyResolver
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         var appSettings = services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSettings>>();
+
+
+        services.AddHybridCache(options =>
+        {
+            // Maximum size of cached items
+            options.MaximumPayloadBytes = appSettings.Value.HybridCacheMaximumPayloadBytes;
+            options.MaximumKeyLength = appSettings.Value.HybridCacheMaximumKeyLength;
+
+            // Default timeouts
+            options.DefaultEntryOptions = new HybridCacheEntryOptions
+            {
+                Expiration = TimeSpan.Parse(appSettings.Value.HybridDistributedCacheExpirationTime),
+                LocalCacheExpiration = TimeSpan.Parse(appSettings.Value.HybridMemoryCacheExpirationTime)
+            };
+        });
+
+
         services.AddOpenApi();
         services.AddExceptionHandler<ErrorHandler>();
         services.AddMemoryCache(); 
@@ -45,20 +62,6 @@ public static class DependencyResolver
         services.AddScoped<Application.Services.Identity.IIdentityService, Application.Services.Identity.IdentityService>();
         services.AddScoped<ResponseCompletionSourcesManagement>();
         services.AddHttpServices();
-
-        services.AddHybridCache(options =>
-        {
-            // Maximum size of cached items
-            options.MaximumPayloadBytes = appSettings.Value.HybridCacheMaximumPayloadBytes;
-            options.MaximumKeyLength = appSettings.Value.HybridCacheMaximumKeyLength;
-
-            // Default timeouts
-            options.DefaultEntryOptions = new HybridCacheEntryOptions
-            {
-                Expiration = TimeSpan.Parse(appSettings.Value.HybridDistributedCacheExpirationTime),
-                LocalCacheExpiration = TimeSpan.Parse(appSettings.Value.HybridMemoryCacheExpirationTime)
-            };
-        });
 
         return services;
     }

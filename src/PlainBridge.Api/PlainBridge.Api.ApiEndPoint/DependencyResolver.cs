@@ -130,10 +130,9 @@ public static class DependencyResolver
         .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddJwtBearer("Bearer", options =>
         {
-            if (appSettings.PlainBridgeUseHttp)
-            {
-                options.RequireHttpsMetadata = false;
-            }
+
+            options.RequireHttpsMetadata = !appSettings.PlainBridgeUseHttp;
+
 
             options.Authority = new Uri(appSettings.PlainBridgeIdsUrl!).ToString();
             options.SaveToken = true;
@@ -155,15 +154,13 @@ public static class DependencyResolver
         })
         .AddOpenIdConnect("oidc", options =>
         {
-            if (appSettings.PlainBridgeUseHttp)
-            {
-                options.RequireHttpsMetadata = false;
-            }
+            options.RequireHttpsMetadata = !appSettings.PlainBridgeUseHttp;
+
 
             options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             options.Authority = new Uri(appSettings.PlainBridgeIdsUrl!).ToString();
             options.ClientId = "bff";
-            options.ClientSecret = "secret";
+            options.ClientSecret = appSettings.PlainBridgeIdsClientSecret;
             options.ResponseType = OidcConstants.ResponseTypes.Code;
             options.Scope.Clear();
             options.Scope.Add("PlainBridge");

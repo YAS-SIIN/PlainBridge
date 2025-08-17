@@ -1,6 +1,11 @@
-﻿using System.Net.WebSockets;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net.WebSockets;
+using Duende.IdentityModel;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using PlainBridge.Client.Application.DTOs;
 using PlainBridge.Client.Application.Handler.WebSocket;
 using PlainBridge.Client.Application.Services.ClientBus;
@@ -28,7 +33,8 @@ public static class DependencyResolver
         services.AddScoped<IUsePortSocketService, UsePortSocketService>();
         services.AddScoped<ISignalService, SignalService>();
 
-        services.AddScoped<ClientWebSocket>(a=>
+        services.AddAuthentication(appSettings.Value);
+        services.AddScoped<ClientWebSocket>(a =>
         {
             var webSocket = new ClientWebSocket();
             webSocket.Options.KeepAliveInterval = TimeSpan.FromSeconds(30);
@@ -50,6 +56,46 @@ public static class DependencyResolver
                 LocalCacheExpiration = TimeSpan.Parse(appSettings.Value.HybridMemoryCacheExpirationTime)
             };
         });
+
+        services.AddAuthentication();
         return services;
     }
+
+
+    public static IServiceCollection AddAuthentication(this IServiceCollection services, ApplicationSettings appSettings)
+    {
+        var serviceProvider = services.BuildServiceProvider();
+        var hybridCache = serviceProvider.GetRequiredService<HybridCache>();
+
+        // This is crucial - prevents the JWT handler from mapping 'sub' claim to ClaimTypes.NameIdentifier
+        JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = "oidc";
+            options.DefaultSignOutScheme = "oidc";
+        })
+        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+          .AddOpenIdConnect("oidc", options =>
+          {
+              options.RequireHttpsMetadata = false;
+              options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+              options.Authority = new Uri(appSettings.PlainBridgeIdsUrl).ToString();
+              options.ClientId = appSettings.PlainBridgeIdsClientId;
+              options.ClientSecret = appSettings.PlainBridgeIdsClientSecret ;
+              options.ResponseType = OidcConstants.ResponseTypes.Code;
+              options.Scope.Clear();
+              options.Scope.Add("openid");
+              options.Scope.Add("profile");
+              options.Scope.Add("email");
+              options.SaveTokens = true;
+
+              options.GetClaimsFromUserInfoEndpoint = true;
+
+          });
+
+        return services;
+    }
+
 }

@@ -10,6 +10,7 @@ using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.Services.Token;
 using PlainBridge.Api.Application.Services.User;
+using PlainBridge.SharedApplication.DTOs;
 
 namespace PlainBridge.Api.UnitTests.Application.Services;
 
@@ -97,7 +98,7 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
         _mockIHttpContextAccessor.Setup(x => x.HttpContext).Returns(context);
 
         var token = "token123";
-        _mockITokenService.Setup(x => x.GetSunTokenAsync(userId)).ReturnsAsync(token);
+        _mockITokenService.Setup(x => x.SetGetSubTokenAsync(userId, It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(token);
 
         // Replace this line:
         // var appSetting = new ApplicationSettings { PlainBridgeIdsUrl = "https://ids.example.com" };
@@ -111,7 +112,11 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
             PlainBridgeUseHttp = false,
             PlainBridgeIdsUrl = "https://ids.example.com",
             PlainBridgeWebUrl = "https://web.example.com",
-            PlainBridgeWebRedirectPage = "/redirect"
+            PlainBridgeWebRedirectPage = "/redirect",
+            HybridDistributedCacheExpirationTime = "00:10:00",
+            HybridMemoryCacheExpirationTime = "00:05:00",
+            HybridCacheMaximumPayloadBytes = 1024,
+            HybridCacheMaximumKeyLength = 128
         };
         _mockApplicationSetting.Setup(x => x.Value).Returns(appSetting);
 

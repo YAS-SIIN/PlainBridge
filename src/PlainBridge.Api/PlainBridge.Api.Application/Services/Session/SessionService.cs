@@ -62,7 +62,7 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
         }
 
         _logger.LogInformation("Getting token for user: {UserId}", userId.Value);
-        var token = await _tokenService.SetGetSubTokenAsync(userId.Value);
+        var token = await _tokenService.GetSubTokenAsync(userId.Value);
         var baseUri = new Uri(_applicationSettings.Value.PlainBridgeIdsUrl!);
         var uri = new Uri(baseUri, "connect/userinfo");
         var userInfoRequest = new UserInfoRequest

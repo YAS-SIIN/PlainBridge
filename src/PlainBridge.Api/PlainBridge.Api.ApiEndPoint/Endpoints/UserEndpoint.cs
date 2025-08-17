@@ -7,7 +7,7 @@ using PlainBridge.Api.Application.Services.User;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
-using PlainBridge.SharedApplication.Extentions;
+using PlainBridge.SharedApplication.Extensions;
 
 namespace PlainBridge.Api.ApiEndPoint.Endpoints;
 

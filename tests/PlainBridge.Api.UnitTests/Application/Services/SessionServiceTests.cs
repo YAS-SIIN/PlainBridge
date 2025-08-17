@@ -98,7 +98,7 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
         _mockIHttpContextAccessor.Setup(x => x.HttpContext).Returns(context);
 
         var token = "token123";
-        _mockITokenService.Setup(x => x.SetGetSubTokenAsync(userId, It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(token);
+        _mockITokenService.Setup(x => x.GetSubTokenAsync(userId, It.IsAny<CancellationToken>())).ReturnsAsync(token);
 
         // Replace this line:
         // var appSetting = new ApplicationSettings { PlainBridgeIdsUrl = "https://ids.example.com" };

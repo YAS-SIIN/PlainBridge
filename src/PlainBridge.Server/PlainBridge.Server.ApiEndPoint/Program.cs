@@ -20,7 +20,9 @@ try
     builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
 
     builder.AddServiceDefaults();
-
+    
+    builder.AddRedisClient(connectionName: "cache");
+    builder.AddRedisDistributedCache(connectionName: "cache");
     builder.AddRabbitMQClient(connectionName: "messaging");
     builder.AddElasticsearchClient(connectionName: "elasticsearch");
      

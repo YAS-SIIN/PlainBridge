@@ -6,13 +6,13 @@ using System.Threading;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
+using PlainBridge.SharedApplication.Extensions;
 
 namespace PlainBridge.Api.Application.Services.Token;
 
 public class TokenService(HybridCache _hybridCache) : ITokenService
-{ 
+{
      
- 
     public JwtSecurityToken ParseToken(string token)
     {
         var handler = new JwtSecurityTokenHandler();
@@ -43,34 +43,44 @@ public class TokenService(HybridCache _hybridCache) : ITokenService
         return tokenString;
     }
 
-    public async Task<string?> SetGetTokenPSubAsync(string tokenp, string value = default!, CancellationToken cancellationToken = default!) => await _hybridCache.GetOrCreateAsync($"tokenpsub:{tokenp}",
-            async ct => value,
-            cancellationToken: cancellationToken);
+    public async Task SetTokenPSubAsync(string tokenp, string? value = default, CancellationToken cancellationToken = default!) => await _hybridCache.SetAsync($"tokenpsub:{tokenp}", value, cancellationToken: cancellationToken);
 
-     
 
-    public async Task<string?> SetGetSubTokenAsync(string sub, string value = default!, CancellationToken cancellationToken = default!) => await _hybridCache.GetOrCreateAsync($"subtoken:{sub}",
-            async ct => value,
-            cancellationToken: cancellationToken);
+    public async Task<string?> GetTokenPSubAsync(string tokenp, CancellationToken cancellationToken = default!) => await
+        _hybridCache.TryGetValueAsync<string>($"tokenpsub:{tokenp}", cancellationToken);
 
-      
-    public async Task SetGetSubTokenPAsync(string sub, string value = default!, CancellationToken cancellationToken = default!) => await _hybridCache.GetOrCreateAsync($"subtokenp:{sub}",
-            async ct => value,
-            cancellationToken: cancellationToken);
 
-     
-    public async Task<string?> SetGetTokenPTokenAsync(string tokenp, string value = default!, CancellationToken cancellationToken = default!) => await _hybridCache.GetOrCreateAsync($"tokenptoken:{tokenp}",
-            async ct => value,
-            cancellationToken: cancellationToken);
 
-     
-    public async Task<string?> SetGetSubIdTokenAsync(string sub, string value = default!, CancellationToken cancellationToken = default!) => await _hybridCache.GetOrCreateAsync($"subidtoken:{sub}",
-            async ct => value,
-            cancellationToken: cancellationToken);
-     
+    public async Task SetSubTokenAsync(string sub, string? value = default, CancellationToken cancellationToken = default!) => await
+        _hybridCache.SetAsync($"subtoken:{sub}", value, cancellationToken: cancellationToken);
 
-    public async Task<string?> SetGetTokenPRefreshTokenAsync(string tokenp, string value = default!, CancellationToken cancellationToken = default!) => await _hybridCache.GetOrCreateAsync($"tokenprefreshtoken:{tokenp}", async ct => value, cancellationToken: cancellationToken);
+    public async Task<string?> GetSubTokenAsync(string sub, CancellationToken cancellationToken = default!) => await 
+        _hybridCache.TryGetValueAsync<string>($"subtoken:{sub}",cancellationToken);
 
-     
+
+    public async Task SetSubTokenPAsync(string sub, string value = default!, CancellationToken cancellationToken = default!) => await _hybridCache.SetAsync($"subtokenp:{sub}", value, cancellationToken: cancellationToken);
+
+    public async Task<string?> GetSubTokenPAsync(string sub, CancellationToken cancellationToken = default!) => await _hybridCache.TryGetValueAsync<string>( $"subtokenp:{sub}", cancellationToken);
+
+
+    public async Task SetTokenPTokenAsync(string tokenp, string value = default!, CancellationToken cancellationToken = default!) => await
+        _hybridCache.SetAsync($"tokenptoken:{tokenp}", value, cancellationToken: cancellationToken);
+
+    public async Task<string?> GetTokenPTokenAsync(string tokenp, CancellationToken cancellationToken = default!) => await
+        _hybridCache.TryGetValueAsync<string>($"tokenptoken:{tokenp}", cancellationToken);
+
+
+    public async Task SetSubIdTokenAsync(string sub, string value = default!, CancellationToken cancellationToken = default!) => await
+        _hybridCache.SetAsync($"subidtoken:{sub}", value, cancellationToken: cancellationToken);
+
+    public async Task<string?> GetSubIdTokenAsync(string sub, CancellationToken cancellationToken = default!) => await _hybridCache.TryGetValueAsync<string>($"subidtoken:{sub}", cancellationToken);
+
+
+    public async Task SetTokenPRefreshTokenAsync(string tokenp, string value = default!, CancellationToken cancellationToken = default!) => await _hybridCache.SetAsync($"tokenprefreshtoken:{tokenp}", value, cancellationToken: cancellationToken);
+
+
+    public async Task<string?> GetTokenPRefreshTokenAsync(string tokenp, CancellationToken cancellationToken = default!) => await _hybridCache.TryGetValueAsync<string>($"tokenprefreshtoken:{tokenp}", cancellationToken);
+
+
 
 }

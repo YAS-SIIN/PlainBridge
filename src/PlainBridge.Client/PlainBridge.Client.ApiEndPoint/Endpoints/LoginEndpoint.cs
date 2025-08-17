@@ -11,7 +11,7 @@ using PlainBridge.Client.Application.Services.Signal;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
-using PlainBridge.SharedApplication.Extentions;
+using PlainBridge.SharedApplication.Extensions;
 
 
 

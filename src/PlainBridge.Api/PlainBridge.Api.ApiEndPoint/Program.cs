@@ -23,10 +23,11 @@ try
      
     builder.AddServiceDefaults();
 
-    builder.AddRabbitMQClient(connectionName: "messaging");
     builder.AddRedisClient(connectionName: "cache");
+    builder.AddRedisDistributedCache(connectionName: "cache");
+    builder.AddRabbitMQClient(connectionName: "messaging");
     builder.AddElasticsearchClient(connectionName: "elasticsearch");
-     
+
     builder.Host.UseSerilog((ctx, services, lc) =>
     {
         lc.ReadFrom.Services(services)

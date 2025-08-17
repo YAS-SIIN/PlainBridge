@@ -14,7 +14,7 @@ try
 {
     var builder = DistributedApplication.CreateBuilder(args);
 
-    var cache = builder.AddRedis("cache");
+    var cache = builder.AddRedis("cache") .WithRedisInsight();
     var rabbitmq = builder.AddRabbitMQ("messaging").WithManagementPlugin();
     IResourceBuilder<ElasticsearchResource> elasticsearch = default!;
 

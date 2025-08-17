@@ -17,39 +17,39 @@ public class LoginEndpoint : IEndpoint
         app.MapBffManagementEndpoints();
      
 
-        app.MapGet("/", static async (CancellationToken cancellationToken, HttpContext context, ILoggerFactory loggerFactory, IHttpContextAccessor httpContextAccessor, ITokenService tokenService, ISessionService sessionService, IUserService customerService, IOptions<ApplicationSettings> _applicationSettings) =>
+        app.MapGet("/", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHttpContextAccessor _httpContextAccessor, ITokenService _tokenService, ISessionService _sessionService, IUserService _userService, IOptions<ApplicationSettings> _applicationSettings) =>
         {
-            var _logger = loggerFactory.CreateLogger(nameof(LoginEndpoint));
+            var logger = loggerFactory.CreateLogger(nameof(LoginEndpoint));
 
             var token = default(string);
 
-            token = httpContextAccessor.HttpContext!.Request.Query["access_token"];
+            token = _httpContextAccessor.HttpContext!.Request.Query["access_token"];
             if (string.IsNullOrEmpty(token))
-                token = await httpContextAccessor.HttpContext.GetTokenAsync("access_token");
-            var idToken = await httpContextAccessor.HttpContext.GetTokenAsync("id_token");
-            var refreshToken = await httpContextAccessor.HttpContext.GetTokenAsync("refresh_token");
+                token = await _httpContextAccessor.HttpContext.GetTokenAsync("access_token");
+            var idToken = await _httpContextAccessor.HttpContext.GetTokenAsync("id_token");
+            var refreshToken = await _httpContextAccessor.HttpContext.GetTokenAsync("refresh_token");
              
 
-            var jwtSecurityToken = tokenService.ParseToken(token);
+            var jwtSecurityToken = _tokenService.ParseToken(token);
             var sub = jwtSecurityToken.Claims.Single(claim => claim.Type == "sub").Value;
-            var tokenp = await tokenService.GenerateToken(sub, string.Empty, string.Empty);
+            var tokenp = await _tokenService.GenerateToken(sub, string.Empty, string.Empty);
 
-            _logger.LogInformation($"{sub} logged in, Token: {token}, TokenP: {tokenp}");
+            logger.LogInformation($"{sub} logged in, Token: {token}, TokenP: {tokenp}");
 
-            await tokenService.SetTokenPSubAsync(tokenp, sub);
-            await tokenService.SetSubTokenAsync(sub, token);
-            await tokenService.SetSubTokenPAsync(sub, tokenp);
-            await tokenService.SetTokenPTokenAsync(tokenp, token);
-            await tokenService.SetSubIdTokenAsync(sub, idToken!);
-            await tokenService.SetTokenPRefreshTokenAsync(tokenp, refreshToken!);
+            await _tokenService.SetGetTokenPSubAsync(tokenp, sub, cancellationToken);
+            await _tokenService.SetGetSubTokenAsync(sub, token, cancellationToken);
+            await _tokenService.SetGetSubTokenPAsync(sub, tokenp, cancellationToken); 
+            await _tokenService.SetGetTokenPTokenAsync(tokenp, token, cancellationToken);
+            await _tokenService.SetGetSubIdTokenAsync(sub, idToken!, cancellationToken);
+            await _tokenService.SetGetTokenPRefreshTokenAsync(tokenp, refreshToken!, cancellationToken);
 
             try
             {
-                await customerService.GetUserByExternalIdAsync(sub, cancellationToken);
+                await _userService.GetUserByExternalIdAsync(sub, cancellationToken);
             }
             catch (NotFoundException)
             {
-                var customerProfile = await sessionService.GetCurrentUserProfileAsync(cancellationToken);
+                var customerProfile = await _sessionService.GetCurrentUserProfileAsync(cancellationToken);
 
                 if (customerProfile is not null)
                 {
@@ -62,14 +62,14 @@ public class LoginEndpoint : IEndpoint
                         Name = customerProfile.Name,
                         Family = customerProfile.Family
                     };
-                    await customerService.CreateLocallyAsync(user, cancellationToken);
+                    await _userService.CreateLocallyAsync(user, cancellationToken);
                 } 
             }
 
             var baseUri = new Uri(_applicationSettings.Value.PlainBridgeWebUrl);
             var signinPage = new Uri(baseUri, _applicationSettings.Value.PlainBridgeWebRedirectPage.ToString());
             var uri = new Uri(signinPage, $"?access_token={tokenp}");
-            httpContextAccessor.HttpContext.Response.Redirect(uri.ToString(), true);
+            _httpContextAccessor.HttpContext.Response.Redirect(uri.ToString(), true);
             return Task.FromResult(0);
         });
     }

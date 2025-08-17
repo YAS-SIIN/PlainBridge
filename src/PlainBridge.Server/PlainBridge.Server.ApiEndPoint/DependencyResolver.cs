@@ -11,6 +11,7 @@ using PlainBridge.Server.Application.Services.ApiExternalBus;
 using PlainBridge.Server.Application.Services.AppProjectConsumer;
 using PlainBridge.Server.Application.Services.HostApplication;
 using PlainBridge.Server.Application.Services.HttpRequestProxy;
+using PlainBridge.Server.Application.Services.Identity;
 using PlainBridge.Server.Application.Services.ServerApplication;
 using PlainBridge.Server.Application.Services.ServerBus;
 using PlainBridge.Server.Application.Services.WebSocket;
@@ -43,24 +44,22 @@ public static class DependencyResolver
 
 
         services.AddOpenApi();
-        services.AddExceptionHandler<ErrorHandler>();
-        services.AddMemoryCache(); 
+        services.AddExceptionHandler<ErrorHandler>(); 
         services.AddHostedService<Worker>();
         services.AddHttpServices();
         services.AddProblemDetails();
 
-        services.AddScoped<IPlainBridgeApiClientHandler, PlainBridgeApiClientHandler>();
-
-        services.AddScoped<IServerApplicationService, ServerApplicationService>(); 
-        services.AddScoped<IHostApplicationService, HostApplicationService>();
-        services.AddScoped<ICacheManagement, CacheManagement>();
-        services.AddScoped<IApiExternalBusService, ApiExternalBusService>();
-        services.AddScoped<IServerBusService, ServerBusService>();
-        services.AddScoped<IServerApplicationConsumerService, ServerApplicationConsumerService>();
-        services.AddScoped<IHttpRequestProxyService, HttpRequestProxyService>();
-        services.AddScoped<IWebSocketService, WebSocketService>();
-        services.AddScoped<Application.Services.Identity.IIdentityService, Application.Services.Identity.IdentityService>();
-        services.AddScoped<ResponseCompletionSourcesManagement>();
+        services.AddSingleton<IPlainBridgeApiClientHandler, PlainBridgeApiClientHandler>(); 
+        services.AddSingleton<IServerApplicationService, ServerApplicationService>(); 
+        services.AddSingleton<IHostApplicationService, HostApplicationService>();
+        services.AddSingleton<ICacheManagement, CacheManagement>();
+        services.AddSingleton<IApiExternalBusService, ApiExternalBusService>();
+        services.AddSingleton<IServerBusService, ServerBusService>();
+        services.AddSingleton<IServerApplicationConsumerService, ServerApplicationConsumerService>();
+        services.AddSingleton<IHttpRequestProxyService, HttpRequestProxyService>();
+        services.AddSingleton<IWebSocketService, WebSocketService>();
+        services.AddSingleton<IIdentityService, IdentityService>();
+        services.AddSingleton<ResponseCompletionSourcesManagement>();
         services.AddHttpServices();
 
         return services;

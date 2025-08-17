@@ -54,7 +54,7 @@ try
         .PublishAsDockerFile();
 
     var clientEndpoint = builder.AddProject<Projects.PlainBridge_Client_ApiEndPoint>("client-apiendpoint")
-    .WithUrl("https://localhost:5002")
+    .WithUrl("https://localhost:5005")
     .WithReference(cache)
     .WithReference(rabbitmq) 
     .WithReference(serverEndpoint)

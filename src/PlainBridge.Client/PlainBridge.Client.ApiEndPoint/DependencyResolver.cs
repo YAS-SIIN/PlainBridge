@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net.WebSockets;
+using Duende.Bff.Yarp;
 using Duende.IdentityModel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,8 +9,12 @@ using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PlainBridge.Client.ApiEndPoint.Endpoints;
+using PlainBridge.Client.ApiEndPoint.ErrorHandling;
 using PlainBridge.Client.Application.DTOs;
+using PlainBridge.Client.Application.Handler.HttpRequest;
 using PlainBridge.Client.Application.Handler.WebSocket;
+using PlainBridge.Client.Application.Management.Cache;
+using PlainBridge.Client.Application.Management.WebSocket;
 using PlainBridge.Client.Application.Services.ClientBus;
 using PlainBridge.Client.Application.Services.ServerBus;
 using PlainBridge.Client.Application.Services.SharePortSocket;
@@ -41,17 +46,10 @@ public static class DependencyResolver
             };
         });
 
-        services.AddScoped<IWebSocketService, WebSocketService>();
-        services.AddScoped<IServerBusService, ServerBusService>();
-        services.AddScoped<IWebSocketHandler, WebSocketHandler>();
-        services.AddScoped<IHttpHelper, HttpHelper>();
-        services.AddScoped<IClientBusService, ClientBusService>();
-        services.AddScoped<ISharePortSocketService, SharePortSocketService>();
-        services.AddScoped<IUsePortSocketService, UsePortSocketService>();
-        services.AddScoped<ISignalService, SignalService>();
+        services.AddExceptionHandler<ErrorHandler>();
+        services.AddOpenApi();
 
-        services.AddAuthentication(appSettings.Value);
-        services.AddScoped<ClientWebSocket>(a =>
+        services.AddSingleton<ClientWebSocket>(a =>
         {
             var webSocket = new ClientWebSocket();
             webSocket.Options.KeepAliveInterval = TimeSpan.FromSeconds(30);
@@ -59,8 +57,21 @@ public static class DependencyResolver
             return webSocket;
         });
 
+        services.AddHttpContextAccessor();
+        services.AddSingleton<IHttpHelper, HttpHelper>();
+        services.AddSingleton<ICacheManagement, CacheManagement>();
+        services.AddSingleton<IWebSocketManagement, WebSocketManagement>();
+        services.AddSingleton<IWebSocketService, WebSocketService>();
+        services.AddSingleton<IServerBusService, ServerBusService>();
+        services.AddSingleton<IHttpRequestHandler, HttpRequestHandler>();
+        services.AddSingleton<IWebSocketHandler, WebSocketHandler>();
+        services.AddSingleton<ISharePortSocketService, SharePortSocketService>();
+        services.AddSingleton<IUsePortSocketService, UsePortSocketService>();
+        services.AddSingleton<IClientBusService, ClientBusService>();
+        services.AddSingleton<ISignalService, SignalService>();
 
-        services.AddAuthentication();
+        services.AddAuthorization();
+        services.AddAuthentication(appSettings.Value);
 
 
         services.Configure<ForwardedHeadersOptions>(options =>
@@ -74,6 +85,7 @@ public static class DependencyResolver
             options.KnownProxies.Clear();
         });
 
+        services.AddHostedService<Worker>();
 
         return services;
     }
@@ -83,7 +95,10 @@ public static class DependencyResolver
     {
         var serviceProvider = services.BuildServiceProvider();
         var hybridCache = serviceProvider.GetRequiredService<HybridCache>();
-
+ 
+        services
+             .AddBff()
+            .AddRemoteApis(); 
         // This is crucial - prevents the JWT handler from mapping 'sub' claim to ClaimTypes.NameIdentifier
         JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
@@ -121,7 +136,7 @@ public static class DependencyResolver
         app.UseForwardedHeaders();
         app.UseExceptionHandler();
         app.UseSerilogRequestLogging();
-
+         
         app.UseForwardedHeaders();
 
         // Configure the HTTP request pipeline.
@@ -145,14 +160,12 @@ public static class DependencyResolver
             app.UseHsts();
         }
 
-        app.MapGroup("api/")
+        app.MapGroup("")
             .MapLoginEndpoint();
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();
-
-        app.UseCors(); 
-
+         
         app.UseDefaultFiles();
         app.UseStaticFiles();
 

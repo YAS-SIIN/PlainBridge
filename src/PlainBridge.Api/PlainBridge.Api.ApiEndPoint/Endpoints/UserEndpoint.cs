@@ -88,5 +88,20 @@ public class UserEndpoint : IEndpoint
             ));
         }).WithName("UpdateUser")
         .RequireAuthorization(new Microsoft.AspNetCore.Authorization.AuthorizeAttribute { AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme });
+
+
+        // ChangePasswordAsync
+        app.MapPost("RefreshToken", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IUserService userService, ISessionService sessionService) =>
+        {
+            await sessionService.RefreshTokenAsync(cancellationToken);
+           
+            return Results.Ok(ResultDto<object>.ReturnData(
+                null,
+                ResultCodeEnum.Success,
+                ResultCodeEnum.Success.ToDisplayName()
+            ));
+        }).WithName("RefreshToken")
+        .RequireAuthorization(new Microsoft.AspNetCore.Authorization.AuthorizeAttribute { AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme });
+
     }
 }

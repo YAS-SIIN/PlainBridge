@@ -29,6 +29,10 @@ public static class LoginEndpoint
         {
             var _logger = loggerFactory.CreateLogger(nameof(LoginEndpoint));
 
+            var fileName = "profile";
+
+            if (File.Exists(fileName))
+                return "Authorized";
 
             if (!context!.User!.Identity!.IsAuthenticated)
             {
@@ -58,6 +62,7 @@ public static class LoginEndpoint
 
             var result = await userInfoResponse!.HttpResponse!.Content.ReadAsStringAsync();
 
+            File.WriteAllText(fileName, result);
             _signalService.Set();
 
             return result;

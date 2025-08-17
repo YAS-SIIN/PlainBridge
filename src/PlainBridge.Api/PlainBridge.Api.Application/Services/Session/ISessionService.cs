@@ -7,5 +7,6 @@ namespace PlainBridge.Api.Application.Services.Session
     {
         Task<UserProfileViewDto?> GetCurrentUserProfileAsync(CancellationToken cancellationToken);
         Task<UserDto> GetCurrentUserAsync(CancellationToken cancellationToken);
+        Task RefreshTokenAsync(CancellationToken cancellationToken);
     }
 }

@@ -90,7 +90,7 @@ public class TokenServiceTests : IClassFixture<TestRunFixture>
             CancellationToken.None
         )).ReturnsAsync("true");
 
-        await _tokenService.SetTokenPSubAsync(tokenp, value, CancellationToken.None);
+        await _tokenService.SetGetTokenPSubAsync(tokenp, value, CancellationToken.None);
 
         _mockDb.Verify(x => x.GetOrCreateAsync<string, string>(
             $"tokenpsub:{tokenp}",
@@ -109,7 +109,7 @@ public class TokenServiceTests : IClassFixture<TestRunFixture>
         //_mockDb.Setup(x => x.GetOrCreateAsync<string, bool>("tokenpsub:tokenp", "sub", It.IsAny<Func<string, CancellationToken, ValueTask<bool>>>(), It.IsAny<HybridCacheEntryOptions?>(), It.IsAny<IEnumerable<string>?>(), It.IsAny<CancellationToken>()))
         //    .ReturnsAsync(true);
 
-        await _tokenService.SetSubTokenAsync("sub", "token");
+        await _tokenService.SetGetSubTokenAsync("sub", "token");
 
 
         _mockDb.Verify(x => x.GetOrCreateAsync<string, bool>(
@@ -128,7 +128,7 @@ public class TokenServiceTests : IClassFixture<TestRunFixture>
         //_mockDb.Setup(x => x.GetOrCreateAsync<string, bool>("tokenpsub:tokenp", "sub", It.IsAny<Func<string, CancellationToken, ValueTask<bool>>>(), It.IsAny<HybridCacheEntryOptions?>(), It.IsAny<IEnumerable<string>?>(), It.IsAny<CancellationToken>()))
         //    .ReturnsAsync(true);
 
-        await _tokenService.SetSubTokenPAsync("sub", "tokenp");
+        await _tokenService.SetGetSubTokenPAsync("sub", "tokenp");
 
         _mockDb.Verify(x => x.GetOrCreateAsync<string, bool>("subtokenp:sub", "sub", It.IsAny<Func<string, CancellationToken, ValueTask<bool>>>(), It.IsAny<HybridCacheEntryOptions?>(), It.IsAny<IEnumerable<string>?>(), It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -140,7 +140,7 @@ public class TokenServiceTests : IClassFixture<TestRunFixture>
         //_mockDb.Setup(x => x.GetOrCreateAsync<string, bool>("tokenptoken:tokenp", "sub", It.IsAny<Func<string, CancellationToken, ValueTask<bool>>>(), It.IsAny<HybridCacheEntryOptions?>(), It.IsAny<IEnumerable<string>?>(), It.IsAny<CancellationToken>()))
         //    .ReturnsAsync(true);
 
-        await _tokenService.GetTokenPTokenAsync("tokenp");
+        await _tokenService.SetGetTokenPTokenAsync("tokenp");
 
         _mockDb.Verify(x => x.GetOrCreateAsync<string, bool>("tokenptoken:tokenp", "sub", It.IsAny<Func<string, CancellationToken, ValueTask<bool>>>(), It.IsAny<HybridCacheEntryOptions?>(), It.IsAny<IEnumerable<string>?>(), It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -152,7 +152,7 @@ public class TokenServiceTests : IClassFixture<TestRunFixture>
         //_mockDb.Setup(x => x.GetOrCreateAsync<string, bool>("subidtoken:sub", "idToken", It.IsAny<Func<string, CancellationToken, ValueTask<bool>>>(), It.IsAny<HybridCacheEntryOptions?>(), It.IsAny<IEnumerable<string>?>(), It.IsAny<CancellationToken>()))
         //    .ReturnsAsync(true);
 
-        await _tokenService.SetSubIdTokenAsync("sub", "idToken");
+        await _tokenService.SetGetSubIdTokenAsync("sub", "idToken");
 
         _mockDb.Verify(x => x.GetOrCreateAsync<string, bool>("subidtoken:sub", "sub", It.IsAny<Func<string, CancellationToken, ValueTask<bool>>>(), It.IsAny<HybridCacheEntryOptions?>(), It.IsAny<IEnumerable<string>?>(), It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -163,7 +163,7 @@ public class TokenServiceTests : IClassFixture<TestRunFixture>
         //_mockDb.Setup(x => x.GetOrCreateAsync<string, bool>("tokenpsub:tokenp", "sub", It.IsAny<Func<string, CancellationToken, ValueTask<bool>>>(), It.IsAny<HybridCacheEntryOptions?>(), It.IsAny<IEnumerable<string>?>(), It.IsAny<CancellationToken>()))
         //    .ReturnsAsync(true);
 
-        await _tokenService.SetTokenPRefreshTokenAsync("tokenp", "refreshToken");
+        await _tokenService.SetGetTokenPRefreshTokenAsync("tokenp", "refreshToken");
 
         _mockDb.Verify(x => x.GetOrCreateAsync<string, bool>("tokenprefreshtoken:tokenp", "sub", It.IsAny<Func<string, CancellationToken, ValueTask<bool>>>(), It.IsAny<HybridCacheEntryOptions?>(), It.IsAny<IEnumerable<string>?>(), It.IsAny<CancellationToken>()), Times.Once);
     }

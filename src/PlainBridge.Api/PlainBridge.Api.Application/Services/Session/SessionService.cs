@@ -62,7 +62,7 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
         }
 
         _logger.LogInformation("Getting token for user: {UserId}", userId.Value);
-        var token = await _tokenService.GetSubTokenAsync(userId.Value);
+        var token = await _tokenService.SetGetSubTokenAsync(userId.Value);
         var baseUri = new Uri(_applicationSettings.Value.PlainBridgeIdsUrl!);
         var uri = new Uri(baseUri, "connect/userinfo");
         var userInfoRequest = new UserInfoRequest
@@ -78,5 +78,32 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
 
         _logger.LogInformation("User info received and deserializing.");
         return JsonSerializer.Deserialize<UserProfileViewDto>(result);
+    }
+
+    public async Task RefreshTokenAsync(CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Getting current user profile from HttpContext.");
+
+        var httpClient = _httpClientFactory.CreateClient("Default");
+
+        var tokenp = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+        tokenp = tokenp.ToString().Replace("Bearer ", "");
+        var sub = await _tokenService.SetGetTokenPSubAsync(tokenp);
+        var refreshToken = await _tokenService.SetGetTokenPRefreshTokenAsync(tokenp);
+        var baseUri = new Uri(_applicationSettings.Value.PlainBridgeIdsUrl!);
+        var uri = new Uri(baseUri, "connect/token");
+        var response = await httpClient.RequestRefreshTokenAsync(new RefreshTokenRequest
+        {
+            Address = uri.ToString(),
+            ClientId = "bff",
+            ClientSecret = _applicationSettings.Value.PlainBridgeIdsClientSecret,
+            RefreshToken = refreshToken
+        });
+        var token = response.AccessToken;
+        if (string.IsNullOrEmpty(token))
+            throw new ApplicationException("Failed to refresh token");
+
+        await _tokenService.SetGetSubTokenAsync(sub, token);
+        await _tokenService.SetGetTokenPTokenAsync(tokenp, token);
     }
 }

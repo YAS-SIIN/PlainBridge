@@ -147,9 +147,11 @@ public static class DependencyResolver
                 OnMessageReceived = async context =>
                 { 
                     var tokenService = context.HttpContext.RequestServices.GetRequiredService<ITokenService>();
+                    var cancellationToken = context.HttpContext.RequestAborted;
                     var tokenp = context.Request.Headers["Authorization"];
                     tokenp = tokenp.ToString().Replace("Bearer ", "");
-                    var token = await tokenService.GetTokenPTokenAsync(tokenp.ToString()); 
+                    //var token = await tokenService.GetTokenPTokenAsync(tokenp.ToString()); 
+                    var token = await tokenService.SetGetTokenPTokenAsync(tokenp.ToString(), cancellationToken: cancellationToken); 
 
                     context.Token = token;
                 }

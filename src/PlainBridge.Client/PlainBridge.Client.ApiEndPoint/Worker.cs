@@ -18,9 +18,7 @@ public class Worker(ILogger<Worker> _logger, ISignalService _signalService, IHtt
         var _ = Task.Run(async () =>
         {
             var fileName = "profile";
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Test")
-                fileName = "profile.test";
-
+      
             if (!File.Exists(fileName))
                 _signalService.WaitOne();
 

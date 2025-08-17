@@ -7,21 +7,15 @@ public interface ITokenService
     JwtSecurityToken ParseToken(string token);
     Task<string> GenerateToken(string sub, string name, string family);
 
-    Task SetTokenPSubAsync(string tokenp, string? value = null, CancellationToken cancellationToken = default);
-    Task<string?> GetTokenPSubAsync(string tokenp, CancellationToken cancellationToken = default);
-
-    Task SetSubTokenAsync(string sub, string? value = null, CancellationToken cancellationToken = default);
-    Task<string?> GetSubTokenAsync(string sub, CancellationToken cancellationToken = default);
-
-    Task SetSubTokenPAsync(string sub, string value = null, CancellationToken cancellationToken = default);
-    Task<string?> GetSubTokenPAsync(string sub, CancellationToken cancellationToken = default);
-
-    Task SetTokenPTokenAsync(string tokenp, string value = null, CancellationToken cancellationToken = default);
-    Task<string?> GetTokenPTokenAsync(string tokenp, CancellationToken cancellationToken = default);
-
-    Task SetSubIdTokenAsync(string sub, string value = null, CancellationToken cancellationToken = default);
-    Task<string?> GetSubIdTokenAsync(string sub, CancellationToken cancellationToken = default);
-
-    Task SetTokenPRefreshTokenAsync(string tokenp, string value = null, CancellationToken cancellationToken = default);
-    Task<string?> GetTokenPRefreshTokenAsync(string tokenp, CancellationToken cancellationToken = default);
+    Task<string?> SetGetTokenPSubAsync(string tokenp, string? value = null, CancellationToken cancellationToken = default);
+ 
+    Task<string?> SetGetSubTokenAsync(string sub, string? value = null, CancellationToken cancellationToken = default);
+    
+    Task<string?> SetGetSubTokenPAsync(string sub, string value = null, CancellationToken cancellationToken = default);
+   
+    Task<string?> SetGetTokenPTokenAsync(string tokenp, string value = null, CancellationToken cancellationToken = default);
+  
+    Task<string?> SetGetSubIdTokenAsync(string sub, string value = null, CancellationToken cancellationToken = default);
+  
+    Task<string?> SetGetTokenPRefreshTokenAsync(string tokenp, string value = null, CancellationToken cancellationToken = default); 
 }

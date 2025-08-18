@@ -8,8 +8,9 @@ namespace PlainBridge.Server.ApiEndPoint.Middleware;
 
 public class WebSocketProxyMiddleware(RequestDelegate _next, ILogger<WebSocketProxyMiddleware> _logger, IServiceProvider _serviceProvider)
 {
-    public async Task Invoke(HttpContext context, CancellationToken cancellationToken)
+    public async Task Invoke(HttpContext context)
     {
+        CancellationToken cancellationToken = context.RequestAborted;
         using var scope = _serviceProvider.CreateScope();
         var hostApplicationService = scope.ServiceProvider.GetRequiredService<IHostApplicationService>();
         var webSocketService = scope.ServiceProvider.GetRequiredService<IWebSocketService>();

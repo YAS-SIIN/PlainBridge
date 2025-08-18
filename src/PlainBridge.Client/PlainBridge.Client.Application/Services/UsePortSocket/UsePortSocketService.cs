@@ -136,6 +136,6 @@ public class UsePortSocketService(ILogger<UsePortSocketService> logger, IConnect
             await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
         };
 
-        await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer);
+        await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer, cancellationToken: cancellationToken);
     }
 }

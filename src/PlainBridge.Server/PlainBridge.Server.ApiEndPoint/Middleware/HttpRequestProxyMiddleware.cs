@@ -14,8 +14,9 @@ public class HttpRequestProxyMiddleware(RequestDelegate _next, ILogger<HttpReque
 { 
     private Dictionary<string, bool> _initializedQueues = new Dictionary<string, bool>();
      
-    public async Task Invoke(HttpContext context, CancellationToken cancellationToken)
+    public async Task Invoke(HttpContext context)
     {
+        CancellationToken cancellationToken = context.RequestAborted;
         using var scope = _serviceProvider.CreateScope();
         var hostApplicationService = scope.ServiceProvider.GetRequiredService<IHostApplicationService>();
         var responseCompletionSourcesManagement = scope.ServiceProvider.GetRequiredService<ResponseCompletionSourcesManagement>();
@@ -24,7 +25,7 @@ public class HttpRequestProxyMiddleware(RequestDelegate _next, ILogger<HttpReque
         var requestId = Guid.NewGuid().ToString();
         var host = context.Request.Host;
 
-        var hostApplication = await hostApplicationService.GetByHostAsync(host.Value, cancellationToken);
+        var hostApplication = await hostApplicationService.GetByHostAsync(host!.Value!, cancellationToken);
         var hostApplicationHost = $"{hostApplication.Domain}{applicationSettings.DefaultDomain}";
 
         if (!context.WebSockets.IsWebSocketRequest)

@@ -13,6 +13,7 @@ using PlainBridge.Client.ApiEndPoint.ErrorHandling;
 using PlainBridge.Client.Application.DTOs;
 using PlainBridge.Client.Application.Handler.HttpRequest;
 using PlainBridge.Client.Application.Handler.WebSocket;
+using PlainBridge.Client.Application.Helpers.Http;
 using PlainBridge.Client.Application.Management.Cache;
 using PlainBridge.Client.Application.Management.WebSocket;
 using PlainBridge.Client.Application.Services.ClientBus;
@@ -21,7 +22,6 @@ using PlainBridge.Client.Application.Services.SharePortSocket;
 using PlainBridge.Client.Application.Services.Signal;
 using PlainBridge.Client.Application.Services.UsePortSocket;
 using PlainBridge.Client.Application.Services.WebSocket;
-using PlainBridge.Server.Application.Helpers.Http;
 using Serilog;
 
 namespace PlainBridge.Client.ApiEndPoint;
@@ -58,6 +58,7 @@ public static class DependencyResolver
         });
 
         services.AddHttpContextAccessor();
+        services.AddProblemDetails();
         services.AddSingleton<IHttpHelper, HttpHelper>();
         services.AddSingleton<ICacheManagement, CacheManagement>();
         services.AddSingleton<IWebSocketManagement, WebSocketManagement>();
@@ -133,8 +134,7 @@ public static class DependencyResolver
     public static WebApplication AddUsers(this WebApplication app)
     {
 
-        app.UseForwardedHeaders();
-        app.UseExceptionHandler();
+        app.UseExceptionHandler(); 
         app.UseSerilogRequestLogging();
          
         app.UseForwardedHeaders();

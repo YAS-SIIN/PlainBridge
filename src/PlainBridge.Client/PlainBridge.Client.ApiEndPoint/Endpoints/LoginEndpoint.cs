@@ -1,4 +1,5 @@
 ﻿
+using System.Text.Json;
 using Duende.IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +33,18 @@ public static class LoginEndpoint
             var fileName = "profile";
 
             if (File.Exists(fileName))
+            {
+                var content = File.ReadAllText(fileName);
+                var profile = JsonSerializer.Deserialize<UserProfileViewDto>(content);
+
+                if (profile is null)
+                {
+                    _logger.LogError("Profile is null");
+                    throw new ApplicationException("Profile is null");
+                }
+
                 return "Authorized";
+            }
 
             if (!context!.User!.Identity!.IsAuthenticated)
             {

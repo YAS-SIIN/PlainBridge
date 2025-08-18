@@ -30,5 +30,5 @@ public record HostApplicationDto : BaseDto<long>
     [StringLength(200, MinimumLength = 5)]
     public string InternalUrl { get; set; }
 
-    public string GetProjectHost(string defaultDomain) => $"{this.Domain}{defaultDomain}";
+    public string GetProjectHost(string defaultDomain) => $"{this.Domain.ToLower()}{defaultDomain}";
 }

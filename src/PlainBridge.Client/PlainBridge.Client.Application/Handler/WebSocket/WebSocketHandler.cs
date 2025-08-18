@@ -25,13 +25,14 @@ public class WebSocketHandler(ILogger<WebSocketHandler> _logger, IWebSocketServi
                  durable: false,
                  exclusive: false,
                  autoDelete: false,
-                 arguments: null);
+                 arguments: null, 
+                 cancellationToken: cancellationToken);
 
         // Start consuming requests
         var consumer = new AsyncEventingBasicConsumer(channel);
         consumer.ReceivedAsync += async (model, ea) =>
         {
-            await channel.BasicAckAsync(ea.DeliveryTag, false);
+            await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
 
             try
             {

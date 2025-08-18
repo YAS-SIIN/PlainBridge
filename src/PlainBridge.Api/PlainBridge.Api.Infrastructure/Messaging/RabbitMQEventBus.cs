@@ -23,18 +23,21 @@ public class RabbitMqEventBus(ILogger<RabbitMqEventBus> _logger, IConnection _co
             type: "direct",
             durable: false,
             autoDelete: false,
-            arguments: null);
+            arguments: null, 
+            cancellationToken: cancellationToken);
 
         await channel.QueueDeclareAsync(queue: queueName,
                  durable: false,
                  exclusive: false,
                  autoDelete: false,
-                 arguments: null);
+                 arguments: null, 
+                 cancellationToken: cancellationToken);
 
         await channel.QueueBindAsync(queue: queueName,
             exchange: exchangeName,
             routingKey: routingKey,
-            arguments: null);
+            arguments: null, 
+            cancellationToken: cancellationToken);
 
         var body = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(@event);
          

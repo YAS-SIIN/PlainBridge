@@ -28,27 +28,25 @@ public static class Config
             // m2m client credentials flow client
             new Client
             {
-                ClientId = "m2m.client",
+                ClientId = "client",
                 ClientName = "Client Credentials Client",
 
                 AllowedGrantTypes = GrantTypes.Code,
                 ClientSecrets = { new Secret("secret".Sha256()) },
 
                 // where to redirect to after login
-                RedirectUris = { $"{applcationSettings.PlainBridgeWebUrl}/signin-oidc" },
+                RedirectUris = { $"{applcationSettings.PlainBridgeClientUrl}/signin-oidc" },
 
                 // where to redirect to after logout
-                PostLogoutRedirectUris = { $"{applcationSettings.PlainBridgeWebUrl}/signout-callback-oidc" },
+                PostLogoutRedirectUris = { $"{applcationSettings.PlainBridgeClientUrl}/signout-callback-oidc" },
 
                 AllowedScopes = {
-                    _mainScope, 
-                    IdentityServerConstants.StandardScopes.OpenId, 
-                    IdentityServerConstants.LocalApi.ScopeName, 
-                    IdentityServerConstants.StandardScopes.Profile, 
-                    IdentityServerConstants.StandardScopes.Email,  
+                    _mainScope,
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.StandardScopes.Profile,
+                    IdentityServerConstants.StandardScopes.Email,
                     IdentityServerConstants.StandardScopes.Phone,
-                    IdentityServerConstants.StandardScopes.Address,
-                    IdentityServerConstants.StandardScopes.OfflineAccess,
+                    IdentityServerConstants.StandardScopes.Address
                 }
             },
              

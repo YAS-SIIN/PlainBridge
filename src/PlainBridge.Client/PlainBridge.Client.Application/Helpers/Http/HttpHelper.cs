@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using PlainBridge.SharedApplication.DTOs;
 
-namespace PlainBridge.Server.Application.Helpers.Http;
+namespace PlainBridge.Client.Application.Helpers.Http;
 
 public class HttpHelper : IHttpHelper
 {

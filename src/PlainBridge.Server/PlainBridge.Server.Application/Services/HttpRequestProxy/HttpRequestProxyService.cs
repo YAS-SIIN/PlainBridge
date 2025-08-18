@@ -71,7 +71,7 @@ public class HttpRequestProxyService(ILogger<HttpRequestProxyService> _logger, I
             }
         };
 
-        await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer);
+        await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer, cancellationToken: cancellationToken);
     }
 
     private bool RetrieveResponseCompletionSource(string requestID, out TaskCompletionSource<HttpResponseDto> responseCompletionSource)

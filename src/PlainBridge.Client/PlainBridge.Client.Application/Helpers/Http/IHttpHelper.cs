@@ -1,6 +1,6 @@
 ﻿using PlainBridge.SharedApplication.DTOs;
 
-namespace PlainBridge.Server.Application.Helpers.Http;
+namespace PlainBridge.Client.Application.Helpers.Http;
 
 public interface IHttpHelper
 {

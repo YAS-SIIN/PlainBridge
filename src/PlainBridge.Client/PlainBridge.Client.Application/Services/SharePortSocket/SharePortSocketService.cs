@@ -53,10 +53,10 @@ public class SharePortSocketService(ILogger<SharePortSocketService> _logger, ICo
 
             await sharePortCacheModel.TcpClient.GetStream().WriteAsync(packetModel.Buffer, 0, packetModel.Count, cancellationToken);
 
-            await channel.BasicAckAsync(ea.DeliveryTag, false);
+            await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
         };
 
-        await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer);
+        await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer, cancellationToken: cancellationToken);
     }
 
     private async Task HandleTcpClientResponsesAsync(TcpClient tcpClient, string useportUsername, int useportPort, string connectionId, CancellationToken cancellationToken)

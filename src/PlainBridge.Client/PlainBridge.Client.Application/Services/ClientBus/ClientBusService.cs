@@ -21,6 +21,15 @@ public class ClientBusService(ILogger<ClientBusService> _logger, IConnection _co
 
         var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
+        await channel.QueueDeclareAsync(
+            queue: queueName,
+            durable: true,
+            exclusive: false,
+            autoDelete: false,
+            arguments: null,
+            cancellationToken: cancellationToken);
+
+
         var consumer = new AsyncEventingBasicConsumer(channel);
         consumer.ReceivedAsync += async (model, ea) =>
         {
@@ -35,13 +44,20 @@ public class ClientBusService(ILogger<ClientBusService> _logger, IConnection _co
                 return;
             }
 
-            await _cacheManagement.SetGetServerApplicationsAsync(serverApplications);
+            await _cacheManagement.SetGetServerApplicationsAsync(serverApplications, cancellationToken: cancellationToken);
             await _usePortSocketService.InitializeAsync(username, serverApplications, cancellationToken);
             await _sharePortSocketService.InitializeAsync(username, serverApplications, cancellationToken);
 
-            await channel.BasicAckAsync(ea.DeliveryTag, false);
+            await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
         };
+        try
+        {
 
-        await channel.BasicConsumeAsync(queueName, false, consumer);
+            await channel.BasicConsumeAsync(queueName, false, consumer, cancellationToken: cancellationToken);
+        }
+        catch (Exception EX)
+        {
+            var aa = EX;
+        }
     }
 }

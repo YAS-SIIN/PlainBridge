@@ -18,18 +18,18 @@ public class Worker(ILogger<Worker> _logger, ISignalService _signalService, IHtt
         var _ = Task.Run(async () =>
         {
             var fileName = "profile";
-      
+
             if (!File.Exists(fileName))
                 _signalService.WaitOne();
 
             var content = File.ReadAllText(fileName);
             var profile = JsonSerializer.Deserialize<UserProfileViewDto>(content);
-             
+
             await _httpRequestHandler.InitializeHttpRequestConsumerAsync(profile!.Username, cancellationToken);
             await _webSocketHandler.InitializeWebSocketConsumerAsync(profile!.Username, cancellationToken);
             await _clientBusService.InitializeConsumerAsync(profile.Username, cancellationToken);
             await _serverBusService.RequestServerApplicationsAsync(profile.Username, cancellationToken);
-             
+
             await Task.Delay(Timeout.Infinite, cancellationToken);
         });
 

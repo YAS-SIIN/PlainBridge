@@ -1,9 +1,8 @@
 ﻿
 using System.Text;
 using System.Text.Json;
-using System.Threading;
 using Microsoft.Extensions.Logging;
-using PlainBridge.Server.Application.Helpers.Http;
+using PlainBridge.Client.Application.Helpers.Http;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Exceptions;
 using RabbitMQ.Client;
@@ -89,6 +88,6 @@ public class HttpRequestHandler(ILogger<HttpRequestHandler> _logger, IConnection
             }
         };
 
-        await channel.BasicConsumeAsync(queue: requestQueueName, autoAck: false, consumer: consumer);
+        await channel.BasicConsumeAsync(queue: requestQueueName, autoAck: false, consumer: consumer, cancellationToken: cancellationToken);
     }
 }

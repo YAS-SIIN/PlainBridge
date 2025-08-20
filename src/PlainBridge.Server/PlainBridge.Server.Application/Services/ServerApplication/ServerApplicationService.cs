@@ -25,7 +25,7 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
         foreach (var serverApplication in serverApplications.Where(x => x.State == RowStateEnum.Active))
         { 
             await _cache.SetGetServerApplicationAsync(serverApplication!.UserName!, serverApplication.InternalPort, serverApplication, cancellationToken);
-            await _cache.SetGetServerApplicationAsync(serverApplication.AppId, serverApplication, cancellationToken);
+            await _cache.SetGetServerApplicationAsync(serverApplication.AppId.ToString(), serverApplication, cancellationToken);
 
             _logger.LogInformation("Server application cached: {ServerApplication}", serverApplication);
         }

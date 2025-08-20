@@ -59,13 +59,14 @@ public class ServerApplicationConsumerService(ILogger<ServerApplicationConsumerS
                 return;
             }
 
-            if (!serverApplication.ServerApplicationAppId.HasValue)
+            if (string.IsNullOrWhiteSpace(serverApplication.ServerApplicationAppId) ||
+                 !(Guid.TryParse(serverApplication.ServerApplicationAppId, out Guid parsedId)) || parsedId == Guid.Empty)
             {
                 await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
                 return;
             }
 
-            var destinationServerApplication = await _cacheManagement.SetGetServerApplicationAsync(serverApplication.ServerApplicationAppId.Value);
+            var destinationServerApplication = await _cacheManagement.SetGetServerApplicationAsync(serverApplication.ServerApplicationAppId);
             if (destinationServerApplication is null || destinationServerApplication == default)
             {
                 await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);

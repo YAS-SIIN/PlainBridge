@@ -31,14 +31,26 @@ export class ServerApplicationFormComponent implements OnInit {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
       description: [''],
-      // serverApplicationAppId: [''],
       internalPort: ['', [Validators.required, Validators.min(1)]],
-      serverApplicationType: [ServerApplicationTypeEnum.SharePort, Validators.required]
+      serverApplicationType: [ServerApplicationTypeEnum.SharePort, Validators.required],
+      serverApplicationAppId: ['']
     });
   }
 
   ngOnInit(): void {
     this.pageMode = this.router.url.includes('/detail') ? 'view' : this.router.url.includes('/edit') ? 'edit' : 'new';
+
+    // Show/hide and require serverApplicationAppId based on serverApplicationType
+    this.form.get('serverApplicationType')?.valueChanges.subscribe(type => {
+      const appIdControl = this.form.get('serverApplicationAppId');
+      if (type === ServerApplicationTypeEnum.UsePort) {
+        appIdControl?.setValidators([Validators.required]);
+      } else {
+        appIdControl?.clearValidators();
+        appIdControl?.setValue('');
+      }
+      appIdControl?.updateValueAndValidity();
+    });
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) { 

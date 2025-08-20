@@ -17,11 +17,6 @@
             <ng-container *ngIf="name?.errors?.['minlength']">Name must be at least 2 characters long.</ng-container>
           </mat-error>
         </mat-form-field>
-<!-- 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Server Application App ID</mat-label>
-          <input matInput formControlName="serverApplicationAppId" placeholder="Server Application App ID">
-        </mat-form-field> -->
         
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Internal Port</mat-label>
@@ -41,6 +36,14 @@
           </mat-select>
         </mat-form-field>
  
+        <mat-form-field appearance="fill" class="full-width" *ngIf="form.get('serverApplicationType')?.value === serverApplicationTypes[1].value">
+          <mat-label>Server Application App ID</mat-label>
+          <input matInput formControlName="serverApplicationAppId" placeholder="Server Application App ID">
+          <mat-error *ngIf="form.get('serverApplicationAppId')?.hasError('required') && form.get('serverApplicationAppId')?.touched">
+            Server Application App ID is required.
+          </mat-error>
+        </mat-form-field>
+        
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Description</mat-label>
           <textarea matInput formControlName="description" placeholder="Optional description"></textarea>

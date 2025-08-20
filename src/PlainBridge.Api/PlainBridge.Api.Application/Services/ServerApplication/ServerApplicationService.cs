@@ -2,9 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-
-using PlainBridge.Api.Application.DTOs;
-using PlainBridge.Api.Domain.Entities;
+ 
 using PlainBridge.Api.Infrastructure.Data.Context;
 using PlainBridge.Api.Infrastructure.Messaging;
 using PlainBridge.SharedApplication.DTOs;
@@ -26,6 +24,7 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
         {
             Id = x.Id,
             AppId = x.AppId,
+            ServerApplicationAppId = x.ServerApplicationViewId != Guid.Empty ? x.ServerApplicationViewId.ToString() : null,
             UserId = x.UserId,
             UserName = x.User.Username,
             Name = x.Name,
@@ -34,7 +33,7 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
             State = (RowStateEnum)x.State,
         }).ToList();
     }
-     
+
     public async Task<ServerApplicationDto> GetAsync(long id, long userId, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Getting server application by Id: {Id}", id);
@@ -48,6 +47,7 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
         {
             Id = serverApp.Id,
             AppId = serverApp.AppId,
+            ServerApplicationAppId = serverApp.ServerApplicationViewId != Guid.Empty ? serverApp.ServerApplicationViewId.ToString() : null,
             UserId = serverApp.UserId,
             UserName = serverApp.User.Username,
             Name = serverApp.Name,
@@ -66,22 +66,27 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
             throw new ApplicationException("Port range is not valid");
         }
 
-        if (serverApplication.ServerApplicationType == ServerApplicationTypeEnum.UsePort && (!serverApplication.ServerApplicationAppId.HasValue || serverApplication.ServerApplicationAppId == Guid.Empty))
+        Guid parsedId = Guid.Empty;
+        if (serverApplication.ServerApplicationType == ServerApplicationTypeEnum.UsePort)
         {
-            _logger.LogError("ServerApplicationViewId is required for UsePort type.");
-            throw new ArgumentNullException(nameof(ServerApplicationDto.ServerApplicationAppId));
-        }
+            if (string.IsNullOrWhiteSpace(serverApplication.ServerApplicationAppId) ||
+                !(Guid.TryParse(serverApplication.ServerApplicationAppId, out parsedId)) || parsedId == Guid.Empty)
+            {
+                _logger.LogError("ServerApplicationAppId is required for UsePort type.");
+                throw new ArgumentNullException(nameof(ServerApplicationDto.ServerApplicationAppId));
+            }
 
-        if (serverApplication.ServerApplicationType == ServerApplicationTypeEnum.UsePort && !_dbContext.ServerApplications.Any(x => x.AppId == serverApplication.ServerApplicationAppId))
-        {
-            _logger.LogError("Referenced ServerApplicationViewId not found: {ViewId}", serverApplication.ServerApplicationAppId);
-            throw new NotFoundException(nameof(serverApplication), new List<KeyValuePair<string, object>> { new KeyValuePair<string, object>(nameof(ServerApplicationDto.ServerApplicationAppId), serverApplication.ServerApplicationAppId.Value) });
+            if (!_dbContext.ServerApplications.Any(x => x.AppId == parsedId))
+            {
+                _logger.LogError("Referenced ServerApplicationAppId not found: {AppId}", serverApplication.ServerApplicationAppId);
+                throw new NotFoundException(nameof(serverApplication), new List<KeyValuePair<string, object>> { new KeyValuePair<string, object>(nameof(ServerApplicationDto.ServerApplicationAppId), parsedId) });
+            }
         }
-
+         
         var app = new Domain.Entities.ServerApplication
         {
             AppId = Guid.NewGuid(),
-            ServerApplicationViewId = serverApplication.ServerApplicationAppId,
+            ServerApplicationViewId = parsedId,
             Name = serverApplication.Name,
             UserId = serverApplication.UserId,
             InternalPort = serverApplication.InternalPort,
@@ -134,7 +139,7 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
         app.State = isActive ? Domain.Enums.RowStateEnum.Active : Domain.Enums.RowStateEnum.Inactive;
         await _dbContext.SaveChangesAsync(cancellationToken);
         await _eventBus.PublishAsync<string>("Server_Application_State_Updated", cancellationToken);
-         
+
     }
 
     public async Task DeleteAsync(long id, CancellationToken cancellationToken)

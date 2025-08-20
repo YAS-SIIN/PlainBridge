@@ -77,5 +77,20 @@ describe('ServerApplicationFormComponent', () => {
     component.onSubmit();
     expect(component.loading).toBeFalse();
   });
+  
+  it('should require serverApplicationAppId only for UsePort', () => {
+    const serverApplicationTypeControl = component.form.get('serverApplicationType');
+    const serverApplicationAppIdControl = component.form.get('serverApplicationAppId');
+    if (serverApplicationTypeControl) serverApplicationTypeControl.setValue(0); // SharePort
+    if (serverApplicationAppIdControl) serverApplicationAppIdControl.setValue('');
+    expect(serverApplicationAppIdControl?.valid).toBeTrue();
+
+    if (serverApplicationTypeControl) serverApplicationTypeControl.setValue(1); // UsePort
+    if (serverApplicationAppIdControl) serverApplicationAppIdControl.setValue('');
+    expect(serverApplicationAppIdControl?.valid).toBeFalse();
+
+    if (serverApplicationAppIdControl) serverApplicationAppIdControl.setValue('some-id');
+    expect(serverApplicationAppIdControl?.valid).toBeTrue();
+  });
 });
 

@@ -15,7 +15,7 @@ public class ServerApplicationServiceData
             InternalPort = 4001,
             UserId = 1,
             ServerApplicationType = SharedApplication.Enums.ServerApplicationTypeEnum.SharePort,
-            ServerApplicationAppId = Guid.NewGuid()
+            ServerApplicationAppId = Guid.NewGuid().ToString()
         }};
         yield return new object[] { new ServerApplicationDto
         {
@@ -23,7 +23,7 @@ public class ServerApplicationServiceData
             InternalPort = 4002,
             UserId = 1,
             ServerApplicationType = SharedApplication.Enums.ServerApplicationTypeEnum.UsePort,
-            ServerApplicationAppId = Guid.NewGuid()
+            ServerApplicationAppId = Guid.NewGuid().ToString()
         }};
     }  
     
@@ -35,7 +35,7 @@ public class ServerApplicationServiceData
             InternalPort = 99999,
             UserId = 1,
             ServerApplicationType = SharedApplication.Enums.ServerApplicationTypeEnum.SharePort,
-            ServerApplicationAppId = Guid.NewGuid()
+            ServerApplicationAppId = Guid.NewGuid().ToString()
         }};
     }  
     
@@ -58,7 +58,7 @@ public class ServerApplicationServiceData
             InternalPort = 4000,
             UserId = 1,
             ServerApplicationType = SharedApplication.Enums.ServerApplicationTypeEnum.SharePort,
-            ServerApplicationAppId = Guid.NewGuid()
+            ServerApplicationAppId = Guid.NewGuid().ToString()
         }};
     }  
      

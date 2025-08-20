@@ -62,7 +62,7 @@ public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
         if (dto.ServerApplicationType == SharedApplication.Enums.ServerApplicationTypeEnum.UsePort)
         {
             var serverApplication = await _fixture.MemoryMainDbContext.ServerApplications.FirstOrDefaultAsync();
-            dto.ServerApplicationAppId = serverApplication.AppId;
+            dto.ServerApplicationAppId = serverApplication.AppId.ToString();
         }
 
         var guid = await _serverApplicationService.CreateAsync(dto, CancellationToken.None);

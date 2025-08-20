@@ -15,7 +15,7 @@ public class CacheManagement(ILogger<CacheManagement> _logger, HybridCache _hybr
             async ct => value, 
             cancellationToken: cancellationToken);
 
-    public async Task<ServerApplicationDto?> SetGetServerApplicationAsync(Guid appId, ServerApplicationDto value = default!, CancellationToken cancellationToken = default! ) => await
+    public async Task<ServerApplicationDto?> SetGetServerApplicationAsync(string appId, ServerApplicationDto value = default!, CancellationToken cancellationToken = default! ) => await
         _hybridCache.GetOrCreateAsync($"serverApplication:appId:{appId}",
             async ct => value, 
             cancellationToken: cancellationToken);

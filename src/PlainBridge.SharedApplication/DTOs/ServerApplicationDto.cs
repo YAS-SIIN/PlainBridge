@@ -12,7 +12,7 @@ public record ServerApplicationDto : BaseDto<long>
     public Guid AppId { get; set; }
 
     [Display(Name = "Application app Id")]
-    public Guid? ServerApplicationAppId { get; set; }
+    public string? ServerApplicationAppId { get; set; }
 
     [Display(Name = "User Id")]
     [Required]

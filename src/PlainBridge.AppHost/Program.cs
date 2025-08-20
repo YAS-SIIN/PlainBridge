@@ -24,7 +24,7 @@ try
     var identityserverEndpoint = builder
         .AddDockerfile("identityserver-endpoint", "..\\..", "src/PlainBridge.IdentityServer/PlainBridge.IdentityServer.EndPoint/Dockerfile")
         .WithUrl("https://localhost:5003");
-
+     
     var apiEndpoint = builder
         .AddDockerfile("api-endpoint", "..\\..", "src/PlainBridge.Api/PlainBridge.Api.ApiEndPoint/Dockerfile")
         .WithUrl("https://localhost:5001")
@@ -35,30 +35,31 @@ try
         .WaitFor(identityserverEndpoint);
 
 
-    var serverEndpoint = builder
-        .AddDockerfile("server-endpoint", "..\\..", "src/PlainBridge.Server/PlainBridge.Server.ApiEndPoint/Dockerfile")
+    var serverEndpoint = builder.AddProject<Projects.PlainBridge_Server_ApiEndPoint>("server-endpoint")
         .WithUrl("https://localhost:5002")
         .WithReference(cache)
-        .WithReference(rabbitmq)
+        .WithReference(rabbitmq) 
+        .WithReference(apiEndpoint)
         .WaitFor(cache)
-        .WaitFor(rabbitmq)
-        .WaitFor(apiEndpoint);
-
-    var angularWebUi =
-    builder.AddNpmApp("angularWebUi", "../PlainBridge.Web/PlainBridge.Web.UI")
-        .WithHttpEndpoint(port: 5004, env: "PORT")
-        .WaitFor(identityserverEndpoint)
+        .WaitFor(rabbitmq) 
         .WaitFor(apiEndpoint)
-        .WithExternalHttpEndpoints();
+        .PublishAsDockerFile();
+
+    var angularWebUi = builder
+        .AddDockerfile("angular-web", "..\\..", "src/PlainBridge.Web/PlainBridge.Web.UI/Dockerfile")
+        .WithHttpEndpoint(port: 5004)
+        .WaitFor(identityserverEndpoint)
+        .WaitFor(apiEndpoint);
 
     var clientEndpoint = builder
     .AddDockerfile("client-apiendpoint", "..\\..", "src/PlainBridge.Client/PlainBridge.Client.ApiEndPoint/Dockerfile")
     .WithUrl("https://localhost:5005")
     .WithReference(cache)
-    .WithReference(rabbitmq) 
+    .WithReference(rabbitmq)
     .WaitFor(cache)
-    .WaitFor(rabbitmq) 
+    .WaitFor(rabbitmq)
     .WaitFor(serverEndpoint);
+);
 
 
     if (!builder.Environment.IsDevelopment())

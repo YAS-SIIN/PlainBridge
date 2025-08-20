@@ -1,0 +1,55 @@
+services:
+  traefik:
+    image: traefik:v3.1
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+    ports:
+      - "8088:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+
+  # Route: http://id.plainbridge.com -> identityserver-endpoint:8080
+  identityserver-endpoint:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.identity.rule=Host(`id.plainbridge.com`)
+      - traefik.http.routers.identity.entrypoints=web
+      - traefik.http.services.identity.loadbalancer.server.port=8080
+
+  # Route: http://api.plainbridge.com -> api-endpoint:8080
+  api-endpoint:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.api.rule=Host(`api.plainbridge.com`)
+      - traefik.http.routers.api.entrypoints=web
+      - traefik.http.services.api.loadbalancer.server.port=8080
+
+  # Route: http://server.plainbridge.com -> server-endpoint:8080
+  server-endpoint:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.server.rule=Host(`server.plainbridge.com`)
+      - traefik.http.routers.server.entrypoints=web
+      - traefik.http.services.server.loadbalancer.server.port=8080
+
+  # Route: http://client.plainbridge.com -> client-apiendpoint:8080
+  client-apiendpoint:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.client.rule=Host(`client.plainbridge.com`)
+      - traefik.http.routers.client.entrypoints=web
+      - traefik.http.services.client.loadbalancer.server.port=8080
+
+  # Angular SPA: http://web.plainbridge.com -> angular-web:8080
+  angular-web:
+    build:
+      context: ../src/PlainBridge.Web/PlainBridge.Web.UI
+      dockerfile: Dockerfile
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.web.rule=Host(`web.plainbridge.com`)
+      - traefik.http.routers.web.entrypoints=web
+      - traefik.http.services.web.loadbalancer.server.port=8080

@@ -15,8 +15,10 @@ WORKDIR /src
 COPY ["src/PlainBridge.Api/PlainBridge.Api.ApiEndPoint/PlainBridge.Api.ApiEndPoint.csproj", "src/PlainBridge.Api/PlainBridge.Api.ApiEndPoint/"]
 COPY ["src/PlainBridge.ServiceDefaults/PlainBridge.ServiceDefaults.csproj", "src/PlainBridge.ServiceDefaults/"]
 COPY ["src/PlainBridge.Api/PlainBridge.Api.Application/PlainBridge.Api.Application.csproj", "src/PlainBridge.Api/PlainBridge.Api.Application/"]
-COPY ["src/PlainBridge.Api/PlainBridge.Api.Infrastructure/PlainBridge.Api.Infrastructure.Data/PlainBridge.Api.Infrastructure.Data.csproj", "src/PlainBridge.Api/PlainBridge.Api.Infrastructure/PlainBridge.Api.Infrastructure.Data/"]
+COPY ["src/PlainBridge.SharedApplication/PlainBridge.SharedApplication.csproj", "src/PlainBridge.SharedApplication/"]
+COPY ["src/PlainBridge.Api/PlainBridge.Api.Infrastructure/PlainBridge.Api.Infrastructure.csproj", "src/PlainBridge.Api/PlainBridge.Api.Infrastructure/"]
 COPY ["src/PlainBridge.Api/PlainBridge.Api.Domain/PlainBridge.Api.Domain.csproj", "src/PlainBridge.Api/PlainBridge.Api.Domain/"]
+COPY ["src/PlainBridge.Server/PlainBridge.Server.Application/PlainBridge.Server.Application.csproj", "src/PlainBridge.Server/PlainBridge.Server.Application/"]
 RUN dotnet restore "./src/PlainBridge.Api/PlainBridge.Api.ApiEndPoint/PlainBridge.Api.ApiEndPoint.csproj"
 COPY . .
 WORKDIR "/src/src/PlainBridge.Api/PlainBridge.Api.ApiEndPoint"

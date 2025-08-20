@@ -13,6 +13,13 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/PlainBridge.Client/PlainBridge.Client.ApiEndPoint/PlainBridge.Client.ApiEndPoint.csproj", "src/PlainBridge.Client/PlainBridge.Client.ApiEndPoint/"]
+COPY ["src/PlainBridge.ServiceDefaults/PlainBridge.ServiceDefaults.csproj", "src/PlainBridge.ServiceDefaults/"]
+COPY ["src/PlainBridge.Api/PlainBridge.Api.Application/PlainBridge.Api.Application.csproj", "src/PlainBridge.Api/PlainBridge.Api.Application/"]
+COPY ["src/PlainBridge.SharedApplication/PlainBridge.SharedApplication.csproj", "src/PlainBridge.SharedApplication/"]
+COPY ["src/PlainBridge.Api/PlainBridge.Api.Infrastructure/PlainBridge.Api.Infrastructure.csproj", "src/PlainBridge.Api/PlainBridge.Api.Infrastructure/"]
+COPY ["src/PlainBridge.Api/PlainBridge.Api.Domain/PlainBridge.Api.Domain.csproj", "src/PlainBridge.Api/PlainBridge.Api.Domain/"]
+COPY ["src/PlainBridge.Server/PlainBridge.Server.Application/PlainBridge.Server.Application.csproj", "src/PlainBridge.Server/PlainBridge.Server.Application/"]
+COPY ["src/PlainBridge.Client/PlainBridge.Client.Application/PlainBridge.Client.Application.csproj", "src/PlainBridge.Client/PlainBridge.Client.Application/"]
 RUN dotnet restore "./src/PlainBridge.Client/PlainBridge.Client.ApiEndPoint/PlainBridge.Client.ApiEndPoint.csproj"
 COPY . .
 WORKDIR "/src/src/PlainBridge.Client/PlainBridge.Client.ApiEndPoint"

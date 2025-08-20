@@ -1,0 +1,106 @@
+services:
+  env-dashboard:
+    image: "mcr.microsoft.com/dotnet/nightly/aspire-dashboard:latest"
+    expose:
+      - "18888"
+      - "18889"
+    networks:
+      - "aspire"
+    restart: "always"
+  cache:
+    image: "docker.io/library/redis:7.4"
+    command:
+      - "-c"
+      - "redis-server --requirepass $$REDIS_PASSWORD"
+    entrypoint:
+      - "/bin/sh"
+    environment:
+      REDIS_PASSWORD: "${CACHE_PASSWORD}"
+    expose:
+      - "6379"
+    networks:
+      - "aspire"
+  messaging:
+    image: "docker.io/library/rabbitmq:4.1-management"
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "${MESSAGING_PASSWORD}"
+    expose:
+      - "5672"
+      - "15672"
+    networks:
+      - "aspire"
+  identityserver-endpoint:
+    image: "${IDENTITYSERVER_ENDPOINT_IMAGE}"
+    environment:
+      ConnectionStrings__elasticsearch: "http://elastic:${ELASTICSEARCH_PASSWORD}@elasticsearch:9200"
+    depends_on:
+      elasticsearch:
+        condition: "service_started"
+    networks:
+      - "aspire"
+  api-endpoint:
+    image: "${API_ENDPOINT_IMAGE}"
+    environment:
+      ConnectionStrings__messaging: "amqp://guest:${MESSAGING_PASSWORD}@messaging:5672"
+      ConnectionStrings__cache: "cache:6379,password=${CACHE_PASSWORD}"
+      ConnectionStrings__elasticsearch: "http://elastic:${ELASTICSEARCH_PASSWORD}@elasticsearch:9200"
+    depends_on:
+      cache:
+        condition: "service_started"
+      messaging:
+        condition: "service_started"
+      identityserver-endpoint:
+        condition: "service_started"
+      elasticsearch:
+        condition: "service_started"
+    networks:
+      - "aspire"
+  server-endpoint:
+    image: "${SERVER_ENDPOINT_IMAGE}"
+    environment:
+      ConnectionStrings__cache: "cache:6379,password=${CACHE_PASSWORD}"
+      ConnectionStrings__messaging: "amqp://guest:${MESSAGING_PASSWORD}@messaging:5672"
+      ConnectionStrings__elasticsearch: "http://elastic:${ELASTICSEARCH_PASSWORD}@elasticsearch:9200"
+    depends_on:
+      cache:
+        condition: "service_started"
+      messaging:
+        condition: "service_started"
+      api-endpoint:
+        condition: "service_started"
+      elasticsearch:
+        condition: "service_started"
+    networks:
+      - "aspire"
+  client-apiendpoint:
+    image: "${CLIENT_APIENDPOINT_IMAGE}"
+    environment:
+      ConnectionStrings__cache: "cache:6379,password=${CACHE_PASSWORD}"
+      ConnectionStrings__messaging: "amqp://guest:${MESSAGING_PASSWORD}@messaging:5672"
+      ConnectionStrings__elasticsearch: "http://elastic:${ELASTICSEARCH_PASSWORD}@elasticsearch:9200"
+    depends_on:
+      cache:
+        condition: "service_started"
+      messaging:
+        condition: "service_started"
+      server-endpoint:
+        condition: "service_started"
+      elasticsearch:
+        condition: "service_started"
+    networks:
+      - "aspire"
+  elasticsearch:
+    image: "docker.io/library/elasticsearch:8.17.3"
+    environment:
+      discovery.type: "single-node"
+      xpack.security.enabled: "true"
+      ELASTIC_PASSWORD: "${ELASTICSEARCH_PASSWORD}"
+    expose:
+      - "9200"
+      - "9300"
+    networks:
+      - "aspire"
+networks:
+  aspire:
+    driver: "bridge"

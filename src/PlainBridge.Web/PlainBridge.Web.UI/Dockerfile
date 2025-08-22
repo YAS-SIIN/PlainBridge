@@ -16,5 +16,5 @@ RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copy built app to nginx html folder (Angular outputs browser/ for client bundle)
 COPY --from=build /app/dist/PlainBridge.Web.UI/browser/ /usr/share/nginx/html/
-EXPOSE 8080
+EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

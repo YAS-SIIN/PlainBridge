@@ -50,15 +50,19 @@ try
 
     builder.Services.AddApiProjectServices();
 
-    // Configure Kestrel to support HTTP/3
-    builder.WebHost.ConfigureKestrel(options =>
+    // Configure Kestrel to support HTTP/3 only when not running in a container
+    var inContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+    if (!inContainer)
     {
-        options.ListenAnyIP(5001, listenOptions =>
+        builder.WebHost.ConfigureKestrel(options =>
         {
-            listenOptions.UseHttps(); // HTTP/3 requires HTTPS
-            listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
+            options.ListenAnyIP(5001, listenOptions =>
+            {
+                listenOptions.UseHttps(); // HTTP/3 requires HTTPS
+                listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
+            });
         });
-    });
+    }
 
     var app = builder.Build();
      

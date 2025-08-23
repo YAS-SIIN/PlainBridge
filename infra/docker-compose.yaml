@@ -1,5 +1,5 @@
 services:
-  env-dashboard:
+  plain-bridge-dashboard:
     image: "mcr.microsoft.com/dotnet/nightly/aspire-dashboard:latest"
     expose:
       - "18888"
@@ -33,26 +33,39 @@ services:
   identityserver-endpoint:
     image: "${IDENTITYSERVER_ENDPOINT_IMAGE}"
     environment:
-      ASPNETCORE_ENVIRONMENT: "Development"
-      ASPNETCORE_URLS: "http://+:80"
-      ConnectionStrings__elasticsearch: "endpoint=http://elasticsearch:9200;username=elastic;password=${ELASTICSEARCH_PASSWORD}"
-    cap_add:
-      - NET_BIND_SERVICE
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "${IDENTITYSERVER_ENDPOINT_PORT}"
+      ConnectionStrings__elasticsearch: "http://elastic:${ELASTICSEARCH_PASSWORD}@elasticsearch:9200"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://plain-bridge-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "identityServer-endpoint"
+    expose:
+      - "${IDENTITYSERVER_ENDPOINT_PORT}"
     depends_on:
       elasticsearch:
-        condition: "service_healthy"
+        condition: "service_started"
     networks:
       - "aspire"
   api-endpoint:
     image: "${API_ENDPOINT_IMAGE}"
     environment:
-      ASPNETCORE_ENVIRONMENT: "Development"
-      ASPNETCORE_URLS: "http://+:80"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "${API_ENDPOINT_PORT}"
       ConnectionStrings__messaging: "amqp://guest:${MESSAGING_PASSWORD}@messaging:5672"
       ConnectionStrings__cache: "cache:6379,password=${CACHE_PASSWORD}"
-      ConnectionStrings__elasticsearch: "endpoint=http://elasticsearch:9200;username=elastic;password=${ELASTICSEARCH_PASSWORD}"
-    cap_add:
-      - NET_BIND_SERVICE
+      services__identityServer-endpoint__http__0: "http://identityServer-endpoint:${IDENTITYSERVER_ENDPOINT_PORT}"
+      ConnectionStrings__elasticsearch: "http://elastic:${ELASTICSEARCH_PASSWORD}@elasticsearch:9200"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://plain-bridge-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "api-endpoint"
+    expose:
+      - "${API_ENDPOINT_PORT}"
     depends_on:
       cache:
         condition: "service_started"
@@ -61,19 +74,26 @@ services:
       identityserver-endpoint:
         condition: "service_started"
       elasticsearch:
-        condition: "service_healthy"
+        condition: "service_started"
     networks:
       - "aspire"
   server-endpoint:
     image: "${SERVER_ENDPOINT_IMAGE}"
     environment:
-      ASPNETCORE_ENVIRONMENT: "Development"
-      ASPNETCORE_URLS: "http://+:80"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "${SERVER_ENDPOINT_PORT}"
       ConnectionStrings__cache: "cache:6379,password=${CACHE_PASSWORD}"
       ConnectionStrings__messaging: "amqp://guest:${MESSAGING_PASSWORD}@messaging:5672"
-      ConnectionStrings__elasticsearch: "endpoint=http://elasticsearch:9200;username=elastic;password=${ELASTICSEARCH_PASSWORD}"
-    cap_add:
-      - NET_BIND_SERVICE
+      services__api-endpoint__http__0: "http://api-endpoint:${API_ENDPOINT_PORT}"
+      ConnectionStrings__elasticsearch: "http://elastic:${ELASTICSEARCH_PASSWORD}@elasticsearch:9200"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://plain-bridge-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "server-endpoint"
+    expose:
+      - "${SERVER_ENDPOINT_PORT}"
     depends_on:
       cache:
         condition: "service_started"
@@ -82,19 +102,26 @@ services:
       api-endpoint:
         condition: "service_started"
       elasticsearch:
-        condition: "service_healthy"
+        condition: "service_started"
     networks:
       - "aspire"
-  client-apiendpoint:
-    image: "${CLIENT_APIENDPOINT_IMAGE}"
+  client-endpoint:
+    image: "${CLIENT_ENDPOINT_IMAGE}"
     environment:
-      ASPNETCORE_ENVIRONMENT: "Development"
-      ASPNETCORE_URLS: "http://+:80"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "${CLIENT_ENDPOINT_PORT}"
       ConnectionStrings__cache: "cache:6379,password=${CACHE_PASSWORD}"
       ConnectionStrings__messaging: "amqp://guest:${MESSAGING_PASSWORD}@messaging:5672"
-      ConnectionStrings__elasticsearch: "endpoint=http://elasticsearch:9200;username=elastic;password=${ELASTICSEARCH_PASSWORD}"
-    cap_add:
-      - NET_BIND_SERVICE
+      services__server-endpoint__http__0: "http://server-endpoint:${SERVER_ENDPOINT_PORT}"
+      ConnectionStrings__elasticsearch: "http://elastic:${ELASTICSEARCH_PASSWORD}@elasticsearch:9200"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://plain-bridge-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "client-endpoint"
+    expose:
+      - "${CLIENT_ENDPOINT_PORT}"
     depends_on:
       cache:
         condition: "service_started"
@@ -103,7 +130,7 @@ services:
       server-endpoint:
         condition: "service_started"
       elasticsearch:
-        condition: "service_healthy"
+        condition: "service_started"
     networks:
       - "aspire"
   elasticsearch:
@@ -111,14 +138,7 @@ services:
     environment:
       discovery.type: "single-node"
       xpack.security.enabled: "true"
-      xpack.security.http.ssl.enabled: "false"
       ELASTIC_PASSWORD: "${ELASTICSEARCH_PASSWORD}"
-    healthcheck:
-      test: ["CMD-SHELL", "curl -sf -u elastic:${ELASTICSEARCH_PASSWORD} http://localhost:9200/_cluster/health > /dev/null"]
-      interval: 10s
-      timeout: 5s
-      retries: 12
-      start_period: 20s
     expose:
       - "9200"
       - "9300"

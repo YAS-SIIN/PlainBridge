@@ -23,7 +23,7 @@ public class ClientBusService(ILogger<ClientBusService> _logger, IConnection _co
 
         await channel.QueueDeclareAsync(
             queue: queueName,
-            durable: true,
+            durable: false,
             exclusive: false,
             autoDelete: false,
             arguments: null,

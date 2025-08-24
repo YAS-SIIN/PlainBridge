@@ -44,14 +44,16 @@ public static class Extensions
 
         builder.Services.AddEndpointsApiExplorer();
 
-        builder.Services.AddServiceDiscovery();
+        // Service discovery is disabled for development to avoid rewriting HTTP->HTTPS for intra-container calls.
+        // If you need it later, re-enable these lines and ensure schemes/ports are configured correctly.
+        // builder.Services.AddServiceDiscovery();
 
         builder.Services.ConfigureHttpClientDefaults(http =>
         {
             // Turn on resilience by default
             http.AddStandardResilienceHandler();
 
-            // Turn on service discovery by default
+            // Do not enable service discovery by default in dev
             http.AddServiceDiscovery();
         });
 
@@ -123,7 +125,12 @@ public static class Extensions
 
     public static IServiceCollection AddHttpServices(this IServiceCollection services)
     {
-        services.AddHttpClient("Api");
+        services.AddHttpClient("Api")
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+            {
+                AllowAutoRedirect = false
+            });
+
         return services;
     }
 

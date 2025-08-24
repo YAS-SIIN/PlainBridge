@@ -72,7 +72,7 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
         };
 
         _logger.LogInformation("Requesting user info from: {Address}", userInfoRequest.Address);
-        var httpClientx = _httpClientFactory.CreateClient("Default"); 
+        var httpClientx = _httpClientFactory.CreateClient("Api"); 
         var userInfoResponse = await httpClientx.GetUserInfoAsync(userInfoRequest);
         var result = await userInfoResponse.HttpResponse.Content.ReadAsStringAsync();
 
@@ -84,7 +84,7 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
     {
         _logger.LogInformation("Getting current user profile from HttpContext.");
 
-        var httpClient = _httpClientFactory.CreateClient("Default");
+        var httpClient = _httpClientFactory.CreateClient("Api");
 
         var tokenp = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
         tokenp = tokenp.ToString().Replace("Bearer ", "");

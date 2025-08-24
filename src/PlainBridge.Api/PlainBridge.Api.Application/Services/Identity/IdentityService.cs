@@ -20,7 +20,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
 
     private async Task<HttpClient> InitializeHttpClientAsync(CancellationToken cancellationToken)
     {
-        var httpClient = _httpClientFactory.CreateClient("Default");
+        var httpClient = _httpClientFactory.CreateClient("Api");
         var disco = await httpClient.GetDiscoveryDocumentAsync(new Uri(_applicationSettings.Value.PlainBridgeIdsUrl).ToString(), cancellationToken);
         if (disco.IsError)
             throw new ApplicationException("Failed to get discivery document");

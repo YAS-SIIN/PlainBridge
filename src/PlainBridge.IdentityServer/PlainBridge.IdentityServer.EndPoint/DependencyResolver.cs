@@ -37,6 +37,13 @@ public static class DependencyResolver
         isBuilder.AddInMemoryIdentityResources(Config.IdentityResources);
         isBuilder.AddInMemoryApiScopes(Config.ApiScopes);
         isBuilder.AddInMemoryClients(Config.Clients(appSettings.Value));
+        
+        // Use developer signing credentials in Development to avoid file system key store writes
+        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        if (string.Equals(env, "Development", StringComparison.OrdinalIgnoreCase))
+        {
+            isBuilder.AddDeveloperSigningCredential();
+        }
 
 
         services.AddIdentity<IdentityUser, IdentityRole>(options =>
@@ -102,7 +109,10 @@ public static class DependencyResolver
 
         app.UseStaticFiles();
         app.UseRouting();
-        app.UseHttpsRedirection();
+        if (!app.Environment.IsDevelopment())
+        {
+            app.UseHttpsRedirection();
+        }
         app.UseIdentityServer();
         app.UseAuthorization();
 

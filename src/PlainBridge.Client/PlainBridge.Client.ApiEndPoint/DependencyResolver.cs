@@ -163,7 +163,10 @@ public static class DependencyResolver
         app.MapGroup("")
             .MapLoginEndpoint();
 
-        app.UseHttpsRedirection();
+        if (!app.Environment.IsDevelopment())
+        {
+            app.UseHttpsRedirection();
+        }
         app.UseStaticFiles();
          
         app.UseDefaultFiles();

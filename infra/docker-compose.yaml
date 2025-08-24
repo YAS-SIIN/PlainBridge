@@ -1,9 +1,9 @@
 services:
   plain-bridge-dashboard:
     image: "mcr.microsoft.com/dotnet/nightly/aspire-dashboard:latest"
-    expose:
-      - "18888"
-      - "18889"
+    ports:
+      - "18888:18888"
+      - "18889:18889"
     networks:
       - "aspire"
     restart: "always"
@@ -16,8 +16,8 @@ services:
       - "/bin/sh"
     environment:
       REDIS_PASSWORD: "${CACHE_PASSWORD}"
-    expose:
-      - "6379"
+    ports:
+      - "6379:6379"
     networks:
       - "aspire"
   messaging:
@@ -25,47 +25,62 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: "guest"
       RABBITMQ_DEFAULT_PASS: "${MESSAGING_PASSWORD}"
-    expose:
-      - "5672"
-      - "15672"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - "aspire"
   identityserver-endpoint:
     image: "${IDENTITYSERVER_ENDPOINT_IMAGE}"
     environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://0.0.0.0:${DEFAULT_HTTP_PORT};https://0.0.0.0:${DEFAULT_HTTPS_PORT}"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/${DEV_CERT_FILE}"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "${DEV_CERT_PASSWORD}"
       OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
       OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
       OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
       ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
-      HTTP_PORTS: "${IDENTITYSERVER_ENDPOINT_PORT}"
+      HTTP_PORTS: "${DEFAULT_HTTP_PORT}"
       ConnectionStrings__elasticsearch: "http://elastic:${ELASTICSEARCH_PASSWORD}@elasticsearch:9200"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://plain-bridge-dashboard:18889"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
-      OTEL_SERVICE_NAME: "identityServer-endpoint"
-    expose:
-      - "${IDENTITYSERVER_ENDPOINT_PORT}"
+      OTEL_SERVICE_NAME: "identityserver-endpoint"
+    ports:
+      - "${IDENTITYSERVER_ENDPOINT_HTTPS_PORT}:${DEFAULT_HTTPS_PORT}"
+    volumes:
+      - "./${DEV_CERT_FILE}:/https/${DEV_CERT_FILE}:ro"
+      - "identityserver_dp:/home/app/.aspnet/DataProtection-Keys"
     depends_on:
       elasticsearch:
-        condition: "service_started"
+        condition: "service_healthy"
     networks:
       - "aspire"
   api-endpoint:
     image: "${API_ENDPOINT_IMAGE}"
     environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://0.0.0.0:${DEFAULT_HTTP_PORT};https://0.0.0.0:${DEFAULT_HTTPS_PORT}"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/${DEV_CERT_FILE}"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "${DEV_CERT_PASSWORD}"
       OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
       OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
       OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
       ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
-      HTTP_PORTS: "${API_ENDPOINT_PORT}"
+      HTTP_PORTS: "${DEFAULT_HTTP_PORT}"
       ConnectionStrings__messaging: "amqp://guest:${MESSAGING_PASSWORD}@messaging:5672"
       ConnectionStrings__cache: "cache:6379,password=${CACHE_PASSWORD}"
-      services__identityServer-endpoint__http__0: "http://identityServer-endpoint:${IDENTITYSERVER_ENDPOINT_PORT}"
+      ApplicationSettings__PlainBridgeIdsUrl: "http://identityserver-endpoint:${DEFAULT_HTTP_PORT}"
+      ApplicationSettings__PlainBridgeUseHttp: "true"
       ConnectionStrings__elasticsearch: "http://elastic:${ELASTICSEARCH_PASSWORD}@elasticsearch:9200"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://plain-bridge-dashboard:18889"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_SERVICE_NAME: "api-endpoint"
-    expose:
-      - "${API_ENDPOINT_PORT}"
+    ports:
+      - "${API_ENDPOINT_HTTPS_PORT}:${DEFAULT_HTTPS_PORT}"
+    volumes:
+      - "./${DEV_CERT_FILE}:/https/${DEV_CERT_FILE}:ro"
+      - "api_dp:/home/app/.aspnet/DataProtection-Keys"
     depends_on:
       cache:
         condition: "service_started"
@@ -74,26 +89,35 @@ services:
       identityserver-endpoint:
         condition: "service_started"
       elasticsearch:
-        condition: "service_started"
+        condition: "service_healthy"
     networks:
       - "aspire"
   server-endpoint:
     image: "${SERVER_ENDPOINT_IMAGE}"
     environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://0.0.0.0:${DEFAULT_HTTP_PORT};https://0.0.0.0:${DEFAULT_HTTPS_PORT}"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/${DEV_CERT_FILE}"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "${DEV_CERT_PASSWORD}"
       OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
       OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
       OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
       ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
-      HTTP_PORTS: "${SERVER_ENDPOINT_PORT}"
+      HTTP_PORTS: "${DEFAULT_HTTP_PORT}"
       ConnectionStrings__cache: "cache:6379,password=${CACHE_PASSWORD}"
       ConnectionStrings__messaging: "amqp://guest:${MESSAGING_PASSWORD}@messaging:5672"
-      services__api-endpoint__http__0: "http://api-endpoint:${API_ENDPOINT_PORT}"
+      ApplicationSettings__PlainBridgeApiAddress: "http://api-endpoint:${DEFAULT_HTTP_PORT}"
+      ApplicationSettings__PlainBridgeIdsUrl: "http://identityserver-endpoint:${DEFAULT_HTTP_PORT}"
+      ApplicationSettings__PlainBridgeUseHttp: "true"
       ConnectionStrings__elasticsearch: "http://elastic:${ELASTICSEARCH_PASSWORD}@elasticsearch:9200"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://plain-bridge-dashboard:18889"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_SERVICE_NAME: "server-endpoint"
-    expose:
-      - "${SERVER_ENDPOINT_PORT}"
+    ports:
+      - "${SERVER_ENDPOINT_HTTPS_PORT}:${DEFAULT_HTTPS_PORT}"
+    volumes:
+      - "./${DEV_CERT_FILE}:/https/${DEV_CERT_FILE}:ro"
+      - "server_dp:/home/app/.aspnet/DataProtection-Keys"
     depends_on:
       cache:
         condition: "service_started"
@@ -102,26 +126,53 @@ services:
       api-endpoint:
         condition: "service_started"
       elasticsearch:
+        condition: "service_healthy"
+    networks:
+      - "aspire"
+  angular-webui:
+    image: "${ANGULAR_WEBUI_IMAGE}"
+    environment:
+      NODE_ENV: "production"
+      PORT: "${DEFAULT_HTTP_PORT}"
+      services__api-endpoint__http__0: "http://api-endpoint:${API_ENDPOINT_PORT}"
+      services__identityserver-endpoint__http__0: "http://identityserver-endpoint:${IDENTITYSERVER_ENDPOINT_PORT}"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://plain-bridge-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "angular-webui"
+    ports:
+      - "${ANGULAR_WEBUI_PORT}:${DEFAULT_HTTP_PORT}"
+    depends_on:
+      identityserver-endpoint:
+        condition: "service_started"
+      api-endpoint:
         condition: "service_started"
     networks:
       - "aspire"
   client-endpoint:
     image: "${CLIENT_ENDPOINT_IMAGE}"
     environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://0.0.0.0:${DEFAULT_HTTP_PORT};https://0.0.0.0:${DEFAULT_HTTPS_PORT}"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/${DEV_CERT_FILE}"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "${DEV_CERT_PASSWORD}"
       OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
       OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
       OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
       ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
-      HTTP_PORTS: "${CLIENT_ENDPOINT_PORT}"
+      HTTP_PORTS: "${DEFAULT_HTTP_PORT}"
       ConnectionStrings__cache: "cache:6379,password=${CACHE_PASSWORD}"
       ConnectionStrings__messaging: "amqp://guest:${MESSAGING_PASSWORD}@messaging:5672"
-      services__server-endpoint__http__0: "http://server-endpoint:${SERVER_ENDPOINT_PORT}"
+      ApplicationSettings__PlainBridgeIdsUrl: "http://identityserver-endpoint:${DEFAULT_HTTP_PORT}"
+      ApplicationSettings__PlainBridgeUseHttp: "true"
       ConnectionStrings__elasticsearch: "http://elastic:${ELASTICSEARCH_PASSWORD}@elasticsearch:9200"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://plain-bridge-dashboard:18889"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_SERVICE_NAME: "client-endpoint"
-    expose:
-      - "${CLIENT_ENDPOINT_PORT}"
+    ports:
+      - "${CLIENT_ENDPOINT_HTTPS_PORT}:${DEFAULT_HTTPS_PORT}"
+    volumes:
+      - "./${DEV_CERT_FILE}:/https/${DEV_CERT_FILE}:ro"
+      - "client_dp:/home/app/.aspnet/DataProtection-Keys"
     depends_on:
       cache:
         condition: "service_started"
@@ -130,7 +181,7 @@ services:
       server-endpoint:
         condition: "service_started"
       elasticsearch:
-        condition: "service_started"
+        condition: "service_healthy"
     networks:
       - "aspire"
   elasticsearch:
@@ -139,11 +190,18 @@ services:
       discovery.type: "single-node"
       xpack.security.enabled: "true"
       ELASTIC_PASSWORD: "${ELASTICSEARCH_PASSWORD}"
-    expose:
-      - "9200"
-      - "9300"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    healthcheck:
+      test: ["CMD", "bash", "-c", "curl -s -u elastic:${ELASTICSEARCH_PASSWORD} http://localhost:9200 >/dev/null"]
     networks:
       - "aspire"
 networks:
   aspire:
     driver: "bridge"
+volumes:
+  identityserver_dp:
+  api_dp:
+  server_dp:
+  client_dp:

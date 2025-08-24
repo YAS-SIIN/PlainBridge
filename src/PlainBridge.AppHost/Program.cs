@@ -1,4 +1,6 @@
 using System.Globalization;
+using System.Runtime.InteropServices;
+using Aspire.Hosting;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
@@ -14,7 +16,7 @@ try
 {
     var builder = DistributedApplication.CreateBuilder(args);
 
-    builder.AddDockerComposeEnvironment("plain-bridge");
+    var dc = builder.AddDockerComposeEnvironment("plain-bridge");
 
     var cache = builder.AddRedis("cache")
         .WithRedisInsight();
@@ -23,7 +25,7 @@ try
         .WithManagementPlugin();
     IResourceBuilder<ElasticsearchResource> elasticsearch = default!;
 
-    var identityServerEndpoint = builder.AddProject<Projects.PlainBridge_IdentityServer_EndPoint>("identityServer-endpoint")
+    var identityServerEndpoint = builder.AddProject<Projects.PlainBridge_IdentityServer_EndPoint>("identityserver-endpoint")
         .WithUrl("https://localhost:5003");
 
     var apiEndpoint = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-endpoint")
@@ -45,23 +47,27 @@ try
         .WaitFor(rabbitmq)
         .WaitFor(apiEndpoint);
 
-    var angularWebUi =
-    builder.AddNpmApp("angularWebUi", "../PlainBridge.Web/PlainBridge.Web.UI")
+
+    var angularWebUi = builder.AddNpmApp("angular-webui", "../PlainBridge.Web/PlainBridge.Web.UI")
         .WithHttpEndpoint(port: 5004, env: "PORT")
         .WithReference(apiEndpoint)
         .WithReference(identityServerEndpoint)
         .WaitFor(identityServerEndpoint)
         .WaitFor(apiEndpoint)
-        .WithExternalHttpEndpoints();
+        .WithExternalHttpEndpoints()
+        .PublishAsDockerFile();
+
 
     var clientEndpoint = builder.AddProject<Projects.PlainBridge_Client_ApiEndPoint>("client-endpoint")
-    .WithUrl("https://localhost:5005")
-    .WithReference(cache)
-    .WithReference(rabbitmq)
-    .WithReference(serverEndpoint)
-    .WaitFor(cache)
-    .WaitFor(rabbitmq)
-    .WaitFor(serverEndpoint);
+        .WithUrl("https://localhost:5005")
+        .WithReference(cache)
+        .WithReference(rabbitmq)
+        .WithReference(serverEndpoint)
+        .WaitFor(cache)
+        .WaitFor(rabbitmq)
+        .WaitFor(serverEndpoint);
+
+
 
 
     if (!builder.Environment.IsDevelopment())
@@ -73,19 +79,30 @@ try
         .WaitFor(elasticsearch);
 
         apiEndpoint
-            .WithReference(elasticsearch)
-            .WaitFor(elasticsearch);
+        .WithReference(elasticsearch)
+        .WaitFor(elasticsearch);
 
         serverEndpoint
-            .WithReference(elasticsearch)
-            .WaitFor(elasticsearch);
+        .WithReference(elasticsearch)
+        .WaitFor(elasticsearch);
 
         clientEndpoint
-            .WithReference(elasticsearch)
-            .WaitFor(elasticsearch);
+        .WithReference(elasticsearch)
+        .WaitFor(elasticsearch);
+
+        // Suppress ASPIRECOMPUTE001 diagnostic for WithComputeEnvironment usage
+#pragma warning disable ASPIRECOMPUTE001
+        clientEndpoint.WithComputeEnvironment(dc);
 
     }
-
+    // Suppress ASPIRECOMPUTE001 diagnostic for WithComputeEnvironment usage
+#pragma warning disable ASPIRECOMPUTE001
+    identityServerEndpoint.WithComputeEnvironment(dc);
+    cache.WithComputeEnvironment(dc);
+    rabbitmq.WithComputeEnvironment(dc);
+    apiEndpoint.WithComputeEnvironment(dc);
+    serverEndpoint.WithComputeEnvironment(dc);
+    clientEndpoint.WithComputeEnvironment(dc);
 
     //builder.AddDockerfile("PlainBridge-AppHost", "relative/context/path")
     //    .WithReference(apiEndpoint)

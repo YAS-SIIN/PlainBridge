@@ -81,7 +81,10 @@ public static class DependencyResolver
             app.MapOpenApi();
         }
 
-        app.UseHttpsRedirection();
+        if (!app.Environment.IsDevelopment())
+        {
+            app.UseHttpsRedirection();
+        }
 
         app.UseWebSockets();
         app.UseMiddleware<HttpRequestProxyMiddleware>();

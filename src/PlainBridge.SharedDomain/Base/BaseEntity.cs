@@ -1,26 +1,27 @@
 ﻿
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
-using PlainBridge.Api.Domain.Entities;
+
+
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using PlainBridge.Api.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PlainBridge.SharedDomain.Base.Enums;
 
-namespace PlainBridge.Api.Domain.Common;
+namespace PlainBridge.SharedDomain.Base;
 
 /// <summary>
 /// Base Entity Class Which is base of the every entity. 
 /// </summary>
-/// <typeparam name="TKey"></typeparam>
-public abstract class BaseEntity<TKey>
+/// <typeparam name="TId"></typeparam>
+public abstract class BaseEntity<TId>
 {
     /// <summary>
     /// Identity Key
     /// </summary>
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public TKey? Id { get; set; }
+    public TId? Id { get; set; }
 
     /// <summary>
     /// Create DateTime
@@ -60,5 +61,9 @@ public class BaseEntityTypeConfiguration<TEntity, TKey> : IEntityTypeConfigurati
           
         builder.Property(b => b.Description)
             .HasMaxLength(250);
+
+        builder.Property(x => x.State)
+            .HasConversion<string>()
+            .IsRequired();
     }
 }

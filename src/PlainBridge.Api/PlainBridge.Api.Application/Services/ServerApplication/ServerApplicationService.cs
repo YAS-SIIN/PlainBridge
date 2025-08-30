@@ -1,8 +1,7 @@
 ﻿
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
- 
+using Microsoft.Extensions.Logging;  
 using PlainBridge.Api.Infrastructure.Data.Context;
 using PlainBridge.Api.Infrastructure.Messaging;
 using PlainBridge.SharedApplication.DTOs;
@@ -23,12 +22,12 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
         return serverApplication.Select(x => new ServerApplicationDto
         {
             Id = x.Id,
-            AppId = x.AppId,
+            AppId = x.AppId.ViewId,
             ServerApplicationAppId = x.ServerApplicationViewId != Guid.Empty ? x.ServerApplicationViewId.ToString() : null,
             UserId = x.UserId,
             UserName = x.User.Username,
             Name = x.Name,
-            InternalPort = x.InternalPort,
+            InternalPort = x.InternalPort.Port,
             Description = x.Description,
             State = (RowStateEnum)x.State,
         }).ToList();
@@ -46,12 +45,12 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
         return new ServerApplicationDto
         {
             Id = serverApp.Id,
-            AppId = serverApp.AppId,
+            AppId = serverApp.AppId.ViewId,
             ServerApplicationAppId = serverApp.ServerApplicationViewId != Guid.Empty ? serverApp.ServerApplicationViewId.ToString() : null,
             UserId = serverApp.UserId,
             UserName = serverApp.User.Username,
             Name = serverApp.Name,
-            InternalPort = serverApp.InternalPort,
+            InternalPort = serverApp.InternalPort.Port,
             Description = serverApp.Description,
             State = (RowStateEnum)serverApp.State
         };
@@ -60,67 +59,42 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
     public async Task<Guid> CreateAsync(ServerApplicationDto serverApplication, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Creating server application with Name: {Name}", serverApplication.Name);
-        if (serverApplication.InternalPort < 1 || serverApplication.InternalPort > 65535)
-        {
-            _logger.LogError("Port range is not valid: {Port}", serverApplication.InternalPort);
-            throw new ApplicationException("Port range is not valid");
-        }
+       
 
         Guid parsedId = Guid.Empty;
-        if (serverApplication.ServerApplicationType == ServerApplicationTypeEnum.UsePort)
+        if (serverApplication.ServerApplicationType == SharedApplication.Enums.ServerApplicationTypeEnum.UsePort)
         {
-            if (string.IsNullOrWhiteSpace(serverApplication.ServerApplicationAppId) ||
-                !(Guid.TryParse(serverApplication.ServerApplicationAppId, out parsedId)) || parsedId == Guid.Empty)
-            {
-                _logger.LogError("ServerApplicationAppId is required for UsePort type.");
-                throw new ArgumentNullException(nameof(ServerApplicationDto.ServerApplicationAppId));
-            }
-
-            if (!_dbContext.ServerApplications.Any(x => x.AppId == parsedId))
+            Guid.TryParse(serverApplication.ServerApplicationAppId, out parsedId);
+            if (!_dbContext.ServerApplications.Any(x => x.AppId.ViewId == parsedId))
             {
                 _logger.LogError("Referenced ServerApplicationAppId not found: {AppId}", serverApplication.ServerApplicationAppId);
                 throw new NotFoundException(nameof(serverApplication), new List<KeyValuePair<string, object>> { new KeyValuePair<string, object>(nameof(ServerApplicationDto.ServerApplicationAppId), parsedId) });
             }
         }
-         
-        var app = new Domain.Entities.ServerApplication
-        {
-            AppId = Guid.NewGuid(),
-            ServerApplicationViewId = parsedId,
-            Name = serverApplication.Name,
-            UserId = serverApplication.UserId,
-            InternalPort = serverApplication.InternalPort,
-            State = (Domain.Enums.RowStateEnum)RowStateEnum.Inactive,
-            Description = serverApplication.Description
-        };
+        var app = Domain.ServerAggregate.ServerApplication.Create(parsedId, (Domain.ServerAggregate.Enums.ServerApplicationTypeEnum)serverApplication.ServerApplicationType, serverApplication.Name, serverApplication.InternalPort, serverApplication.UserId, serverApplication.Description);
+       
 
         await _dbContext.ServerApplications.AddAsync(app, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
         await _eventBus.PublishAsync<string>("Server_Application_Created", cancellationToken);
 
         _logger.LogInformation("Server application created with AppId: {AppId}", app.AppId);
-        return app.AppId;
+        return app.AppId.ViewId;
     }
 
     public async Task UpdateAsync(ServerApplicationDto serverApplication, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Updating server application with Id: {Id}", serverApplication.Id);
         var app = await _dbContext.ServerApplications.FindAsync(serverApplication.Id, cancellationToken);
-        if (app == null)
+        if (app is null)
         {
             _logger.LogWarning("Server application with Id: {Id} not found for update.", serverApplication.Id);
             throw new NotFoundException(nameof(ServerApplication), new List<KeyValuePair<string, object>> { new KeyValuePair<string, object>(nameof(ServerApplicationDto.Id), serverApplication.Id) });
         }
 
-        if (serverApplication.InternalPort < 1 || serverApplication.InternalPort > 65535)
-        {
-            _logger.LogError("Port range is not valid: {Port}", serverApplication.InternalPort);
-            throw new ApplicationException("Port range is not valid");
-        }
+        Guid parsedId = Guid.Empty;
 
-        app.InternalPort = serverApplication.InternalPort;
-        app.Name = serverApplication.Name;
-        app.Description = serverApplication.Description;
+        app.Update(serverApplication.Name, serverApplication.InternalPort, serverApplication.Description);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         await _eventBus.PublishAsync<string>("Server_Application_Updated", cancellationToken);
@@ -136,7 +110,13 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
             _logger.LogWarning("Server application with Id: {Id} not found for state update.", id);
             throw new NotFoundException(id);
         }
-        app.State = isActive ? Domain.Enums.RowStateEnum.Active : Domain.Enums.RowStateEnum.Inactive;
+
+
+        if (isActive)
+            app.Activate();
+        else
+            app.Deactivate();
+
         await _dbContext.SaveChangesAsync(cancellationToken);
         await _eventBus.PublishAsync<string>("Server_Application_State_Updated", cancellationToken);
 

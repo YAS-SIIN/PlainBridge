@@ -1,7 +1,7 @@
 ﻿
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;  
+using Microsoft.Extensions.Logging;
 using PlainBridge.Api.Infrastructure.Data.Context;
 using PlainBridge.Api.Infrastructure.Messaging;
 using PlainBridge.SharedApplication.DTOs;
@@ -20,12 +20,12 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
         return list.Select(x => new HostApplicationDto
         {
             Id = x.Id,
-            AppId = x.AppId,
+            AppId = x.AppId.ViewId,
             UserId = x.UserId,
             UserName = x.User.Username,
             Name = x.Name,
-            Domain = x.Domain,
-            InternalUrl = x.InternalUrl,
+            Domain = x.Domain.HostDomainName,
+            InternalUrl = x.InternalUrl.InternalUrlValue,
             Description = x.Description,
             State = (RowStateEnum)x.State
         }).ToList();
@@ -45,12 +45,12 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
         return new HostApplicationDto
         {
             Id = hostApp.Id,
-            AppId = hostApp.AppId,
+            AppId = hostApp.AppId.ViewId,
             UserId = hostApp.UserId,
             UserName = hostApp.User.Username,
             Name = hostApp.Name,
-            Domain = hostApp.Domain,
-            InternalUrl = hostApp.InternalUrl,
+            Domain = hostApp.Domain.HostDomainName,
+            InternalUrl = hostApp.InternalUrl.InternalUrlValue,
             Description = hostApp.Description, 
             State = (RowStateEnum)hostApp.State
         };
@@ -59,29 +59,20 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
     public async Task<Guid> CreateAsync(HostApplicationDto hostApplication, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Creating host application with domain: {Domain}", hostApplication.Domain);
-        var isDomainExists = await _dbContext.HostApplications.AnyAsync(x => x.Domain == hostApplication.Domain, cancellationToken);
+        var isDomainExists = await _dbContext.HostApplications.AnyAsync(x => x.Domain.HostDomainName == hostApplication.Domain, cancellationToken);
         if (isDomainExists)
         {
             _logger.LogWarning("Host application with domain {Domain} already exists.", hostApplication.Domain);
             throw new DuplicatedException(hostApplication.Domain);
         }
-
-        var app = new Domain.Entities.HostApplication
-        {
-            AppId = Guid.NewGuid(),
-            UserId = hostApplication.UserId,
-            Name = hostApplication.Name,
-            Domain = hostApplication.Domain,
-            InternalUrl = hostApplication.InternalUrl,
-            Description = hostApplication.Description
-        };
-
+        var app = Domain.HostAggregate.HostApplication.Create(hostApplication.Name, hostApplication.Domain, hostApplication.InternalUrl, hostApplication.UserId, hostApplication.Description);
+        
         await _dbContext.HostApplications.AddAsync(app, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Host application with domain {Domain} created. AppId: {AppId}", app.Domain, app.AppId);
         await _eventBus.PublishAsync<string>("Host_Application_Created", cancellationToken);
 
-        return app.AppId;
+        return app.AppId.ViewId;
     }
 
     public async Task UpdateAsync(HostApplicationDto hostApplication, CancellationToken cancellationToken)
@@ -94,17 +85,16 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
             throw new NotFoundException(hostApplication.Id);
         }
 
-        var isDomainExists = await _dbContext.HostApplications.AnyAsync(x => x.Domain == hostApplication.Domain && x.Id != hostApplication.Id, cancellationToken);
+        var isDomainExists = await _dbContext.HostApplications.AnyAsync(x => x.Domain.HostDomainName == hostApplication.Domain && x.Id != hostApplication.Id, cancellationToken);
 
         if (isDomainExists)
         {
             _logger.LogWarning("Another host application with domain {Domain} already exists.", hostApplication.Domain);
             throw new ApplicationException(hostApplication.Domain);
         }
-        app.Domain = hostApplication.Domain;
-        app.InternalUrl = hostApplication.InternalUrl;
-        app.Name = hostApplication.Name;
-        app.Description = hostApplication.Description;
+
+        app.Update(hostApplication.Name, hostApplication.Domain, hostApplication.InternalUrl, hostApplication.Description);
+        
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Host application with Id {Id} updated.", hostApplication.Id);
@@ -120,7 +110,13 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, Mai
             _logger.LogWarning("Host application with Id {Id} not found for state update.", id);
             throw new NotFoundException(id);
         }
-        app.State = isActive ? Domain.Enums.RowStateEnum.Active : Domain.Enums.RowStateEnum.Inactive;
+         
+
+        if (isActive)
+            app.Activate();
+        else
+            app.Deactivate();
+
         await _dbContext.SaveChangesAsync(cancellationToken);
         await _eventBus.PublishAsync<string>("Host_Application_State_Updated", cancellationToken);
          

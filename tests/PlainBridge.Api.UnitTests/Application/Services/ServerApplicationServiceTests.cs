@@ -68,10 +68,10 @@ public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
         var guid = await _serverApplicationService.CreateAsync(dto, CancellationToken.None);
         Assert.NotEqual(Guid.Empty, guid);
 
-        var created = await _fixture.MemoryMainDbContext.ServerApplications.FirstOrDefaultAsync(x => x.AppId == guid);
+        var created = await _fixture.MemoryMainDbContext.ServerApplications.FirstOrDefaultAsync(x => x.AppId.ViewId == guid);
         Assert.NotNull(created);
         Assert.Equal(dto.Name, created.Name);
-        Assert.Equal(dto.InternalPort, created.InternalPort);
+        Assert.Equal(dto.InternalPort, created.InternalPort.Port);
     }
 
      
@@ -128,7 +128,7 @@ public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
 
         Assert.NotNull(updated);
         Assert.Equal(dto.Name, updated.Name); 
-        Assert.Equal(dto.InternalPort, updated.InternalPort);
+        Assert.Equal(dto.InternalPort, updated.InternalPort.Port);
     }
 
     [Theory]

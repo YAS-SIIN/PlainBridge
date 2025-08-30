@@ -1,5 +1,4 @@
-﻿ 
-namespace PlainBridge.Api.Domain.Enums;
+﻿namespace PlainBridge.Api.Domain.ServerAggregate.Enums;
 
 public enum ServerApplicationTypeEnum
 {

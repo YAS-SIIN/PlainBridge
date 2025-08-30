@@ -63,7 +63,7 @@ public class HostApplicationServiceTests : IClassFixture<TestRunFixture>
         var guid = await _hostApplicationService.CreateAsync(dto, CancellationToken.None);
         Assert.NotEqual(Guid.Empty, guid);
 
-        var created = await _fixture.MemoryMainDbContext.HostApplications.FirstOrDefaultAsync(x => x.AppId == guid);
+        var created = await _fixture.MemoryMainDbContext.HostApplications.FirstOrDefaultAsync(x => x.AppId.ViewId == guid);
         Assert.NotNull(created);
         Assert.Equal("NewApp", created.Name);
     }
@@ -108,8 +108,8 @@ public class HostApplicationServiceTests : IClassFixture<TestRunFixture>
 
         Assert.NotNull(updated);
         Assert.Equal(dto.Name, updated.Name);
-        Assert.Equal(dto.Domain, updated.Domain);
-        Assert.Equal(dto.InternalUrl, updated.InternalUrl);
+        Assert.Equal(dto.Domain, updated.Domain.HostDomainName);
+        Assert.Equal(dto.InternalUrl, updated.InternalUrl.InternalUrlValue);
     } 
     [Theory]
     [MemberData(nameof(HostApplicationServiceData.SetDataFor_UpdateAsync_WhenDomainIsExisted_ShouldThrowException), MemberType = typeof(HostApplicationServiceData))]

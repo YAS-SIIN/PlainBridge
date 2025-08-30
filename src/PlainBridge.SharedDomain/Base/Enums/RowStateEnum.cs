@@ -1,6 +1,4 @@
-﻿
-
-namespace PlainBridge.SharedApplication.Enums;
+﻿namespace PlainBridge.SharedDomain.Base.Enums;
 
 public enum RowStateEnum
 {

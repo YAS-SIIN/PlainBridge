@@ -66,22 +66,13 @@ public class UserService(
             _logger.LogWarning("User already exists with username: {Username} or email: {Email}", user.Username, user.Email);
             throw new DuplicatedException($"{user.Username} or {user.Email}");
         }
-         
-        var newUser = new Domain.Entities.User
-        {
-            AppId = Guid.NewGuid(),
-            Username = user.Username,
-            Email = user.Email,
-            PhoneNumber = user.PhoneNumber,
-            Name = user.Name,
-            Family = user.Family,
-            ExternalId = user.ExternalId
-        };
+        var newUser =  Domain.Entities.User.Create(Guid.NewGuid().ToString(), user.Username, user.Email, user.PhoneNumber, user.Name, user.Family, user.ExternalId);
+        
         var createdUser = await _dbContext.Users.AddAsync(newUser, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
         newUser = createdUser.Entity;
         _logger.LogInformation("User created successfully: {Username}", user.Username);
-        return newUser.AppId;
+        return newUser.AppId.ViewId;
     }
 
     public async Task<Guid> CreateAsync(UserDto user, CancellationToken cancellationToken)
@@ -96,27 +87,19 @@ public class UserService(
 
         var userCreationResult = await _identityService.CreateUserAsync(user, cancellationToken);
 
-        if (userCreationResult.ResultCode != ResultCodeEnum.Success)
+        if (userCreationResult is null || userCreationResult.ResultCode != ResultCodeEnum.Success || userCreationResult.Data is null)
         {
             _logger.LogError("User creation on identity server failed for username: {Username}", user.Username);
             throw new ApplicationException("User creation on identity server failed");
         }
-
-        var newUser = new Domain.Entities.User
-        {
-            AppId = Guid.NewGuid(),
-            Username = user.Username,
-            Email = user.Email,
-            PhoneNumber = user.PhoneNumber,
-            Name = user.Name,
-            Family = user.Family,
-            ExternalId = userCreationResult!.Data!
-        };
+        
+        var newUser = Domain.Entities.User.Create(userCreationResult!.Data!, user.Username, user.Email, user.PhoneNumber, user.Name, user.Family, user.ExternalId);
+ 
         var createdUser = await _dbContext.Users.AddAsync(newUser, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
         newUser = createdUser.Entity;
         _logger.LogInformation("User created successfully: {Username}", user.Username);
-        return newUser.AppId;
+        return newUser.AppId.ViewId;
     }
 
     public async Task ChangePasswordAsync(ChangeUserPasswordDto changeUserPassword, CancellationToken cancellationToken)

@@ -92,8 +92,6 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
             throw new NotFoundException(nameof(ServerApplication), new List<KeyValuePair<string, object>> { new KeyValuePair<string, object>(nameof(ServerApplicationDto.Id), serverApplication.Id) });
         }
 
-        Guid parsedId = Guid.Empty;
-
         app.Update(serverApplication.Name, serverApplication.InternalPort, serverApplication.Description);
 
         await _dbContext.SaveChangesAsync(cancellationToken);

@@ -55,6 +55,7 @@ public class ServerApplicationServiceData
         yield return new object[] { new ServerApplicationDto
         {
             Id = 2,
+            Name = "NewApp",
             InternalPort = 4000,
             UserId = 1,
             ServerApplicationType = SharedApplication.Enums.ServerApplicationTypeEnum.SharePort,
@@ -67,6 +68,7 @@ public class ServerApplicationServiceData
         yield return new object[] { new ServerApplicationDto
         {
             Id = 0,
+            Name = "NewApp",
             InternalPort = 4000
         }};
     }  
@@ -76,6 +78,7 @@ public class ServerApplicationServiceData
         yield return new object[] { new ServerApplicationDto
         {
             Id = 999,
+            Name = "NewApp",
             InternalPort = 4000
         }};
     }  

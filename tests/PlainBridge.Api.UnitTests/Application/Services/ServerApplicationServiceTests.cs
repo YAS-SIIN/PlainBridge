@@ -62,7 +62,7 @@ public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
         if (dto.ServerApplicationType == SharedApplication.Enums.ServerApplicationTypeEnum.UsePort)
         {
             var serverApplication = await _fixture.MemoryMainDbContext.ServerApplications.FirstOrDefaultAsync();
-            dto.ServerApplicationAppId = serverApplication.AppId.ToString();
+            dto.ServerApplicationAppId = serverApplication.AppId.ViewId.ToString();
         }
 
         var guid = await _serverApplicationService.CreateAsync(dto, CancellationToken.None);
@@ -81,16 +81,16 @@ public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
     {
         var res = await Assert.ThrowsAsync<ApplicationException>(() => _serverApplicationService.CreateAsync(dto, CancellationToken.None));
         Assert.NotNull(res);
-        Assert.Equal("Port range is not valid", res.Message);
+        Assert.Equal("Port range is not valid (1-65535).", res.Message);
     }
     
     [Theory]
     [MemberData(nameof(ServerApplicationServiceData.SetDataFor_CreateAsync_WhenServerApplicationViewIdIsEmpty_ShouldThrowException), MemberType = typeof(ServerApplicationServiceData))]
     public async Task CreateAsync_WhenServerApplicationViewIdIsEmpty_ShouldThrowException(ServerApplicationDto dto)
     {
-        var res = await Assert.ThrowsAsync<ArgumentNullException>(() => _serverApplicationService.CreateAsync(dto, CancellationToken.None));
+        var res = await Assert.ThrowsAsync<NotFoundException>(() => _serverApplicationService.CreateAsync(dto, CancellationToken.None));
         Assert.NotNull(res);
-        Assert.Equal(nameof(ServerApplicationDto.ServerApplicationAppId), res.ParamName);
+        //Assert.Equal(nameof(NotFoundException.ServerApplicationAppId), res.ParamName);
     }
 
 

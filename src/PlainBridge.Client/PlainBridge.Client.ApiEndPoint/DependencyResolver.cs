@@ -96,10 +96,10 @@ public static class DependencyResolver
     {
         var serviceProvider = services.BuildServiceProvider();
         var hybridCache = serviceProvider.GetRequiredService<HybridCache>();
- 
+
         services
              .AddBff()
-            .AddRemoteApis(); 
+            .AddRemoteApis();
         // This is crucial - prevents the JWT handler from mapping 'sub' claim to ClaimTypes.NameIdentifier
         JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
@@ -116,7 +116,7 @@ public static class DependencyResolver
               options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
               options.Authority = new Uri(appSettings.PlainBridgeIdsUrl).ToString();
               options.ClientId = appSettings.PlainBridgeIdsClientId;
-              options.ClientSecret = appSettings.PlainBridgeIdsClientSecret ;
+              options.ClientSecret = appSettings.PlainBridgeIdsClientSecret;
               options.ResponseType = OidcConstants.ResponseTypes.Code;
               options.Scope.Clear();
               options.Scope.Add("openid");
@@ -134,9 +134,9 @@ public static class DependencyResolver
     public static WebApplication AddUsers(this WebApplication app)
     {
 
-        app.UseExceptionHandler(); 
+        app.UseExceptionHandler();
         app.UseSerilogRequestLogging();
-         
+
         app.UseForwardedHeaders();
 
         // Configure the HTTP request pipeline.
@@ -147,13 +147,14 @@ public static class DependencyResolver
             app.UseHsts();
         }
 
-        
+
         app.UseRouting();
 
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
-        } else
+        }
+        else
         {
             app.UseExceptionHandler("/Error");
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
@@ -163,12 +164,11 @@ public static class DependencyResolver
         app.MapGroup("")
             .MapLoginEndpoint();
 
-        if (!app.Environment.IsDevelopment())
-        {
-            app.UseHttpsRedirection();
-        }
+
+        app.UseHttpsRedirection();
+
         app.UseStaticFiles();
-         
+
         app.UseDefaultFiles();
         app.UseStaticFiles();
 

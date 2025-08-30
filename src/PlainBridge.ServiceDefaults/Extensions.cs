@@ -46,7 +46,7 @@ public static class Extensions
 
         // Service discovery is disabled for development to avoid rewriting HTTP->HTTPS for intra-container calls.
         // If you need it later, re-enable these lines and ensure schemes/ports are configured correctly.
-        // builder.Services.AddServiceDiscovery();
+         builder.Services.AddServiceDiscovery();
 
         builder.Services.ConfigureHttpClientDefaults(http =>
         {
@@ -125,11 +125,7 @@ public static class Extensions
 
     public static IServiceCollection AddHttpServices(this IServiceCollection services)
     {
-        services.AddHttpClient("Api")
-            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-            {
-                AllowAutoRedirect = false
-            });
+        services.AddHttpClient("Api"); ;
 
         return services;
     }

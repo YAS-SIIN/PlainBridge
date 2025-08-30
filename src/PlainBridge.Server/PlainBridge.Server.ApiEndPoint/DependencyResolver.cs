@@ -1,4 +1,4 @@
-﻿ 
+﻿
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Options;
 using PlainBridge.Server.ApiEndPoint.ErrorHandling;
@@ -15,7 +15,7 @@ using PlainBridge.Server.Application.Services.Identity;
 using PlainBridge.Server.Application.Services.ServerApplication;
 using PlainBridge.Server.Application.Services.ServerBus;
 using PlainBridge.Server.Application.Services.WebSocket;
-using Serilog; 
+using Serilog;
 
 namespace PlainBridge.Server.ApiEndPoint;
 
@@ -44,13 +44,13 @@ public static class DependencyResolver
 
 
         services.AddOpenApi();
-        services.AddExceptionHandler<ErrorHandler>(); 
+        services.AddExceptionHandler<ErrorHandler>();
         services.AddHostedService<Worker>();
         services.AddHttpServices();
         services.AddProblemDetails();
 
-        services.AddSingleton<IPlainBridgeApiClientHandler, PlainBridgeApiClientHandler>(); 
-        services.AddSingleton<IServerApplicationService, ServerApplicationService>(); 
+        services.AddSingleton<IPlainBridgeApiClientHandler, PlainBridgeApiClientHandler>();
+        services.AddSingleton<IServerApplicationService, ServerApplicationService>();
         services.AddSingleton<IHostApplicationService, HostApplicationService>();
         services.AddSingleton<ICacheManagement, CacheManagement>();
         services.AddSingleton<IApiExternalBusService, ApiExternalBusService>();
@@ -69,7 +69,7 @@ public static class DependencyResolver
 
     public static WebApplication AddUsers(this WebApplication app)
     {
-         
+
         app.UseExceptionHandler();
         app.UseSerilogRequestLogging();
 
@@ -81,10 +81,7 @@ public static class DependencyResolver
             app.MapOpenApi();
         }
 
-        if (!app.Environment.IsDevelopment())
-        {
-            app.UseHttpsRedirection();
-        }
+        app.UseHttpsRedirection();
 
         app.UseWebSockets();
         app.UseMiddleware<HttpRequestProxyMiddleware>();

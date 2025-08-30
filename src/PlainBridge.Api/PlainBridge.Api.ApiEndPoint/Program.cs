@@ -61,7 +61,7 @@ try
                 listenOptions.UseHttps(); // HTTP/3 requires HTTPS
                 listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
             });
-        });
+        }); 
     }
 
     var app = builder.Build();

@@ -5,10 +5,12 @@ using PlainBridge.Api.ApiEndPoint.Abstractions;
 using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.HostApplication;
 using PlainBridge.Api.Application.Services.Session;
+using PlainBridge.Api.Application.UseCases.ServerApplication.Queries;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
 using PlainBridge.SharedApplication.Extensions;
+using PlainBridge.SharedApplication.Mediator;
 
 namespace PlainBridge.Api.ApiEndPoint.Endpoints;
 
@@ -20,10 +22,9 @@ public class HostApplicationEndpoint : IEndpoint
             .RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme});
 
         // GetAllAsync
-        app.MapGet("", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, ISessionService _sessionService) =>
+        app.MapGet("", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, IMediator mediator) =>
         {
-        
-            var data = await hostApplicationService.GetAllAsync(cancellationToken);
+            var data = await mediator.Send(new GetAllHostApplicationsQuery(), cancellationToken);
             return Results.Ok(ResultDto<IList<HostApplicationDto>>.ReturnData(
                 data,
                 ResultCodeEnum.Success,
@@ -32,9 +33,9 @@ public class HostApplicationEndpoint : IEndpoint
         }).WithName("GetAllHostApplications");
 
         // GetAsync
-        app.MapGet("{id:long}", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, ISessionService _sessionService) =>
+        app.MapGet("{id:long}", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, ISessionService sessionService) =>
         {
-            var user = await _sessionService.GetCurrentUserAsync(cancellationToken);
+            var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
                 throw new NotFoundException("user");
 

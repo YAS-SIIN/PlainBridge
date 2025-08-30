@@ -22,6 +22,8 @@
 
   <ItemGroup>
     <Folder Include="Handler\" />
+    <Folder Include="UseCases\HostApplication\" />
+    <Folder Include="UseCases\ServerApplication\Commands\" />
   </ItemGroup>
 
 </Project>

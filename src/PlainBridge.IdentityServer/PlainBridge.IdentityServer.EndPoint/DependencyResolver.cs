@@ -1,5 +1,5 @@
-﻿using System.Globalization; 
-using System.Text; 
+﻿using System.Globalization;
+using System.Text;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Licensing;
 using Microsoft.AspNetCore.Identity;
@@ -16,7 +16,7 @@ public static class DependencyResolver
 {
     public static IServiceCollection AddIDSProjectServices(this IServiceCollection services)
     {
-          
+
         var appSettings = services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSettings>>();
 
         services.AddRazorPages();
@@ -37,13 +37,8 @@ public static class DependencyResolver
         isBuilder.AddInMemoryIdentityResources(Config.IdentityResources);
         isBuilder.AddInMemoryApiScopes(Config.ApiScopes);
         isBuilder.AddInMemoryClients(Config.Clients(appSettings.Value));
-        
+
         // Use developer signing credentials in Development to avoid file system key store writes
-        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        if (string.Equals(env, "Development", StringComparison.OrdinalIgnoreCase))
-        {
-            isBuilder.AddDeveloperSigningCredential();
-        }
 
 
         services.AddIdentity<IdentityUser, IdentityRole>(options =>
@@ -55,7 +50,7 @@ public static class DependencyResolver
             options.Password.RequiredLength = 4;
         }).AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
-         
+
         services.AddAuthentication()
             .AddGoogle(options =>
             {
@@ -87,7 +82,7 @@ public static class DependencyResolver
 
 
     public static WebApplication AddUsers(this WebApplication app)
-    { 
+    {
 
         app.UseExceptionHandler();
         app.UseSerilogRequestLogging();
@@ -109,10 +104,9 @@ public static class DependencyResolver
 
         app.UseStaticFiles();
         app.UseRouting();
-        if (!app.Environment.IsDevelopment())
-        {
-            app.UseHttpsRedirection();
-        }
+
+        app.UseHttpsRedirection();
+
         app.UseIdentityServer();
         app.UseAuthorization();
 

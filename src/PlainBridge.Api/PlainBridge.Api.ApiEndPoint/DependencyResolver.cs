@@ -1,30 +1,19 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Threading;
+﻿using System.IdentityModel.Tokens.Jwt; 
 using Duende.Bff.Yarp;
-using Duende.IdentityModel;
-using Elastic.CommonSchema;
+using Duende.IdentityModel; 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PlainBridge.Api.ApiEndPoint.Abstractions;
 using PlainBridge.Api.ApiEndPoint.ErrorHandling;
+using PlainBridge.Api.Application;
 using PlainBridge.Api.Application.DTOs;
-using PlainBridge.Api.Application.Services.HostApplication;
-using PlainBridge.Api.Application.Services.Identity;
-using PlainBridge.Api.Application.Services.ServerApplication;
-using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.Services.Token;
-using PlainBridge.Api.Application.Services.User;
-using PlainBridge.Api.Infrastructure.Data.Context;
-using PlainBridge.Api.Infrastructure.Messaging;
-using PlainBridge.SharedApplication.Extensions;
-using Serilog;
-using StackExchange.Redis;
+using PlainBridge.Api.Infrastructure;
+using Serilog; 
 
 namespace PlainBridge.Api.ApiEndPoint;
 
@@ -57,19 +46,14 @@ public static class DependencyResolver
         });
 
         // Add services to the container 
-        services.AddApiProjectDatabase();
+
         services.AddProblemDetails();
         services.AddOpenApi();
 
         services.AddAuthorization();
 
-        services.AddScoped<IHostApplicationService, HostApplicationService>();
-        services.AddScoped<IServerApplicationService, ServerApplicationService>();
-        services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IIdentityService, IdentityService>();
-        services.AddScoped<IEventBus, RabbitMqEventBus>();
-        services.AddScoped<ISessionService, SessionService>();
-        services.AddScoped<ITokenService, TokenService>();
+        services.AddApiApplicationProjectServices();
+        services.AddApiInfrastructureProjectServices();
 
         services.AddAuthentication(appSettings.Value);
         services.AddExceptionHandler<ErrorHandler>();
@@ -78,8 +62,7 @@ public static class DependencyResolver
 
         services.AddEndpoints();
 
-        services
-              .AddBff()
+        services.AddBff()
               .AddRemoteApis();
         JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
@@ -87,18 +70,11 @@ public static class DependencyResolver
 
         services.AddHttpServices();
 
-
-
-        return services;
-    }
-
-    public static IServiceCollection AddApiProjectDatabase(this IServiceCollection services)
-    {
-        services.AddDbContext<MainDbContext>(options => options.UseInMemoryDatabase("PlainBridgeApiDBContext"));
+         
 
         return services;
     }
-
+     
     public static IServiceCollection AddEndpoints(this IServiceCollection services)
     {
         var assembly = typeof(IAssemblyMarker).Assembly;

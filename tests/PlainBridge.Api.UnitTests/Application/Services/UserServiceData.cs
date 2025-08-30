@@ -12,7 +12,7 @@ public class UserServiceData
         {
             Username = "NewUser",
             Email = "newuser@PlainBridge.com",
-            PhoneNumber = "09120000000",
+            PhoneNumber = "+989120000000",
             Name = "New",
             Family = "User",
             Password = "Password123!",
@@ -26,7 +26,7 @@ public class UserServiceData
         {
             Username = "TestUser1",
             Email = "TestUser1@PlainBridge.com",
-            PhoneNumber = "09120000000",
+            PhoneNumber = "+989120000000",
             Name = "New",
             Family = "User",
             Password = "Password123!",
@@ -38,9 +38,9 @@ public class UserServiceData
     {
         yield return new object[] { new UserDto
         {
-            Username = "NewUser",
-            Email = "newuser@PlainBridge.com",
-            PhoneNumber = "09120000000",
+            Username = "NewUserWithError",
+            Email = "newuserWithError@PlainBridge.com",
+            PhoneNumber = "+989120000000",
             Name = "New",
             Family = "User",
             Password = "Password123!",
@@ -54,9 +54,9 @@ public class UserServiceData
     {
         yield return new object[] { new UserDto
         {
-            Username = "NewUser",
-            Email = "newuser@PlainBridge.com",
-            PhoneNumber = "09120000000",
+            Username = "NewUserLocally",
+            Email = "newuserLocally@PlainBridge.com",
+            PhoneNumber = "+989120000000",
             Name = "New",
             Family = "User",
             Password = "Password123!",
@@ -71,7 +71,7 @@ public class UserServiceData
         {
             Username = "TestUser1",
             Email = "TestUser1@PlainBridge.com",
-            PhoneNumber = "09120000000",
+            PhoneNumber = "+989120000000",
             Name = "New",
             Family = "User",
             Password = "Password123!",
@@ -126,7 +126,7 @@ public class UserServiceData
             Id = 1,
             Username = "TestUser1",
             Email = "TestUser1@PlainBridge.com",
-            PhoneNumber = "09120000000",
+            PhoneNumber = "+989120000000",
             Name = "New",
             Family = "User",
             Password = "Password123!",
@@ -141,7 +141,7 @@ public class UserServiceData
             Id = 9999,
             Username = "TestUser1",
             Email = "TestUser1@PlainBridge.com",
-            PhoneNumber = "09120000000",
+            PhoneNumber = "+989120000000",
             Name = "New",
             Family = "User",
             Password = "Password123!",
@@ -156,7 +156,7 @@ public class UserServiceData
             Id = 1,
             Username = "TestUser1",
             Email = "TestUser1@PlainBridge.com",
-            PhoneNumber = "09120000000",
+            PhoneNumber = "+989120000000",
             Name = "New",
             Family = "User",
             Password = "Password123!",

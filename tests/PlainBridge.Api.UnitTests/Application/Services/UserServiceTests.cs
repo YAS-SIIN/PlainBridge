@@ -41,10 +41,11 @@ public class UserServiceTests : IClassFixture<TestRunFixture>
         Assert.Equal(externalId, user.ExternalId);
     }
 
-    [Fact]
-    public async Task GetUserByExternalIdAsync_WhenIdDoesntExist_ShouldThrowException()
+    [Theory]
+    [InlineData("999")]
+    public async Task GetUserByExternalIdAsync_WhenIdDoesntExist_ShouldThrowException(string externalId)
     {
-        await Assert.ThrowsAsync<NotFoundException>(() => _userService.GetUserByExternalIdAsync("999", CancellationToken.None));
+        await Assert.ThrowsAsync<NotFoundException>(() => _userService.GetUserByExternalIdAsync(externalId, CancellationToken.None));
     }
 
     #endregion
@@ -72,7 +73,7 @@ public class UserServiceTests : IClassFixture<TestRunFixture>
         var appId = await _userService.CreateAsync(userDto, CancellationToken.None);
         Assert.NotEqual(Guid.Empty, appId);
 
-        var created = await _fixture.MemoryMainDbContext.Users.FirstOrDefaultAsync(x => x.Username == "NewUser");
+        var created = await _fixture.MemoryMainDbContext.Users.FirstOrDefaultAsync(x => x.Username == userDto.Username);
 
         _mockIdentityService.Verify(x => x.CreateUserAsync(userDto, It.IsAny<CancellationToken>()), Times.Once);
         Assert.NotNull(created);
@@ -111,7 +112,7 @@ public class UserServiceTests : IClassFixture<TestRunFixture>
         var appId = await _userService.CreateLocallyAsync(userDto, CancellationToken.None);
         Assert.NotEqual(Guid.Empty, appId);
 
-        var created = await _fixture.MemoryMainDbContext.Users.FirstOrDefaultAsync(x => x.Username == "NewUser");
+        var created = await _fixture.MemoryMainDbContext.Users.FirstOrDefaultAsync(x => x.Username == userDto.Username);
 
         Assert.NotNull(created);
         Assert.Equal(userDto.Username, created.Username); 

@@ -54,7 +54,7 @@ public class TestRunFixture : IAsyncLifetime
             for (int i = 1; i <= countUser; i++)
             { 
                 userList.Add(User.Create(
-                    AppId.CreateUniqueId()!.ToString()!,
+                    i.ToString(),
                     $"TestUser{i}",
                     $"TestUser{i}@PlainBridge.Com",
                     $"+98912111222{i}",
@@ -62,6 +62,8 @@ public class TestRunFixture : IAsyncLifetime
                     $"TestFamily{i}", ""));
             }
             MemoryMainDbContext.Users.AddRange(userList);
+
+            await MemoryMainDbContext.SaveChangesAsync(CancellationToken.None);
 
         }
 
@@ -73,9 +75,9 @@ public class TestRunFixture : IAsyncLifetime
             {
                 var hostApp = HostApplication.Create(
                     $"TestTitle{i}",
-                    $"TestDomain{i}.com",
+                    $"TestDomain{i}",
                     $"http://localhost:300{i}",
-                    userList[i - 1].Id,
+                    MemoryMainDbContext.Users.ToList()[i - 1].Id,
                     $"This is test application {i}"
                 );
                 await  MemoryMainDbContext.HostApplications.AddAsync(hostApp);
@@ -93,7 +95,7 @@ public class TestRunFixture : IAsyncLifetime
                     Domain.ServerAggregate.Enums.ServerApplicationTypeEnum.SharePort,
                     $"TestTitle{i}",
                     2020 + i,
-                    userList[i - 1].Id,
+                    MemoryMainDbContext.Users.ToList()[i - 1].Id,
                     $"This is test application {i}"
                 );
                 await MemoryMainDbContext.ServerApplications.AddAsync(serverApp);

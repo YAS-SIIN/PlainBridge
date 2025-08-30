@@ -62,7 +62,7 @@ public class ServerApplicationService(ILogger<ServerApplicationService> _logger,
        
 
         Guid parsedId = Guid.Empty;
-        if (serverApplication.ServerApplicationType == SharedApplication.Enums.ServerApplicationTypeEnum.UsePort)
+        if (serverApplication.ServerApplicationType == ServerApplicationTypeEnum.UsePort)
         {
             Guid.TryParse(serverApplication.ServerApplicationAppId, out parsedId);
             if (!_dbContext.ServerApplications.Any(x => x.AppId.ViewId == parsedId))

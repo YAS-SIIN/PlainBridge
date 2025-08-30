@@ -89,10 +89,10 @@ public class HostApplicationServiceTests : IClassFixture<TestRunFixture>
     }
 
     [Theory]
-    [InlineData(9)]
+    [InlineData(9999)]
     public async Task DeleteAsync_WhenIdDoesntExist_ShouldThrowException(int id)
     {
-        await Assert.ThrowsAsync<NotFoundException>(() => _hostApplicationService.DeleteAsync(9999, CancellationToken.None));
+        await Assert.ThrowsAsync<NotFoundException>(() => _hostApplicationService.DeleteAsync(id, CancellationToken.None));
     }
     #endregion
 

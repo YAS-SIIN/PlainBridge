@@ -14,7 +14,7 @@ using PlainBridge.SharedApplication.DTOs;
 
 namespace PlainBridge.Api.UnitTests.Application.Services;
 
-[Collection("TestRun")]
+[Collection("ApiUnitTestRun")]
 public class SessionServiceTests : IClassFixture<TestRunFixture>
 {
     private readonly TestRunFixture _fixture;

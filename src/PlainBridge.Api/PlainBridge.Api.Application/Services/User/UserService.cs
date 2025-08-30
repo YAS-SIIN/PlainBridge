@@ -66,7 +66,7 @@ public class UserService(
             _logger.LogWarning("User already exists with username: {Username} or email: {Email}", user.Username, user.Email);
             throw new DuplicatedException($"{user.Username} or {user.Email}");
         }
-        var newUser =  Domain.Entities.User.Create(Guid.NewGuid().ToString(), user.Username, user.Email, user.PhoneNumber, user.Name, user.Family, user.ExternalId);
+        var newUser =  Domain.Entities.User.Create("", user.Username, user.Email, user.PhoneNumber, user.Name, user.Family, user.ExternalId);
         
         var createdUser = await _dbContext.Users.AddAsync(newUser, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
@@ -141,6 +141,7 @@ public class UserService(
             throw new ApplicationException("Updating user on identity server failed");
         }
 
+        existedUser.ExternalId = userUpdatingResult.Data;
         existedUser.Name = user.Name;
         existedUser.Family = user.Family;
 

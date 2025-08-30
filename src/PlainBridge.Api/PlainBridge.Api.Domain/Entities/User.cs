@@ -31,8 +31,7 @@ public class User : BaseEntity<long>
 
     public static User Create(string externalId, string username, string email, string? phoneNumber, string name, string family, string? description)
     {
-        EnsureName(name);
-        EnsureExternalId(externalId);
+        EnsureName(name); 
         EnsureUsername(username);
         EnsureEmail(email);
         EnsurePhoneNumber(phoneNumber);
@@ -94,10 +93,6 @@ public class User : BaseEntity<long>
             throw new ApplicationException("Username must be 150 characters or fewer.");
     }
 
-    private static void EnsureExternalId(string externalId)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(externalId);
-    }
 
     private static void EnsureEmail(string email)
     {

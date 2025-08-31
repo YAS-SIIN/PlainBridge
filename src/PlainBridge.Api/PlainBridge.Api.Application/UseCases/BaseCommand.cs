@@ -2,9 +2,9 @@
 
 using PlainBridge.SharedApplication.Enums;
 
-namespace PlainBridge.SharedApplication.DTOs;
+namespace PlainBridge.Api.Application.UseCases;
 
-public abstract record BaseDto<TId>
+public class BaseCommand<TId>
 {
     public TId Id { get; set; }
     public RowStateEnum State { get; set; }

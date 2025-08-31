@@ -24,13 +24,13 @@ public static class MediatorExtensions
         // Register request handlers
         var requestHandlerTypes = assembly.GetTypes()
             .Where(t => t.GetInterfaces().Any(i =>
-                i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>)))
+                i.IsGenericType && (i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>) || i.GetGenericTypeDefinition() == typeof(IRequestHandler<>))))
             .ToList();
 
         foreach (var handlerType in requestHandlerTypes)
         {
             var handlerInterface = handlerType.GetInterfaces()
-                .First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>));
+                .First(i => i.IsGenericType && (i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>) || i.GetGenericTypeDefinition() == typeof(IRequestHandler<>)));
 
             services.AddTransient(handlerInterface, handlerType);
         }

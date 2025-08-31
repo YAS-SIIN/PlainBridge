@@ -7,7 +7,7 @@ using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Mediator;
 
-namespace PlainBridge.Api.Application.UseCases.ServerApplication.Queries;
+namespace PlainBridge.Api.Application.UseCases.HostApplication.Queries;
 
 public class GetAllHostApplicationsQueryHandler(ILogger<GetAllHostApplicationsQueryHandler> _logger, MainDbContext _dbContext) : IRequestHandler<GetAllHostApplicationsQuery, List<HostApplicationDto>>
 {

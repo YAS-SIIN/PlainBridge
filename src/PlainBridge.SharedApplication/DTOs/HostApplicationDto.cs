@@ -5,30 +5,12 @@ namespace PlainBridge.SharedApplication.DTOs;
 
 public record HostApplicationDto : BaseDto<long>
 {
-    [Display(Name = "Application Id")]
     public Guid AppId { get; set; }
-
-    [Display(Name = "Name")]
-    [Required]
-    [StringLength(150, MinimumLength = 3)]
-    public string Name { get; set; }
-
-    [Display(Name = "User Id")]
-    [Required]
+    public string Name { get; set; } = string.Empty;
     public long UserId { get; set; }
-
-    [Display(Name = "User name")]
     public string? UserName { get; set; } = string.Empty;
-
-    [Display(Name = "Domain")]
-    [Required]
-    [StringLength(200, MinimumLength = 5)]
-    public string Domain { get; set; }
-
-    [Display(Name = "Internal URL")]
-    [Required]
-    [StringLength(200, MinimumLength = 5)]
-    public string InternalUrl { get; set; }
+    public string Domain { get; set; } = string.Empty;
+    public string InternalUrl { get; set; } = string.Empty;
 
     public string GetProjectHost(string defaultDomain) => $"{this.Domain.ToLower()}{defaultDomain}";
 }

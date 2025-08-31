@@ -23,7 +23,6 @@ public static class DependencyResolver
         // Add services to the container 
 
 
-        services.AddScoped<IHostApplicationService, HostApplicationService>();
         services.AddScoped<IServerApplicationService, ServerApplicationService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IIdentityService, IdentityService>();

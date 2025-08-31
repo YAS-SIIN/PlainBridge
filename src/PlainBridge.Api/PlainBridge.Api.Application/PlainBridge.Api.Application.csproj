@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="UseCases\Queries\**" />
+    <EmbeddedResource Remove="UseCases\Queries\**" />
+    <None Remove="UseCases\Queries\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="IdentityModel.AspNetCore.OAuth2Introspection" Version="6.2.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.14.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
@@ -22,8 +28,6 @@
 
   <ItemGroup>
     <Folder Include="Handler\" />
-    <Folder Include="UseCases\HostApplication\" />
-    <Folder Include="UseCases\ServerApplication\Commands\" />
   </ItemGroup>
 
 </Project>

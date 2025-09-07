@@ -2,8 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PlainBridge.Api.Domain.HostAggregate;
-using PlainBridge.Api.Infrastructure.Data.Context;
-using PlainBridge.Api.Infrastructure.Messaging;
+using PlainBridge.Api.Infrastructure.ExternalServices.Messaging;
+using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
 using PlainBridge.SharedApplication.Exceptions;
 using PlainBridge.SharedApplication.Mediator;
 

@@ -5,10 +5,11 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using PlainBridge.Api.Application.UseCases.HostApplication.Commands;
 using PlainBridge.Api.Application.UseCases.ServerApplication.Commands;
-using PlainBridge.Api.Infrastructure.Messaging;
+using PlainBridge.Api.Infrastructure.ExternalServices.Messaging;
 using PlainBridge.Api.UnitTests.Application.Services;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Exceptions;
+using PlainBridge.SharedDomain.Base.Enums;
 
 namespace PlainBridge.Api.UnitTests.Application.UseCases.HostApplication;
 
@@ -113,5 +114,32 @@ public class HostApplicationCommandsTests : IClassFixture<TestRunFixture>
     }
     #endregion
 
+
+
+    #region UpdateStateHostApplicationCommandHandler
+
+    [Theory]
+    [InlineData(2, true)]
+    [InlineData(2, false)]
+    public async Task UpdateStateHostApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded(int id, bool IsActive)
+    {
+        await _updateStateHostApplicationCommandHandler.Handle(new UpdateStateHostApplicationCommand { Id = id, IsActive = IsActive }, CancellationToken.None);
+
+        var updated = await _fixture.MemoryMainDbContext.HostApplications.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+
+        Assert.NotNull(updated);
+        Assert.Equal(id, updated.Id);
+        Assert.Equal(RowStateEnum.Active, updated.State);
+    }
+
+
+    [Theory]
+    [InlineData(999, true)]
+    [InlineData(999, false)]
+    public async Task UpdateStateHostApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException(int id, bool IsActive)
+    {
+        await Assert.ThrowsAsync<NotFoundException>(() => _updateStateHostApplicationCommandHandler.Handle(new UpdateStateHostApplicationCommand { Id = id, IsActive = IsActive }, CancellationToken.None));
+    }
+    #endregion
 
 }

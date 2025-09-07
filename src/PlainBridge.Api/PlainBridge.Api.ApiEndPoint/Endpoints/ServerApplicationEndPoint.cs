@@ -2,12 +2,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PlainBridge.Api.ApiEndPoint.Abstractions;
-using PlainBridge.Api.Application.Services.ServerApplication;
 using PlainBridge.Api.Application.Services.Session;
+using PlainBridge.Api.Application.UseCases.ServerApplication.Commands;
+using PlainBridge.Api.Application.UseCases.ServerApplication.Queries;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
 using PlainBridge.SharedApplication.Extensions;
+using PlainBridge.SharedApplication.Mediator;
 
 namespace PlainBridge.Api.ApiEndPoint.Endpoints;
 
@@ -19,9 +21,9 @@ public class ServerApplicationEndPoint : IEndpoint
             .RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme });
 
         // GetAllAsync
-        app.MapGet("", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IServerApplicationService serverApplicationService, ISessionService _sessionService) =>
+        app.MapGet("", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IMediator mediator, ISessionService _sessionService) =>
         {
-            var data = await serverApplicationService.GetAllAsync(cancellationToken);
+            var data = await mediator.Send(new GetAllServerApplicationsQuery(), cancellationToken);
             return Results.Ok(ResultDto<IList<ServerApplicationDto>>.ReturnData(
                 data,
                 ResultCodeEnum.Success,
@@ -31,21 +33,14 @@ public class ServerApplicationEndPoint : IEndpoint
 
 
         // GetByIdAsync
-        app.MapGet("{id:long}", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IServerApplicationService serverApplicationService,  ISessionService sessionService) =>
+        app.MapGet("{id:long}", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IMediator mediator,  ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
                 throw new NotFoundException("user");
 
-            var data = await serverApplicationService.GetAsync(id, user.Id, cancellationToken);
-            if (data == null)
-            {
-                return Results.NotFound(ResultDto<ServerApplicationDto>.ReturnData(
-                    null,
-                    ResultCodeEnum.NotFound,
-                    ResultCodeEnum.NotFound.ToDisplayName()
-                ));
-            }
+            var data = await mediator.Send(new GetServerApplicationQuery { Id = id }, cancellationToken);
+
             return Results.Ok(ResultDto<ServerApplicationDto>.ReturnData(
                 data,
                 ResultCodeEnum.Success,
@@ -55,14 +50,14 @@ public class ServerApplicationEndPoint : IEndpoint
 
 
         // CreateAsync
-        app.MapPost("", async ([FromBody] ServerApplicationDto hostApplication, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IServerApplicationService serverApplicationService, ISessionService sessionService) =>
+        app.MapPost("", async ([FromBody] CreateServerApplicationCommand hostApplication, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IMediator mediator, ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
                 throw new NotFoundException("user");
 
             hostApplication.UserId = user.Id;
-            var id = await serverApplicationService.CreateAsync(hostApplication, cancellationToken);
+            var id = await mediator.Send(hostApplication, cancellationToken); 
             return Results.Created($"/serverApplication/{id}", ResultDto<Guid>.ReturnData(
                 id,
                 ResultCodeEnum.Success,
@@ -71,7 +66,7 @@ public class ServerApplicationEndPoint : IEndpoint
         }).WithName("CreateServerApplication");
 
         // UpdateAsync
-        app.MapPatch("{id:long}", async (long id, [FromBody] ServerApplicationDto hostApplication, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IServerApplicationService serverApplicationService, ISessionService sessionService) =>
+        app.MapPatch("{id:long}", async (long id, [FromBody] UpdateServerApplicationCommand hostApplication, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IMediator mediator, ISessionService sessionService) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
@@ -79,9 +74,9 @@ public class ServerApplicationEndPoint : IEndpoint
 
             hostApplication.Id = id;
             hostApplication.UserId = user.Id;
-            await serverApplicationService.UpdateAsync(hostApplication, cancellationToken);
-            return Results.Ok(ResultDto<ServerApplicationDto>.ReturnData(
-                hostApplication,
+            var updatedApplicationAppId = await mediator.Send(hostApplication, cancellationToken);
+            return Results.Ok(ResultDto<Guid>.ReturnData(
+                updatedApplicationAppId,
                 ResultCodeEnum.Success,
                 ResultCodeEnum.Success.ToDisplayName()
             ));
@@ -89,9 +84,9 @@ public class ServerApplicationEndPoint : IEndpoint
 
 
         // DeleteAsync
-        app.MapDelete("{id:long}", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IServerApplicationService serverApplicationService, ISessionService sessionService) =>
+        app.MapDelete("{id:long}", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IMediator mediator, ISessionService sessionService) =>
         {
-            await serverApplicationService.DeleteAsync(id, cancellationToken);
+            await mediator.Send(new DeleteServerApplicationCommand { Id = id }, cancellationToken);
             return Results.Ok(ResultDto<object>.ReturnData(
                 null,
                 ResultCodeEnum.Success,
@@ -100,9 +95,9 @@ public class ServerApplicationEndPoint : IEndpoint
         }).WithName("DeleteServerApplication");
 
         // Toggle isActive -> State
-        app.MapPatch("UpdateState/{id:long}/{isActive:bool}", async (long id, bool isActive, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IServerApplicationService serverApplicationService) =>
+        app.MapPatch("UpdateState/{id:long}/{isActive:bool}", async (long id, bool isActive, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IMediator mediator) =>
         {
-            await serverApplicationService.UpdateStateAsync(id, isActive, cancellationToken);
+            await mediator.Send(new UpdateStateServerApplicationCommand { Id = id, IsActive = isActive }, cancellationToken);
             return Results.Ok(ResultDto<ServerApplicationDto>.ReturnData(
                 null,
                 ResultCodeEnum.Success,

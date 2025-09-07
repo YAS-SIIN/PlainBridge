@@ -1,11 +1,10 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
-
 using PlainBridge.Api.Domain.Entities;
 using PlainBridge.Api.Domain.HostAggregate;
 using PlainBridge.Api.Domain.ServerAggregate;
 
-namespace PlainBridge.Api.Infrastructure.Data.Context;
+namespace PlainBridge.Api.Infrastructure.Persistence.Data.Context;
 
 
 public class MainDbContext : DbContext

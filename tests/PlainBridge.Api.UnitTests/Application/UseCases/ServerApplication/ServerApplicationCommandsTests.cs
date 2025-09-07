@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using PlainBridge.Api.Application.UseCases.ServerApplication.Commands;
-using PlainBridge.Api.Infrastructure.Messaging;
+using PlainBridge.Api.Infrastructure.ExternalServices.Messaging;
 using PlainBridge.Api.UnitTests.Application.Services;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Exceptions;
+using PlainBridge.SharedDomain.Base.Enums;
 
 namespace PlainBridge.Api.UnitTests.Application.UseCases.ServerApplication;
 
@@ -122,7 +123,34 @@ public class ServerApplicationCommandsTests : IClassFixture<TestRunFixture>
     public async Task UpdateServerApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException(UpdateServerApplicationCommand dto)
     {
         await Assert.ThrowsAsync<ApplicationException>(() => _updateServerApplicationCommandHandler.Handle(dto, CancellationToken.None));
-    } 
+    }
+    #endregion
+
+
+    #region UpdateStateServerApplicationCommandHandler
+     
+    [Theory]
+    [InlineData(2, true)]
+    [InlineData(2, false)]
+    public async Task UpdateStateServerApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded(int id, bool IsActive)
+    {
+        await _updateStateServerApplicationCommandHandler.Handle(new UpdateStateServerApplicationCommand { Id = id, IsActive = IsActive }, CancellationToken.None);
+
+        var updated = await _fixture.MemoryMainDbContext.ServerApplications.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+
+        Assert.NotNull(updated);
+        Assert.Equal(id, updated.Id);
+        Assert.Equal(RowStateEnum.Active, updated.State);
+    }
+
+
+    [Theory]
+    [InlineData(999, true)]
+    [InlineData(999, false)]
+    public async Task UpdateStateServerApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException(int id, bool IsActive)
+    {
+        await Assert.ThrowsAsync<NotFoundException>(() => _updateStateServerApplicationCommandHandler.Handle(new UpdateStateServerApplicationCommand { Id = id, IsActive = IsActive }, CancellationToken.None));
+    }
     #endregion
 
 

@@ -11,7 +11,7 @@ using PlainBridge.SharedApplication.DTOs;
 using System.Text;
 using System.Text.Json;
 
-namespace PlainBridge.Api.Infrastructure.Identity;
+namespace PlainBridge.Api.Infrastructure.ExternalServices.Identity;
 public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactory _httpClientFactory, IOptions<ApplicationSettings> _applicationSettings) : IIdentityService
 {
 

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using PlainBridge.Api.Application.Services.User;
 using PlainBridge.Api.Infrastructure.DTOs;
-using PlainBridge.Api.Infrastructure.Identity;
+using PlainBridge.Api.Infrastructure.ExternalServices.Identity;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;

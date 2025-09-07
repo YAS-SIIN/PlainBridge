@@ -3,8 +3,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PlainBridge.Api.Domain.ServerAggregate;
-using PlainBridge.Api.Infrastructure.Data.Context;
-using PlainBridge.Api.Infrastructure.Messaging;
+using PlainBridge.Api.Infrastructure.ExternalServices.Messaging;
+using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Exceptions;
 using PlainBridge.SharedApplication.Mediator;
@@ -17,7 +17,7 @@ public class UpdateStateServerApplicationCommandHandler(ILogger<UpdateStateServe
     {
         _logger.LogInformation("Updating server application state. Id: {Id}, IsActive: {IsActive}", request.Id, request.IsActive);
         var app = await _dbContext.ServerApplications.Include(a => a.User).FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
-        if (app == null)
+        if (app is null)
         {
             _logger.LogWarning("Server application with Id: {Id} not found for state update.", request.Id);
             throw new NotFoundException(request.Id);

@@ -1,12 +1,10 @@
 ﻿
 using Microsoft.Extensions.Logging;
- 
-
 using RabbitMQ.Client;
 
 using System.Threading.Tasks;
 
-namespace PlainBridge.Api.Infrastructure.Messaging;
+namespace PlainBridge.Api.Infrastructure.ExternalServices.Messaging;
 
 public class RabbitMqEventBus(ILogger<RabbitMqEventBus> _logger, IConnection _connection) : IEventBus
 {
@@ -60,7 +58,7 @@ public class RabbitMqEventBus(ILogger<RabbitMqEventBus> _logger, IConnection _co
         //    cancellationToken: cancellationToken);
         try
         {
-            await channel.BasicPublishAsync<BasicProperties>(
+            await channel.BasicPublishAsync(
            exchange: exchangeName,
            routingKey: routingKey,
            mandatory: true,

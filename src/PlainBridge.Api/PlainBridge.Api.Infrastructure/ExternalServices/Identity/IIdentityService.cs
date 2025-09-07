@@ -1,8 +1,7 @@
-﻿
-using PlainBridge.Api.Infrastructure.DTOs;
+﻿using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.SharedApplication.DTOs;
 
-namespace PlainBridge.Api.Infrastructure.Identity;
+namespace PlainBridge.Api.Infrastructure.ExternalServices.Identity;
 
 public interface IIdentityService
 {

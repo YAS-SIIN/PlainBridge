@@ -2,10 +2,9 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
- 
-using PlainBridge.Api.Infrastructure.Data.Context;
 using PlainBridge.Api.Infrastructure.DTOs;
-using PlainBridge.Api.Infrastructure.Identity;
+using PlainBridge.Api.Infrastructure.ExternalServices.Identity;
+using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
 

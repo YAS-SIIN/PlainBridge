@@ -29,4 +29,8 @@
     <ProjectReference Include="..\PlainBridge.Api.Infrastructure\PlainBridge.Api.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UseCases\User\" />
+  </ItemGroup>
+
 </Project>

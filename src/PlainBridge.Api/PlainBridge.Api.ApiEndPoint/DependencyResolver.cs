@@ -13,6 +13,7 @@ using PlainBridge.Api.Application;
 using PlainBridge.Api.Application.Services.Token;
 using PlainBridge.Api.Infrastructure;
 using PlainBridge.Api.Infrastructure.DTOs;
+using PlainBridge.Api.Infrastructure.Persistence.Cache;
 using Serilog; 
 
 namespace PlainBridge.Api.ApiEndPoint;
@@ -122,12 +123,12 @@ public static class DependencyResolver
             {
                 OnMessageReceived = async context =>
                 { 
-                    var tokenService = context.HttpContext.RequestServices.GetRequiredService<ITokenService>();
+                    var cacheManagement = context.HttpContext.RequestServices.GetRequiredService<ICacheManagement>();
                     var cancellationToken = context.HttpContext.RequestAborted;
                     var tokenp = context.Request.Headers["Authorization"];
                     tokenp = tokenp.ToString().Replace("Bearer ", "");
                     //var token = await tokenService.GetTokenPTokenAsync(tokenp.ToString()); 
-                    var token = await tokenService.SetGetTokenPTokenAsync(tokenp.ToString(), cancellationToken: cancellationToken); 
+                    var token = await cacheManagement.SetGetTokenPTokenAsync(tokenp.ToString(), cancellationToken: cancellationToken); 
 
                     context.Token = token;
                 }

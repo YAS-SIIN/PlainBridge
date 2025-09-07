@@ -7,13 +7,14 @@ using Microsoft.Extensions.Options;
 using PlainBridge.Api.Application.Services.Token;
 using PlainBridge.Api.Application.Services.User;
 using PlainBridge.Api.Infrastructure.DTOs;
+using PlainBridge.Api.Infrastructure.Persistence.Cache;
 using PlainBridge.SharedApplication.DTOs;
 using System.Text.Json;
 
 namespace PlainBridge.Api.Application.Services.Session;
 
 
-public class SessionService(ILogger<SessionService> _logger, IHttpContextAccessor _httpContextAccessor, IUserService _userService, ITokenService _tokenService, IHttpClientFactory _httpClientFactory, IOptions<ApplicationSettings> _applicationSettings) : ISessionService
+public class SessionService(ILogger<SessionService> _logger, IHttpContextAccessor _httpContextAccessor, IUserService _userService, ICacheManagement _cacheManagement, IHttpClientFactory _httpClientFactory, IOptions<ApplicationSettings> _applicationSettings) : ISessionService
 {
     public async Task<UserDto> GetCurrentUserAsync(CancellationToken cancellationToken)
     {
@@ -62,7 +63,7 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
         }
 
         _logger.LogInformation("Getting token for user: {UserId}", userId.Value);
-        var token = await _tokenService.SetGetSubTokenAsync(userId.Value);
+        var token = await _cacheManagement.SetGetSubTokenAsync(userId.Value);
         var baseUri = new Uri(_applicationSettings.Value.PlainBridgeIdsUrl!);
         var uri = new Uri(baseUri, "connect/userinfo");
         var userInfoRequest = new UserInfoRequest
@@ -88,8 +89,8 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
 
         var tokenp = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
         tokenp = tokenp.ToString().Replace("Bearer ", "");
-        var sub = await _tokenService.SetGetTokenPSubAsync(tokenp);
-        var refreshToken = await _tokenService.SetGetTokenPRefreshTokenAsync(tokenp);
+        var sub = await _cacheManagement.SetGetTokenPSubAsync(tokenp);
+        var refreshToken = await _cacheManagement.SetGetTokenPRefreshTokenAsync(tokenp);
         var baseUri = new Uri(_applicationSettings.Value.PlainBridgeIdsUrl!);
         var uri = new Uri(baseUri, "connect/token");
         var response = await httpClient.RequestRefreshTokenAsync(new RefreshTokenRequest
@@ -103,7 +104,7 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
         if (string.IsNullOrEmpty(token))
             throw new ApplicationException("Failed to refresh token");
 
-        await _tokenService.SetGetSubTokenAsync(sub, token);
-        await _tokenService.SetGetTokenPTokenAsync(tokenp, token);
+        await _cacheManagement.SetGetSubTokenAsync(sub, token);
+        await _cacheManagement.SetGetTokenPTokenAsync(tokenp, token);
     }
 }

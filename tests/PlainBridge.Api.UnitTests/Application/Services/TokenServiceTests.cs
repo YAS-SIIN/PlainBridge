@@ -21,15 +21,7 @@ public class TokenServiceTests : IClassFixture<TestRunFixture>
         _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
         _mockDb = new Mock<HybridCache>();
         _tokenService = new TokenService(_mockDb.Object);
-
-        // _mockDb.Setup(x => x.GetOrCreateAsync<string, bool>(
-        //    It.IsAny<string>(),
-        //    It.IsAny<string>(),
-        //    It.IsAny<Func<string, CancellationToken, ValueTask<bool>>>(),
-        //    It.IsAny<HybridCacheEntryOptions?>(),
-        //    It.IsAny<IEnumerable<string>?>(),
-        //    It.IsAny<CancellationToken>()
-        //)).ReturnsAsync(true);
+         
     }
 
     [Theory]
@@ -76,30 +68,6 @@ public class TokenServiceTests : IClassFixture<TestRunFixture>
         Assert.Equal(sub, jwt.Claims.FirstOrDefault(c => c.Type == "user_id")?.Value);
     }
 
-
- 
-    [Fact(Skip = "Hybric cache doesn't mock")] 
-    public async Task SetGetSubIdTokenAsync_WhenEverythingIsOk_ShouldCallSuccessfully()
-    {
-        // Fix for CS1929: Use Returns instead of ReturnsAsync for ValueTask<string>
-        ValueTask<string> aaa = new ValueTask<string>("idToken");
-        _mockDb.Setup(x => x.GetOrCreateAsync(
-            It.IsAny<string>(),
-            It.IsAny<Func<CancellationToken, ValueTask<string>>>(),
-            It.IsAny<HybridCacheEntryOptions?>(),
-            It.IsAny<IEnumerable<string>?>(),
-            It.IsAny<CancellationToken>()
-        )).Returns(aaa);
-
-        var res = await _tokenService.SetGetSubIdTokenAsync("sub", "idToken", CancellationToken.None);
-
-        _mockDb.Verify(x => x.GetOrCreateAsync(
-            It.IsAny<string>(),
-            It.IsAny<Func<CancellationToken, ValueTask<string>>>(),
-            It.IsAny<HybridCacheEntryOptions?>(),
-            It.IsAny<IEnumerable<string>?>(),
-            It.IsAny<CancellationToken>()
-        ), Times.Once);
-    }
+     
 
 }

@@ -10,6 +10,7 @@ using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.Services.Token;
 using PlainBridge.Api.Application.Services.User;
 using PlainBridge.Api.Infrastructure.DTOs;
+using PlainBridge.Api.Infrastructure.Persistence.Cache;
 using PlainBridge.SharedApplication.DTOs;
 
 namespace PlainBridge.Api.UnitTests.Application.Services;
@@ -22,7 +23,7 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
     private readonly Mock<ILogger<SessionService>> _mockLoggerSessionService;
     private readonly Mock<IHttpContextAccessor> _mockIHttpContextAccessor;
     private readonly Mock<IUserService> _mockIUserService;
-    private readonly Mock<ITokenService> _mockITokenService;
+    private readonly Mock<ICacheManagement> _mockICacheManagement;
     private readonly Mock<IHttpClientFactory> _mockIHttpClientFactory;
     private readonly Mock<IOptions<ApplicationSettings>> _mockApplicationSetting;
 
@@ -32,14 +33,14 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
         _mockLoggerSessionService = new Mock<ILogger<SessionService>>();
         _mockIHttpContextAccessor = new Mock<IHttpContextAccessor>();
         _mockIUserService = new Mock<IUserService>();
-        _mockITokenService = new Mock<ITokenService>();
+        _mockICacheManagement = new Mock<ICacheManagement>();
         _mockIHttpClientFactory = new Mock<IHttpClientFactory>();
         _mockApplicationSetting = new Mock<IOptions<ApplicationSettings>>();
         _sessionService = new SessionService(
             _mockLoggerSessionService.Object,
             _mockIHttpContextAccessor.Object,
             _mockIUserService.Object,
-            _mockITokenService.Object,
+            _mockICacheManagement.Object,
             _mockIHttpClientFactory.Object,
             _mockApplicationSetting.Object
         );
@@ -98,7 +99,7 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
         _mockIHttpContextAccessor.Setup(x => x.HttpContext).Returns(context);
 
         var token = "token123";
-        _mockITokenService.Setup(x => x.SetGetSubTokenAsync(userId, It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(token);
+        _mockICacheManagement.Setup(x => x.SetGetSubTokenAsync(userId, It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(token);
 
         // Replace this line:
         // var appSetting = new ApplicationSettings { PlainBridgeIdsUrl = "https://ids.example.com" };

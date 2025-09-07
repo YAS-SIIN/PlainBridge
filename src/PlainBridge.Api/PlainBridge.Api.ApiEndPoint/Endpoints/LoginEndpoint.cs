@@ -5,6 +5,7 @@ using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.Services.Token;
 using PlainBridge.Api.Application.Services.User;
 using PlainBridge.Api.Infrastructure.DTOs;
+using PlainBridge.Api.Infrastructure.Persistence.Cache;
 using PlainBridge.SharedApplication.Exceptions;
 
 namespace PlainBridge.Api.ApiEndPoint.Endpoints;
@@ -17,7 +18,7 @@ public class LoginEndpoint : IEndpoint
         app.MapBffManagementEndpoints();
      
 
-        app.MapGet("/", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHttpContextAccessor _httpContextAccessor, ITokenService _tokenService, ISessionService _sessionService, IUserService _userService, IOptions<ApplicationSettings> _applicationSettings) =>
+        app.MapGet("/", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHttpContextAccessor _httpContextAccessor, ITokenService _tokenService, ICacheManagement _cacheManagement, ISessionService _sessionService, IUserService _userService, IOptions<ApplicationSettings> _applicationSettings) =>
         {
             var logger = loggerFactory.CreateLogger(nameof(LoginEndpoint));
 
@@ -36,12 +37,12 @@ public class LoginEndpoint : IEndpoint
 
             logger.LogInformation($"{sub} logged in, Token: {token}, TokenP: {tokenp}");
 
-            await _tokenService.SetGetTokenPSubAsync(tokenp, sub, cancellationToken);
-            await _tokenService.SetGetSubTokenAsync(sub, token, cancellationToken);
-            await _tokenService.SetGetSubTokenPAsync(sub, tokenp, cancellationToken); 
-            await _tokenService.SetGetTokenPTokenAsync(tokenp, token, cancellationToken);
-            await _tokenService.SetGetSubIdTokenAsync(sub, idToken!, cancellationToken);
-            await _tokenService.SetGetTokenPRefreshTokenAsync(tokenp, refreshToken!, cancellationToken);
+            await _cacheManagement.SetGetTokenPSubAsync(tokenp, sub, cancellationToken);
+            await _cacheManagement.SetGetSubTokenAsync(sub, token, cancellationToken);
+            await _cacheManagement.SetGetSubTokenPAsync(sub, tokenp, cancellationToken);
+            await _cacheManagement.SetGetTokenPTokenAsync(tokenp, token, cancellationToken);
+            await _cacheManagement.SetGetSubIdTokenAsync(sub, idToken!, cancellationToken);
+            await _cacheManagement.SetGetTokenPRefreshTokenAsync(tokenp, refreshToken!, cancellationToken);
 
             try
             {

@@ -2,8 +2,6 @@
 using System.IdentityModel.Tokens.Jwt; 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using PlainBridge.Api.Application.Services.HostApplication;
-using PlainBridge.Api.Application.Services.Identity;
 using PlainBridge.Api.Application.Services.ServerApplication;
 using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.Services.Token;
@@ -25,7 +23,6 @@ public static class DependencyResolver
 
         services.AddScoped<IServerApplicationService, ServerApplicationService>();
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<ISessionService, SessionService>();
         services.AddScoped<ITokenService, TokenService>();
 

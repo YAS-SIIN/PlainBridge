@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using PlainBridge.Api.ApiEndPoint.Abstractions;
-using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.Services.Token;
 using PlainBridge.Api.Application.Services.User;
+using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.SharedApplication.Exceptions;
 
 namespace PlainBridge.Api.ApiEndPoint.Endpoints;

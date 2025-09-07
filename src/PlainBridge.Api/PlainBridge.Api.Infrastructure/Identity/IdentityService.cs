@@ -1,19 +1,17 @@
 ﻿
 
 
-using IdentityModel.Client;
 
+using Duende.IdentityModel.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
-using PlainBridge.Api.Application.DTOs;
+using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.SharedApplication.DTOs;
 
 using System.Text;
 using System.Text.Json;
 
-namespace PlainBridge.Api.Application.Services.Identity;
-
+namespace PlainBridge.Api.Infrastructure.Identity;
 public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactory _httpClientFactory, IOptions<ApplicationSettings> _applicationSettings) : IIdentityService
 {
 
@@ -36,7 +34,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         if (tokenResponse.IsError)
             throw new ApplicationException("Failed to get token from identity server");
 
-        httpClient.SetBearerToken(tokenResponse.AccessToken);
+        httpClient.SetBearerToken(tokenResponse!.AccessToken!);
 
         return httpClient;
     }

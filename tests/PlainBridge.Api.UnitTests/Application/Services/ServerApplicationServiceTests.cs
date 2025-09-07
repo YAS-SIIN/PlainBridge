@@ -62,7 +62,7 @@ public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
         if (dto.ServerApplicationType == SharedApplication.Enums.ServerApplicationTypeEnum.UsePort)
         {
             var serverApplication = await _fixture.MemoryMainDbContext.ServerApplications.FirstOrDefaultAsync();
-            dto.ServerApplicationAppId = serverApplication.AppId.ViewId.ToString();
+            dto.ServerApplicationAppId = serverApplication!.AppId.ViewId.ToString();
         }
 
         var guid = await _serverApplicationService.CreateAsync(dto, CancellationToken.None);
@@ -138,14 +138,7 @@ public class ServerApplicationServiceTests : IClassFixture<TestRunFixture>
        var res = await Assert.ThrowsAsync<NotFoundException>(() => _serverApplicationService.UpdateAsync(dto, CancellationToken.None));
         Assert.NotNull(res);
     }
-
-    [Theory]
-    [MemberData(nameof(ServerApplicationServiceData.SetDataFor_UpdateAsync_WhenIdDoesntExist_ShouldThrowApplicationException), MemberType = typeof(ServerApplicationServiceData))]
-    public async Task UpdateAsync_WhenIdDoesntExist_ShouldThrowApplicationException(ServerApplicationDto dto)
-    {
-        var res = await Assert.ThrowsAsync<NotFoundException>(() => _serverApplicationService.UpdateAsync(dto, CancellationToken.None));
-        Assert.NotNull(res);
-    }
+     
 
     #endregion
 

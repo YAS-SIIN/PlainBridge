@@ -1,9 +1,8 @@
-﻿
-using PlainBridge.SharedApplication.DTOs;
+﻿using PlainBridge.SharedApplication.DTOs;
 
 using System.ComponentModel.DataAnnotations;
 
-namespace PlainBridge.Api.Application.DTOs;
+namespace PlainBridge.Api.Infrastructure.DTOs;
 
 public record UserDto : BaseDto<long>
 {

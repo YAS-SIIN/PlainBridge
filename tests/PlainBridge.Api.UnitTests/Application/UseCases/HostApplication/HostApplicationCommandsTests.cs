@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using PlainBridge.Api.Application.UseCases.HostApplication.Commands;
+using PlainBridge.Api.Application.UseCases.ServerApplication.Commands;
 using PlainBridge.Api.Infrastructure.Messaging;
 using PlainBridge.Api.UnitTests.Application.Services;
 using PlainBridge.SharedApplication.DTOs;
@@ -76,8 +77,9 @@ public class HostApplicationCommandsTests : IClassFixture<TestRunFixture>
     [Theory]
     [InlineData(9999)]
     public async Task DeleteHostApplicationCommandHandler_WhenIdDoesntExist_ShouldThrowException(int id)
-    {
-        await Assert.ThrowsAsync<NotFoundException>(() => _deleteHostApplicationCommandHandler.Handle(new DeleteHostApplicationCommand { Id = id }, CancellationToken.None));
+    { 
+        var res = await Assert.ThrowsAsync<NotFoundException>(() => _deleteHostApplicationCommandHandler.Handle(new DeleteHostApplicationCommand { Id = id }, CancellationToken.None));
+        Assert.NotNull(res);
     }
     #endregion
 

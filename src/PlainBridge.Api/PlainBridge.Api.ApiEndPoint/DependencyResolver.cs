@@ -10,9 +10,9 @@ using Microsoft.IdentityModel.Tokens;
 using PlainBridge.Api.ApiEndPoint.Abstractions;
 using PlainBridge.Api.ApiEndPoint.ErrorHandling;
 using PlainBridge.Api.Application;
-using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.Token;
 using PlainBridge.Api.Infrastructure;
+using PlainBridge.Api.Infrastructure.DTOs;
 using Serilog; 
 
 namespace PlainBridge.Api.ApiEndPoint;

@@ -9,25 +9,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
-using OpenTelemetry.Trace;
-using PlainBridge.Api.Application.DTOs;
-using PlainBridge.Api.Application.Services.HostApplication;
-using PlainBridge.Api.Application.Services.Identity;
-using PlainBridge.Api.Application.Services.ServerApplication;
-using PlainBridge.Api.Application.Services.Session;
-using PlainBridge.Api.Application.Services.Token;
-using PlainBridge.Api.Application.Services.User;
-using PlainBridge.Api.Infrastructure.Data.Context;
-using PlainBridge.Api.Infrastructure.Messaging;
-using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
-using PlainBridge.Server.Application.Management.Cache;
-using PlainBridge.Server.Application.Management.ResponseCompletionSources;
-using PlainBridge.Server.Application.Management.WebSocketManagement;
-using PlainBridge.Server.Application.Services.ApiExternalBus;
-using PlainBridge.Server.Application.Services.AppProjectConsumer;
-using PlainBridge.Server.Application.Services.HttpRequestProxy;
-using PlainBridge.Server.Application.Services.ServerBus;
-using PlainBridge.Server.Application.Services.WebSocket;
+using OpenTelemetry.Trace; 
 
 namespace Microsoft.Extensions.Hosting;
 

@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.Services.Token;
 using PlainBridge.Api.Application.Services.User;
+using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.SharedApplication.DTOs;
 
 namespace PlainBridge.Api.UnitTests.Application.Services;

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PlainBridge.Api.ApiEndPoint.Abstractions;
-using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.ServerApplication;
 using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.SharedApplication.DTOs;

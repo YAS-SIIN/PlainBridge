@@ -12,17 +12,17 @@ public class DeleteServerApplicationCommandHandler(ILogger<DeleteServerApplicati
 {
     public async Task Handle(DeleteServerApplicationCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Deleting server application with Id: {Id}", request);
+        _logger.LogInformation("Deleting server application with Id: {Id}", request.Id);
         var app = await _dbContext.ServerApplications.FindAsync(request.Id, cancellationToken);
         if (app == null)
         {
-            _logger.LogWarning("Server application with Id {Id} not found for deletion.", request.Id);
+            _logger.LogWarning("Server application with Id: {Id} not found for deletion.", request.Id);
             throw new NotFoundException(request.Id);
         }
 
         _dbContext.ServerApplications.Remove(app);
         await _dbContext.SaveChangesAsync(cancellationToken);
-        _logger.LogInformation("Server application with Id {Id} deleted.", request.Id);
         await _eventBus.PublishAsync<string>("Server_Application_Deleted", cancellationToken);
+        _logger.LogInformation("Server application with Id: {Id} deleted.", request.Id);
     }
 }

@@ -1,7 +1,6 @@
-﻿
-using System.Runtime.Serialization;
+﻿ 
 
-namespace PlainBridge.Api.Application.DTOs;
+namespace PlainBridge.Api.Infrastructure.DTOs;
 
 public class ApplicationSettings
 {

@@ -1,12 +1,10 @@
 
 using System.Globalization;
 using Elastic.Clients.Elasticsearch;
-using Elastic.CommonSchema;
 using Elastic.Ingest.Elasticsearch;
 using Elastic.Serilog.Sinks;
 using PlainBridge.Api.ApiEndPoint;
-using PlainBridge.Api.ApiEndPoint.Endpoints;
-using PlainBridge.Api.Application.DTOs;
+using PlainBridge.Api.Infrastructure.DTOs;
 using Serilog; 
 
 

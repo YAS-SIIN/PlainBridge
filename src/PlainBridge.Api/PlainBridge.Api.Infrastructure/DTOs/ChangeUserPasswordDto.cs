@@ -2,8 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace PlainBridge.Api.Application.DTOs;
-
+namespace PlainBridge.Api.Infrastructure.DTOs;
 public record ChangeUserPasswordDto : BaseDto<long>
 { 
      

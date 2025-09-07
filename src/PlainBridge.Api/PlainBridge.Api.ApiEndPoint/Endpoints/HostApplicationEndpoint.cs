@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Authorization; 
 using Microsoft.AspNetCore.Mvc;
 using PlainBridge.Api.ApiEndPoint.Abstractions; 
-using PlainBridge.Api.Application.Services.HostApplication;
 using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.UseCases.HostApplication.Commands;
-using PlainBridge.Api.Application.UseCases.HostApplication.Queries; 
+using PlainBridge.Api.Application.UseCases.HostApplication.Queries;
+using PlainBridge.Server.Application.Services.HostApplication;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
@@ -22,7 +22,7 @@ public class HostApplicationEndpoint : IEndpoint
             .RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme});
 
         // GetAllAsync
-        app.MapGet("", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, IMediator mediator) =>
+        app.MapGet("", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IMediator mediator) =>
         {
             var data = await mediator.Send(new GetAllHostApplicationsQuery(), cancellationToken);
             return Results.Ok(ResultDto<IList<HostApplicationDto>>.ReturnData(
@@ -33,7 +33,7 @@ public class HostApplicationEndpoint : IEndpoint
         }).WithName("GetAllHostApplications");
 
         // GetAsync
-        app.MapGet("{id:long}", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, ISessionService sessionService, IMediator mediator) =>
+        app.MapGet("{id:long}", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, ISessionService sessionService, IMediator mediator) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
@@ -49,7 +49,7 @@ public class HostApplicationEndpoint : IEndpoint
         }).WithName("GetHostApplication");
 
         // CreateAsync
-        app.MapPost("", async ([FromBody] CreateHostApplicationCommand hostApplication, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, ISessionService sessionService, IMediator mediator) =>
+        app.MapPost("", async ([FromBody] CreateHostApplicationCommand hostApplication, CancellationToken cancellationToken, ILoggerFactory loggerFactory, ISessionService sessionService, IMediator mediator) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
@@ -66,7 +66,7 @@ public class HostApplicationEndpoint : IEndpoint
         }).WithName("CreateHostApplication");
 
         // UpdateAsync
-        app.MapPatch("{id:long}", async (long id, CancellationToken cancellationToken, [FromBody] UpdateHostApplicationCommand hostApplication, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, ISessionService sessionService, IMediator mediator) =>
+        app.MapPatch("{id:long}", async (long id, CancellationToken cancellationToken, [FromBody] UpdateHostApplicationCommand hostApplication, ILoggerFactory loggerFactory, ISessionService sessionService, IMediator mediator) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
@@ -83,10 +83,10 @@ public class HostApplicationEndpoint : IEndpoint
         }).WithName("UpdateHostApplication");
          
         // DeleteAsync
-        app.MapDelete("{id:long}", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, IMediator mediator) =>
+        app.MapDelete("{id:long}", async (long id, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IMediator mediator) =>
         {
             await mediator.Send(new DeleteHostApplicationCommand { Id = id }, cancellationToken);
-            await hostApplicationService.DeleteAsync(id, cancellationToken);
+           
             return Results.Ok(ResultDto<object>.ReturnData(
                 null,
                 ResultCodeEnum.Success,
@@ -95,10 +95,9 @@ public class HostApplicationEndpoint : IEndpoint
         }).WithName("DeleteHostApplication");
 
         // Toggle isActive -> State
-        app.MapPatch("UpdateState/{id:long}/{isActive:bool}", async (long id, bool isActive, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHostApplicationService hostApplicationService, IMediator mediator) =>
+        app.MapPatch("UpdateState/{id:long}/{isActive:bool}", async (long id, bool isActive, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IMediator mediator) =>
         {
-             await mediator.Send(new UpdateStateHostApplicationCommand { Id = id, IsActive = isActive }, cancellationToken);
-            await hostApplicationService.UpdateStateAsync(id, isActive, cancellationToken);
+             await mediator.Send(new UpdateStateHostApplicationCommand { Id = id, IsActive = isActive }, cancellationToken); 
             return Results.Ok(ResultDto<HostApplicationDto>.ReturnData(
                 null,
                 ResultCodeEnum.Success,

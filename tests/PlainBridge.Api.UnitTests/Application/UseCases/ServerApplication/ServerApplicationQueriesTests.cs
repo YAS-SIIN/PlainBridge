@@ -3,64 +3,65 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using PlainBridge.Api.Application.UseCases.HostApplication.Queries;
+using PlainBridge.Api.Application.UseCases.ServerApplication.Queries;
 using PlainBridge.Api.Infrastructure.Messaging;
 using PlainBridge.SharedApplication.Exceptions;
 
 namespace PlainBridge.Api.UnitTests.Application.UseCases.HostApplication;
 
 [Collection("ApiUnitTestRun")]
-public class HostApplicationQueriesTests : IClassFixture<TestRunFixture>
+public class ServerApplicationQueriesTests : IClassFixture<TestRunFixture>
 {
     private readonly TestRunFixture _fixture;
-    private readonly GetAllHostApplicationsQueryHandler _getAllHostApplicationsQueryHandler;
-    private readonly GetHostApplicationQueryHandler _getHostApplicationQueryHandler; 
+    private readonly GetAllServerApplicationsQueryHandler _getAllServerApplicationsQueryHandler;
+    private readonly GetServerApplicationQueryHandler _getServerApplicationQueryHandler; 
 
 
-    public HostApplicationQueriesTests(TestRunFixture fixture)
+    public ServerApplicationQueriesTests(TestRunFixture fixture)
     {
-        _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture)); 
+        _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
 
-        _getAllHostApplicationsQueryHandler = new GetAllHostApplicationsQueryHandler(new Mock<ILogger<GetAllHostApplicationsQueryHandler>>().Object, _fixture.MemoryMainDbContext);
-        _getHostApplicationQueryHandler = new GetHostApplicationQueryHandler(new Mock<ILogger<GetHostApplicationQueryHandler>>().Object, _fixture.MemoryMainDbContext);
+        _getAllServerApplicationsQueryHandler = new GetAllServerApplicationsQueryHandler(new Mock<ILogger<GetAllServerApplicationsQueryHandler>>().Object, _fixture.MemoryMainDbContext);
+        _getServerApplicationQueryHandler = new GetServerApplicationQueryHandler(new Mock<ILogger<GetServerApplicationQueryHandler>>().Object, _fixture.MemoryMainDbContext);
     }
 
-    #region GetAllHostApplicationsQueryHandler
+    #region GetAllServerApplicationsQueryHandler
 
     [Fact]
-    public async Task GetAllHostApplicationsQueryHandler_WhenEveryThingIsOk_ShouldReturnData()
+    public async Task GetAllServerApplicationsQueryHandler_WhenEveryThingIsOk_ShouldReturnData()
     {
-        var result = await _getAllHostApplicationsQueryHandler.Handle(new GetAllHostApplicationsQuery(), CancellationToken.None);
+        var result = await _getAllServerApplicationsQueryHandler.Handle(new GetAllServerApplicationsQuery(), CancellationToken.None);
         Assert.NotNull(result);
         Assert.True(result.Count > 0);
     }
 
     #endregion
 
-    #region GetHostApplicationQueryHandler 
+    #region GetServerApplicationQueryHandler
     [Theory]
     [InlineData(1, 1)]
-    public async Task GetHostApplicationQueryHandler_WhenEveryThingIsOk_ShouldReturnData(long id, long userId)
+    public async Task GetServerApplicationQueryHandler_WhenEveryThingIsOk_ShouldReturnData(long id, long userId)
     {
-        GetHostApplicationQuery getHostApplicationQuery = new GetHostApplicationQuery
+        GetServerApplicationQuery getServerApplicationQuery = new GetServerApplicationQuery
         {
             Id = id,
             UserId = userId
         };
-        var result = await _getHostApplicationQueryHandler.Handle(getHostApplicationQuery, CancellationToken.None);
+        var result = await _getServerApplicationQueryHandler.Handle(getServerApplicationQuery, CancellationToken.None);
         Assert.NotNull(result);
         Assert.Equal(id, result.Id);
     }
 
     [Theory]
     [InlineData(999, 1)]
-    public async Task GetHostApplicationQueryHandler_WhenIdDoesntExist_ShouldThrowException(long id, long userId)
+    public async Task GetServerApplicationQueryHandler_WhenIdDoesntExist_ShouldThrowException(long id, long userId)
     {
-        GetHostApplicationQuery getHostApplicationQuery = new GetHostApplicationQuery
+        GetServerApplicationQuery getServerApplicationQuery = new GetServerApplicationQuery
         {
             Id = id,
             UserId = userId
         };
-        await Assert.ThrowsAsync<NotFoundException>(async () => await _getHostApplicationQueryHandler.Handle(getHostApplicationQuery, CancellationToken.None));
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _getServerApplicationQueryHandler.Handle(getServerApplicationQuery, CancellationToken.None));
     }
     #endregion
 

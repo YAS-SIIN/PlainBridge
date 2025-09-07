@@ -4,9 +4,9 @@ using IdentityModel.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Services.Token;
 using PlainBridge.Api.Application.Services.User;
+using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.SharedApplication.DTOs;
 using System.Text.Json;
 
@@ -21,7 +21,7 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
 
          
         // First, try to find the 'sub' claim (for user authentication)
-        var userId = _httpContextAccessor.HttpContext.User.Claims.SingleOrDefault(claim => claim.Type == "sub");
+        var userId = _httpContextAccessor!.HttpContext!.User.Claims.SingleOrDefault(claim => claim.Type == "sub");
         
         // If no 'sub' claim, try ClaimTypes.NameIdentifier (in case of claim mapping)
         if (userId == null)
@@ -53,7 +53,7 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
     public async Task<UserProfileViewDto?> GetCurrentUserProfileAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Getting current user profile from HttpContext.");
-        var userId = _httpContextAccessor.HttpContext.User.Claims.SingleOrDefault(claim => claim.Type == "sub");
+        var userId = _httpContextAccessor!.HttpContext!.User.Claims.SingleOrDefault(claim => claim.Type == "sub");
 
         if (userId == null || string.IsNullOrEmpty(userId.Value))
         {

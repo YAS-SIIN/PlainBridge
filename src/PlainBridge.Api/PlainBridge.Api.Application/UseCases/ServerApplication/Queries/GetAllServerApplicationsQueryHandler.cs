@@ -13,19 +13,20 @@ public class GetAllServerApplicationsQueryHandler(ILogger<GetAllServerApplicatio
 {
     public async Task<List<ServerApplicationDto>> Handle(GetAllServerApplicationsQuery request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Handling GetAllServerApplicationsQuery.");
-        var list = await _dbContext.ServerApplications.Include(a => a.User).AsNoTracking().ToListAsync(cancellationToken);
-        return list.Select(x => new ServerApplicationDto
+        _logger.LogInformation("Getting all server applications.");
+        var serverApplication = await _dbContext.ServerApplications.Include(a => a.User).AsNoTracking().ToListAsync(cancellationToken);
+
+        return serverApplication.Select(x => new ServerApplicationDto
         {
             Id = x.Id,
             AppId = x.AppId.ViewId,
+            ServerApplicationAppId = x.ServerApplicationViewId != Guid.Empty ? x.ServerApplicationViewId.ToString() : null,
             UserId = x.UserId,
             UserName = x.User.Username,
             Name = x.Name,
-            Domain = x.Domain.HostDomainName,
-            InternalUrl = x.InternalUrl.InternalUrlValue,
+            InternalPort = x.InternalPort.Port,
             Description = x.Description,
-            State = (RowStateEnum)x.State
+            State = (RowStateEnum)x.State,
         }).ToList();
     }
 }

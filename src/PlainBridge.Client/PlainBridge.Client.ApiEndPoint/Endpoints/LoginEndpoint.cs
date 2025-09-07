@@ -2,17 +2,10 @@
 using System.Text.Json;
 using Duende.IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using PlainBridge.Api.Application.DTOs;
-using PlainBridge.Api.Application.Services.Session;
-using PlainBridge.Api.Application.Services.Token;
-using PlainBridge.Api.Application.Services.User;
+using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.Client.Application.Services.Signal;
 using PlainBridge.SharedApplication.DTOs;
-using PlainBridge.SharedApplication.Enums;
-using PlainBridge.SharedApplication.Exceptions;
-using PlainBridge.SharedApplication.Extensions;
 
 
 

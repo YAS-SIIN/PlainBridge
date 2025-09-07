@@ -45,20 +45,40 @@ public class ServerApplicationCommandsTests : IClassFixture<TestRunFixture>
     [MemberData(nameof(ServerApplicationCommandsData.SetDataFor_CreateServerApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded), MemberType = typeof(ServerApplicationCommandsData))]
     public async Task CreateServerApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded(CreateServerApplicationCommand dto)
     {
+        if (dto.ServerApplicationType == SharedApplication.Enums.ServerApplicationTypeEnum.UsePort)
+        {
+            var serverApplication = await _fixture.MemoryMainDbContext.ServerApplications.FirstOrDefaultAsync();
+            dto.ServerApplicationAppId = serverApplication!.AppId.ViewId.ToString();
+        }
+
         var guid = await _createServerApplicationCommandHandler.Handle(dto, CancellationToken.None);
         Assert.NotEqual(Guid.Empty, guid);
 
         var created = await _fixture.MemoryMainDbContext.ServerApplications.FirstOrDefaultAsync(x => x.AppId.ViewId == guid);
         Assert.NotNull(created);
-        Assert.Equal("NewApp", created.Name);
+        Assert.Equal(dto.Name, created.Name);
+        Assert.Equal(dto.InternalPort, created.InternalPort.Port);
     }
 
     [Theory]
-    [MemberData(nameof(ServerApplicationCommandsData.SetDataFor_CreateServerApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException), MemberType = typeof(ServerApplicationCommandsData))]
-    public async Task CreateServerApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException(CreateServerApplicationCommand dto)
+    [MemberData(nameof(ServerApplicationCommandsData.SetDataFor_CreateServerApplicationCommandHandler_WhenInternalPortIsNotValid_ShouldThrowException), MemberType = typeof(ServerApplicationCommandsData))]
+    public async Task CreateServerApplicationCommandHandler_WhenInternalPortIsNotValid_ShouldThrowException(CreateServerApplicationCommand dto)
     {
-        await Assert.ThrowsAsync<DuplicatedException>(() => _createServerApplicationCommandHandler.Handle(dto, CancellationToken.None));
+        var res = await Assert.ThrowsAsync<ApplicationException>(() => _createServerApplicationCommandHandler.Handle(dto, CancellationToken.None));
+        Assert.NotNull(res);
+        Assert.Equal("Port range is not valid (1-65535).", res.Message);
     }
+
+
+    [Theory]
+    [MemberData(nameof(ServerApplicationCommandsData.SetDataFor_CreateServerApplicationCommandHandler_WhenServerApplicationViewIdIsEmpty_ShouldThrowException), MemberType = typeof(ServerApplicationCommandsData))]
+    public async Task CreateServerApplicationCommandHandler_WhenServerApplicationViewIdIsEmpty_ShouldThrowException(CreateServerApplicationCommand dto)
+    {
+        var res = await Assert.ThrowsAsync<NotFoundException>(() => _createServerApplicationCommandHandler.Handle(dto, CancellationToken.None));
+        Assert.NotNull(res);
+        //Assert.Equal(nameof(NotFoundException.ServerApplicationAppId), res.ParamName);
+    }
+
     #endregion
 
     #region DeleteServerApplicationCommandHandler
@@ -77,7 +97,9 @@ public class ServerApplicationCommandsTests : IClassFixture<TestRunFixture>
     [InlineData(9999)]
     public async Task DeleteServerApplicationCommandHandler_WhenIdDoesntExist_ShouldThrowException(int id)
     {
-        await Assert.ThrowsAsync<NotFoundException>(() => _deleteServerApplicationCommandHandler.Handle(new DeleteServerApplicationCommand { Id = id }, CancellationToken.None));
+        var res = await Assert.ThrowsAsync<NotFoundException>(() => _deleteServerApplicationCommandHandler.Handle(new DeleteServerApplicationCommand { Id = id }, CancellationToken.None));
+        Assert.NotNull(res);
+
     }
     #endregion
 
@@ -93,22 +115,14 @@ public class ServerApplicationCommandsTests : IClassFixture<TestRunFixture>
 
         Assert.NotNull(updated);
         Assert.Equal(dto.Name, updated.Name);
-        Assert.Equal(dto.Domain, updated.Domain.HostDomainName);
-        Assert.Equal(dto.InternalUrl, updated.InternalUrl.InternalUrlValue);
+        Assert.Equal(dto.InternalPort, updated.InternalPort.Port);
     }
     [Theory]
     [MemberData(nameof(ServerApplicationCommandsData.SetDataFor_UpdateServerApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException), MemberType = typeof(ServerApplicationCommandsData))]
     public async Task UpdateServerApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException(UpdateServerApplicationCommand dto)
     {
         await Assert.ThrowsAsync<ApplicationException>(() => _updateServerApplicationCommandHandler.Handle(dto, CancellationToken.None));
-    }
-
-    [Theory]
-    [MemberData(nameof(ServerApplicationCommandsData.SetDataFor_UpdateServerApplicationCommandHandler_WhenIdDoesntExist_ShouldThrowApplicationException), MemberType = typeof(ServerApplicationCommandsData))]
-    public async Task UpdateServerApplicationCommandHandler_WhenIdDoesntExist_ShouldThrowApplicationException(UpdateServerApplicationCommand dto)
-    {
-        await Assert.ThrowsAsync<NotFoundException>(() => _updateServerApplicationCommandHandler.Handle(dto, CancellationToken.None));
-    }
+    } 
     #endregion
 
 

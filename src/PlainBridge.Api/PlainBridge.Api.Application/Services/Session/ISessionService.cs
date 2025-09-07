@@ -1,4 +1,5 @@
-﻿using PlainBridge.Api.Application.DTOs;
+﻿
+using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.SharedApplication.DTOs;
 
 namespace PlainBridge.Api.Application.Services.Session

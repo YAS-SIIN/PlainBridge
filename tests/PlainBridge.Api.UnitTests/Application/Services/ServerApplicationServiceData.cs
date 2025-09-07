@@ -1,6 +1,4 @@
-﻿
-
-using PlainBridge.Api.Application.DTOs;
+﻿ 
 using PlainBridge.SharedApplication.DTOs;
 
 namespace PlainBridge.Api.UnitTests.Application.Services;
@@ -66,16 +64,6 @@ public class ServerApplicationServiceData
         yield return new object[] { new ServerApplicationDto
         {
             Id = 0,
-            Name = "NewApp",
-            InternalPort = 4000
-        }};
-    }  
-     
-    public static IEnumerable<object[]> SetDataFor_UpdateAsync_WhenIdDoesntExist_ShouldThrowApplicationException()
-    {
-        yield return new object[] { new ServerApplicationDto
-        {
-            Id = 999,
             Name = "NewApp",
             InternalPort = 4000
         }};

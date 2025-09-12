@@ -11,7 +11,7 @@ using PlainBridge.SharedApplication.Mediator;
 
 namespace PlainBridge.Api.Application.Features.User.Commands;
 
-public class UpdateUserCommandHandler(ILogger<CreateUserCommand> _logger, MainDbContext _dbContext, IIdentityService _identityService) : IRequestHandler<UpdateUserCommand>
+public class UpdateUserCommandHandler(ILogger<UpdateUserCommandHandler> _logger, MainDbContext _dbContext, IIdentityService _identityService) : IRequestHandler<UpdateUserCommand>
 {
     public async Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
@@ -28,12 +28,11 @@ public class UpdateUserCommandHandler(ILogger<CreateUserCommand> _logger, MainDb
             Id = request.Id,
             AppId = existedUser.AppId.ViewId,
             Username = existedUser.Username,
-            Email = existedUser.Email, 
-            Description = existedUser.Description, 
-            State = request.State, 
+            Email = existedUser.Email,  
+            //State = request.State,  
             Name = request.Name,
             Family = request.Family,
-            ExternalId = existedUser.ExternalId
+            ExternalId = existedUser.ExternalId,
         };
         var userUpdatingResult = await _identityService.UpdateUserAsync(userDto, cancellationToken);
 

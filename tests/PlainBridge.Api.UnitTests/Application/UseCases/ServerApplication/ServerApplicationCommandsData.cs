@@ -4,7 +4,7 @@ using PlainBridge.SharedApplication.DTOs;
 
 namespace PlainBridge.Api.UnitTests.Application.UseCases.ServerApplication;
 
-public class ServerApplicationCommandsData
+public static class ServerApplicationCommandsData
 {
     public static IEnumerable<object[]> SetDataFor_CreateServerApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded()
     {
@@ -25,7 +25,7 @@ public class ServerApplicationCommandsData
         }};
     }
 
-    public static IEnumerable<object[]> SetDataFor_CreateServerApplicationCommandHandler_WhenInternalPortIsNotValid_ShouldThrowException()
+    public static IEnumerable<object[]> SetDataFor_CreateServerApplicationCommandHandler_WhenInternalPortIsNotValid_ShouldThrowApplicationException()
     {
         yield return new object[] { new CreateServerApplicationCommand
         {
@@ -36,7 +36,7 @@ public class ServerApplicationCommandsData
         }};
     }
 
-    public static IEnumerable<object[]> SetDataFor_CreateServerApplicationCommandHandler_WhenServerApplicationViewIdIsEmpty_ShouldThrowException()
+    public static IEnumerable<object[]> SetDataFor_CreateServerApplicationCommandHandler_WhenServerApplicationViewIdIsEmpty_ShouldThrowNotFoundException()
     {
         yield return new object[] { new CreateServerApplicationCommand
         {
@@ -60,7 +60,7 @@ public class ServerApplicationCommandsData
         }};
     }
 
-    public static IEnumerable<object[]> SetDataFor_UpdateServerApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException()
+    public static IEnumerable<object[]> SetDataFor_UpdateServerApplicationCommandHandler_WhenIdDoesntExist_ShouldThrowNotFoundException()
     {
         yield return new object[] { new UpdateServerApplicationCommand
         {

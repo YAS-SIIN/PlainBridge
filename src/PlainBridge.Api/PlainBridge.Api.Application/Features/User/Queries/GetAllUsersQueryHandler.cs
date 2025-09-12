@@ -8,7 +8,7 @@ using PlainBridge.SharedApplication.Mediator;
 
 namespace PlainBridge.Api.Application.Features.User.Queries;
 
-public class GetAllUsersQueryHandler(ILogger<GetAllUsersQuery> _logger, MainDbContext _dbContext) : IRequestHandler<GetAllUsersQuery, List<UserDto>>
+public class GetAllUsersQueryHandler(ILogger<GetAllUsersQueryHandler> _logger, MainDbContext _dbContext) : IRequestHandler<GetAllUsersQuery, List<UserDto>>
 {
     public async Task<List<UserDto>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
     {

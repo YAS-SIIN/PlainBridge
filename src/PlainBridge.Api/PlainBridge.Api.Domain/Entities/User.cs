@@ -46,7 +46,8 @@ public class User : BaseEntity<long>
             PhoneNumber = phoneNumber,
             Name = name,
             Family = family,
-            ExternalId = externalId
+            ExternalId = externalId,
+            State = RowStateEnum.Active
         };
 
     }

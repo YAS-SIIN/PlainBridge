@@ -58,7 +58,7 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
         _mockIHttpContextAccessor.Setup(x => x.HttpContext).Returns(context);
 
         var expectedUser = new UserDto { ExternalId = userId, Username = "TestUser" };
-        _mockIMediator.Setup(x => x.Send(new GetUserByExternalIdQuery { ExternalId = userId }, It.IsAny<CancellationToken>()))
+        _mockIMediator.Setup(x => x.Send(It.IsAny<GetUserByExternalIdQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedUser);
 
         // Act

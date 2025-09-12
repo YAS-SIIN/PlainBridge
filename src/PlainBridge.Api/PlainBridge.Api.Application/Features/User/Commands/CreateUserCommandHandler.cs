@@ -12,7 +12,7 @@ using PlainBridge.SharedApplication.Mediator;
 
 namespace PlainBridge.Api.Application.Features.User.Commands;
 
-public class CreateUserCommandHandler(ILogger<CreateUserCommand> _logger, MainDbContext _dbContext, IIdentityService _identityService) : IRequestHandler<CreateUserCommand, Guid>
+public class CreateUserCommandHandler(ILogger<CreateUserCommandHandler> _logger, MainDbContext _dbContext, IIdentityService _identityService) : IRequestHandler<CreateUserCommand, Guid>
 {
     public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
@@ -30,10 +30,7 @@ public class CreateUserCommandHandler(ILogger<CreateUserCommand> _logger, MainDb
             AppId = request.AppId,
             Username = request.Username,
             Email = request.Email,
-            Password = request.Password,
-            Description = request.Description,
-            RePassword = request.RePassword,
-            State = request.State,
+            Password = request.Password, 
             PhoneNumber = request.PhoneNumber,
             Name = request.Name,
             Family = request.Family,

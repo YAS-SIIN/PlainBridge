@@ -17,10 +17,10 @@ namespace PlainBridge.Api.UnitTests.Application.UseCases.HostApplication;
 public class HostApplicationCommandsTests : IClassFixture<TestRunFixture>
 {
     private readonly TestRunFixture _fixture;
-    private readonly CreateHostApplicationCommandHandler _createHostApplicationCommandHandler;
-    private readonly UpdateHostApplicationCommandHandler _updateHostApplicationCommandHandler;
-    private readonly DeleteHostApplicationCommandHandler _deleteHostApplicationCommandHandler;
-    private readonly UpdateStateHostApplicationCommandHandler _updateStateHostApplicationCommandHandler;
+    private readonly CreateHostApplicationCommandHandler _createHandler;
+    private readonly UpdateHostApplicationCommandHandler _updateHandler;
+    private readonly DeleteHostApplicationCommandHandler _deleteHandler;
+    private readonly UpdateStateHostApplicationCommandHandler _updateStateHandler;
 
     private readonly Mock<IEventBus> _mockEventBus;
 
@@ -30,13 +30,13 @@ public class HostApplicationCommandsTests : IClassFixture<TestRunFixture>
         _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
         _mockEventBus = new Mock<IEventBus>();
 
-        _createHostApplicationCommandHandler = new CreateHostApplicationCommandHandler(new Mock<ILogger<CreateHostApplicationCommandHandler>>().Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
+        _createHandler = new CreateHostApplicationCommandHandler(new Mock<ILogger<CreateHostApplicationCommandHandler>>().Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
 
-        _updateHostApplicationCommandHandler = new UpdateHostApplicationCommandHandler(new Mock<ILogger<UpdateHostApplicationCommandHandler>>().Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
+        _updateHandler = new UpdateHostApplicationCommandHandler(new Mock<ILogger<UpdateHostApplicationCommandHandler>>().Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
 
-        _deleteHostApplicationCommandHandler = new DeleteHostApplicationCommandHandler(new Mock<ILogger<DeleteHostApplicationCommandHandler>>().Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
+        _deleteHandler = new DeleteHostApplicationCommandHandler(new Mock<ILogger<DeleteHostApplicationCommandHandler>>().Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
 
-        _updateStateHostApplicationCommandHandler = new UpdateStateHostApplicationCommandHandler(new Mock<ILogger<UpdateStateHostApplicationCommandHandler>>().Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
+        _updateStateHandler = new UpdateStateHostApplicationCommandHandler(new Mock<ILogger<UpdateStateHostApplicationCommandHandler>>().Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
 
     }
 
@@ -47,7 +47,7 @@ public class HostApplicationCommandsTests : IClassFixture<TestRunFixture>
     [MemberData(nameof(HostApplicationCommandsData.SetDataFor_CreateHostApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded), MemberType = typeof(HostApplicationCommandsData))]
     public async Task CreateHostApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded(CreateHostApplicationCommand dto)
     {
-        var guid = await _createHostApplicationCommandHandler.Handle(dto, CancellationToken.None);
+        var guid = await _createHandler.Handle(dto, CancellationToken.None);
         Assert.NotEqual(Guid.Empty, guid);
 
         var created = await _fixture.MemoryMainDbContext.HostApplications.FirstOrDefaultAsync(x => x.AppId.ViewId == guid);
@@ -56,10 +56,10 @@ public class HostApplicationCommandsTests : IClassFixture<TestRunFixture>
     }
 
     [Theory]
-    [MemberData(nameof(HostApplicationCommandsData.SetDataFor_CreateHostApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException), MemberType = typeof(HostApplicationCommandsData))]
-    public async Task CreateHostApplicationCommandHandler__WhenDomainIsExisted_ShouldThrowException(CreateHostApplicationCommand dto)
+    [MemberData(nameof(HostApplicationCommandsData.SetDataFor_CreateHostApplicationCommandHandler__WhenDomainIsExisted_ShouldThrowDuplicatedException), MemberType = typeof(HostApplicationCommandsData))]
+    public async Task CreateHostApplicationCommandHandler__WhenDomainIsExisted_ShouldThrowDuplicatedException(CreateHostApplicationCommand dto)
     {
-        await Assert.ThrowsAsync<DuplicatedException>(() => _createHostApplicationCommandHandler.Handle(dto, CancellationToken.None));
+        await Assert.ThrowsAsync<DuplicatedException>(() => _createHandler.Handle(dto, CancellationToken.None));
     }
     #endregion
 
@@ -70,16 +70,16 @@ public class HostApplicationCommandsTests : IClassFixture<TestRunFixture>
     public async Task DeleteHostApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded(int id)
     {
 
-        await _deleteHostApplicationCommandHandler.Handle(new DeleteHostApplicationCommand { Id = id }, CancellationToken.None);
+        await _deleteHandler.Handle(new DeleteHostApplicationCommand { Id = id }, CancellationToken.None);
         var deleted = await _fixture.MemoryMainDbContext.HostApplications.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         Assert.Null(deleted);
     }
 
     [Theory]
     [InlineData(9999)]
-    public async Task DeleteHostApplicationCommandHandler_WhenIdDoesntExist_ShouldThrowException(int id)
+    public async Task DeleteHostApplicationCommandHandler_WhenIdDoesntExist_ShouldThrowNotFoundException(int id)
     { 
-        var res = await Assert.ThrowsAsync<NotFoundException>(() => _deleteHostApplicationCommandHandler.Handle(new DeleteHostApplicationCommand { Id = id }, CancellationToken.None));
+        var res = await Assert.ThrowsAsync<NotFoundException>(() => _deleteHandler.Handle(new DeleteHostApplicationCommand { Id = id }, CancellationToken.None));
         Assert.NotNull(res);
     }
     #endregion
@@ -90,7 +90,7 @@ public class HostApplicationCommandsTests : IClassFixture<TestRunFixture>
     [MemberData(nameof(HostApplicationCommandsData.SetDataFor_UpdateHostApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded), MemberType = typeof(HostApplicationCommandsData))]
     public async Task UpdateHostApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded(UpdateHostApplicationCommand dto)
     {
-        await _updateHostApplicationCommandHandler.Handle(dto, CancellationToken.None);
+        await _updateHandler.Handle(dto, CancellationToken.None);
 
         var updated = await _fixture.MemoryMainDbContext.HostApplications.AsNoTracking().FirstOrDefaultAsync(x => x.Id == dto.Id);
 
@@ -100,17 +100,17 @@ public class HostApplicationCommandsTests : IClassFixture<TestRunFixture>
         Assert.Equal(dto.InternalUrl, updated.InternalUrl.InternalUrlValue);
     }
     [Theory]
-    [MemberData(nameof(HostApplicationCommandsData.SetDataFor_UpdateHostApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException), MemberType = typeof(HostApplicationCommandsData))]
-    public async Task UpdateHostApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException(UpdateHostApplicationCommand dto)
+    [MemberData(nameof(HostApplicationCommandsData.SetDataFor_UpdateHostApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowApplicationException), MemberType = typeof(HostApplicationCommandsData))]
+    public async Task UpdateHostApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowApplicationException(UpdateHostApplicationCommand dto)
     {
-        await Assert.ThrowsAsync<ApplicationException>(() => _updateHostApplicationCommandHandler.Handle(dto, CancellationToken.None));
+        await Assert.ThrowsAsync<ApplicationException>(() => _updateHandler.Handle(dto, CancellationToken.None));
     }
 
     [Theory]
     [MemberData(nameof(HostApplicationCommandsData.SetDataFor_UpdateHostApplicationCommandHandler_WhenIdDoesntExist_ShouldThrowApplicationException), MemberType = typeof(HostApplicationCommandsData))]
     public async Task UpdateHostApplicationCommandHandler_WhenIdDoesntExist_ShouldThrowApplicationException(UpdateHostApplicationCommand dto)
     {
-        await Assert.ThrowsAsync<NotFoundException>(() => _updateHostApplicationCommandHandler.Handle(dto, CancellationToken.None));
+        await Assert.ThrowsAsync<NotFoundException>(() => _updateHandler.Handle(dto, CancellationToken.None));
     }
     #endregion
 
@@ -123,22 +123,24 @@ public class HostApplicationCommandsTests : IClassFixture<TestRunFixture>
     [InlineData(2, false)]
     public async Task UpdateStateHostApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded(int id, bool IsActive)
     {
-        await _updateStateHostApplicationCommandHandler.Handle(new UpdateStateHostApplicationCommand { Id = id, IsActive = IsActive }, CancellationToken.None);
+        await _updateStateHandler.Handle(new UpdateStateHostApplicationCommand { Id = id, IsActive = IsActive }, CancellationToken.None);
 
         var updated = await _fixture.MemoryMainDbContext.HostApplications.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
         Assert.NotNull(updated);
         Assert.Equal(id, updated.Id);
-        Assert.Equal(RowStateEnum.Active, updated.State);
+
+
+        Assert.Equal(IsActive ? RowStateEnum.Active : RowStateEnum.DeActive, updated.State);
     }
 
 
     [Theory]
     [InlineData(999, true)]
     [InlineData(999, false)]
-    public async Task UpdateStateHostApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException(int id, bool IsActive)
+    public async Task UpdateStateHostApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowNotFoundException(int id, bool IsActive)
     {
-        await Assert.ThrowsAsync<NotFoundException>(() => _updateStateHostApplicationCommandHandler.Handle(new UpdateStateHostApplicationCommand { Id = id, IsActive = IsActive }, CancellationToken.None));
+        await Assert.ThrowsAsync<NotFoundException>(() => _updateStateHandler.Handle(new UpdateStateHostApplicationCommand { Id = id, IsActive = IsActive }, CancellationToken.None));
     }
     #endregion
 

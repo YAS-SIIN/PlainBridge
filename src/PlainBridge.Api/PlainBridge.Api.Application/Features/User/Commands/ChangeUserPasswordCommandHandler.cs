@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace PlainBridge.Api.Application.Features.User.Commands;
 
-public class ChangeUserPasswordCommandHandler(ILogger<CreateUserCommand> _logger, MainDbContext _dbContext, IIdentityService _identityService) : IRequestHandler<ChangeUserPasswordCommand>
+public class ChangeUserPasswordCommandHandler(ILogger<ChangeUserPasswordCommandHandler> _logger, MainDbContext _dbContext, IIdentityService _identityService) : IRequestHandler<ChangeUserPasswordCommand>
 {
     public async Task Handle(ChangeUserPasswordCommand request, CancellationToken cancellationToken)
     {

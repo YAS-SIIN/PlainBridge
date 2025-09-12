@@ -4,8 +4,6 @@ using PlainBridge.Api.ApiEndPoint.Abstractions;
 using PlainBridge.Api.Application.Features.User.Commands;
 using PlainBridge.Api.Application.Features.User.Queries;
 using PlainBridge.Api.Application.Services.Session;
-using PlainBridge.Api.Application.Services.User;
-using PlainBridge.Api.Application.UseCases.ServerApplication.Queries;
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
@@ -65,7 +63,7 @@ public class UserEndpoint : IEndpoint
             if (user == null)
                 throw new NotFoundException("user");
 
-            changeUserPassword.Id = user.Id;
+            changeUserPassword.Id = user!.Id!;
             await mediator.Send(changeUserPassword, cancellationToken);
             return Results.Ok(ResultDto<object>.ReturnData(
                 null,

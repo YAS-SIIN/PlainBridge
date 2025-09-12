@@ -1,11 +1,14 @@
 ﻿using PlainBridge.SharedApplication.DTOs;
 
 using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
 
 namespace PlainBridge.Api.Infrastructure.DTOs;
 
-public record UserDto : BaseDto<long>
+public record UserDto
 {
+    public long Id { get; set; }
+
     [Display(Name = "Application Id")]
     public Guid AppId { get; set; }
 
@@ -18,14 +21,9 @@ public record UserDto : BaseDto<long>
     public string Username { get; set; }
 
     [Display(Name = "Password")]
-    [Required]
-    [StringLength(150, ErrorMessage = "Password must be between 6 and 100 characters.", MinimumLength = 6)]
+    [Required] 
     public string Password { get; set; }
-
-    [Display(Name = "Confirm password")]
-    [Compare("Password", ErrorMessage = "Passwords do not match.")]
-    public string RePassword { get; set; }
-
+     
     [Display(Name = "Email")]
     [Required]
     [StringLength(200, MinimumLength = 5)]

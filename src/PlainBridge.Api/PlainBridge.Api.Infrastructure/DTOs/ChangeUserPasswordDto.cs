@@ -3,9 +3,10 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace PlainBridge.Api.Infrastructure.DTOs;
-public record ChangeUserPasswordDto : BaseDto<long>
-{ 
-     
+public record ChangeUserPasswordDto
+{
+    public long Id { get; set; }
+
     [Display(Name = "Current password")]
     [Required]
     public string CurrentPassword { get; set; }

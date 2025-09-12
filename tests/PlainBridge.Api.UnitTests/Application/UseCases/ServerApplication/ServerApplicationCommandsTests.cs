@@ -16,10 +16,10 @@ namespace PlainBridge.Api.UnitTests.Application.UseCases.ServerApplication;
 public class ServerApplicationCommandsTests : IClassFixture<TestRunFixture>
 {
     private readonly TestRunFixture _fixture;
-    private readonly CreateServerApplicationCommandHandler _createServerApplicationCommandHandler;
-    private readonly UpdateServerApplicationCommandHandler _updateServerApplicationCommandHandler;
-    private readonly DeleteServerApplicationCommandHandler _deleteServerApplicationCommandHandler;
-    private readonly UpdateStateServerApplicationCommandHandler _updateStateServerApplicationCommandHandler;
+    private readonly CreateServerApplicationCommandHandler _createHandler;
+    private readonly UpdateServerApplicationCommandHandler _updateHandler;
+    private readonly DeleteServerApplicationCommandHandler _deleteHandler;
+    private readonly UpdateStateServerApplicationCommandHandler _updateStateHandler;
 
     private readonly Mock<IEventBus> _mockEventBus;
 
@@ -29,13 +29,13 @@ public class ServerApplicationCommandsTests : IClassFixture<TestRunFixture>
         _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
         _mockEventBus = new Mock<IEventBus>();
 
-        _createServerApplicationCommandHandler = new CreateServerApplicationCommandHandler(new Mock<ILogger<CreateServerApplicationCommandHandler>>().Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
+        _createHandler = new CreateServerApplicationCommandHandler(new Mock<ILogger<CreateServerApplicationCommandHandler>>().Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
 
-        _updateServerApplicationCommandHandler = new UpdateServerApplicationCommandHandler(new Mock<ILogger<UpdateServerApplicationCommandHandler>>().Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
+        _updateHandler = new UpdateServerApplicationCommandHandler(new Mock<ILogger<UpdateServerApplicationCommandHandler>>().Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
 
-        _deleteServerApplicationCommandHandler = new DeleteServerApplicationCommandHandler(new Mock<ILogger<DeleteServerApplicationCommandHandler>>().Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
+        _deleteHandler = new DeleteServerApplicationCommandHandler(new Mock<ILogger<DeleteServerApplicationCommandHandler>>().Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
 
-        _updateStateServerApplicationCommandHandler = new UpdateStateServerApplicationCommandHandler(new Mock<ILogger<UpdateStateServerApplicationCommandHandler>>().Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
+        _updateStateHandler = new UpdateStateServerApplicationCommandHandler(new Mock<ILogger<UpdateStateServerApplicationCommandHandler>>().Object, _fixture.MemoryMainDbContext, _mockEventBus.Object);
 
     }
 
@@ -52,7 +52,7 @@ public class ServerApplicationCommandsTests : IClassFixture<TestRunFixture>
             dto.ServerApplicationAppId = serverApplication!.AppId.ViewId.ToString();
         }
 
-        var guid = await _createServerApplicationCommandHandler.Handle(dto, CancellationToken.None);
+        var guid = await _createHandler.Handle(dto, CancellationToken.None);
         Assert.NotEqual(Guid.Empty, guid);
 
         var created = await _fixture.MemoryMainDbContext.ServerApplications.FirstOrDefaultAsync(x => x.AppId.ViewId == guid);
@@ -62,20 +62,20 @@ public class ServerApplicationCommandsTests : IClassFixture<TestRunFixture>
     }
 
     [Theory]
-    [MemberData(nameof(ServerApplicationCommandsData.SetDataFor_CreateServerApplicationCommandHandler_WhenInternalPortIsNotValid_ShouldThrowException), MemberType = typeof(ServerApplicationCommandsData))]
-    public async Task CreateServerApplicationCommandHandler_WhenInternalPortIsNotValid_ShouldThrowException(CreateServerApplicationCommand dto)
+    [MemberData(nameof(ServerApplicationCommandsData.SetDataFor_CreateServerApplicationCommandHandler_WhenInternalPortIsNotValid_ShouldThrowApplicationException), MemberType = typeof(ServerApplicationCommandsData))]
+    public async Task CreateServerApplicationCommandHandler_WhenInternalPortIsNotValid_ShouldThrowApplicationException(CreateServerApplicationCommand dto)
     {
-        var res = await Assert.ThrowsAsync<ApplicationException>(() => _createServerApplicationCommandHandler.Handle(dto, CancellationToken.None));
+        var res = await Assert.ThrowsAsync<ApplicationException>(() => _createHandler.Handle(dto, CancellationToken.None));
         Assert.NotNull(res);
         Assert.Equal("Port range is not valid (1-65535).", res.Message);
     }
 
 
     [Theory]
-    [MemberData(nameof(ServerApplicationCommandsData.SetDataFor_CreateServerApplicationCommandHandler_WhenServerApplicationViewIdIsEmpty_ShouldThrowException), MemberType = typeof(ServerApplicationCommandsData))]
-    public async Task CreateServerApplicationCommandHandler_WhenServerApplicationViewIdIsEmpty_ShouldThrowException(CreateServerApplicationCommand dto)
+    [MemberData(nameof(ServerApplicationCommandsData.SetDataFor_CreateServerApplicationCommandHandler_WhenServerApplicationViewIdIsEmpty_ShouldThrowNotFoundException), MemberType = typeof(ServerApplicationCommandsData))]
+    public async Task CreateServerApplicationCommandHandler_WhenServerApplicationViewIdIsEmpty_ShouldThrowNotFoundException(CreateServerApplicationCommand dto)
     {
-        var res = await Assert.ThrowsAsync<NotFoundException>(() => _createServerApplicationCommandHandler.Handle(dto, CancellationToken.None));
+        var res = await Assert.ThrowsAsync<NotFoundException>(() => _createHandler.Handle(dto, CancellationToken.None));
         Assert.NotNull(res);
         //Assert.Equal(nameof(NotFoundException.ServerApplicationAppId), res.ParamName);
     }
@@ -89,16 +89,16 @@ public class ServerApplicationCommandsTests : IClassFixture<TestRunFixture>
     public async Task DeleteServerApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded(int id)
     {
 
-        await _deleteServerApplicationCommandHandler.Handle(new DeleteServerApplicationCommand { Id = id }, CancellationToken.None);
+        await _deleteHandler.Handle(new DeleteServerApplicationCommand { Id = id }, CancellationToken.None);
         var deleted = await _fixture.MemoryMainDbContext.ServerApplications.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         Assert.Null(deleted);
     }
 
     [Theory]
     [InlineData(9999)]
-    public async Task DeleteServerApplicationCommandHandler_WhenIdDoesntExist_ShouldThrowException(int id)
+    public async Task DeleteServerApplicationCommandHandler_WhenIdDoesntExist_ShouldThrowNotFoundException(int id)
     {
-        var res = await Assert.ThrowsAsync<NotFoundException>(() => _deleteServerApplicationCommandHandler.Handle(new DeleteServerApplicationCommand { Id = id }, CancellationToken.None));
+        var res = await Assert.ThrowsAsync<NotFoundException>(() => _deleteHandler.Handle(new DeleteServerApplicationCommand { Id = id }, CancellationToken.None));
         Assert.NotNull(res);
 
     }
@@ -110,7 +110,7 @@ public class ServerApplicationCommandsTests : IClassFixture<TestRunFixture>
     [MemberData(nameof(ServerApplicationCommandsData.SetDataFor_UpdateServerApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded), MemberType = typeof(ServerApplicationCommandsData))]
     public async Task UpdateServerApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded(UpdateServerApplicationCommand dto)
     {
-        await _updateServerApplicationCommandHandler.Handle(dto, CancellationToken.None);
+        await _updateHandler.Handle(dto, CancellationToken.None);
 
         var updated = await _fixture.MemoryMainDbContext.ServerApplications.AsNoTracking().FirstOrDefaultAsync(x => x.Id == dto.Id);
 
@@ -119,10 +119,10 @@ public class ServerApplicationCommandsTests : IClassFixture<TestRunFixture>
         Assert.Equal(dto.InternalPort, updated.InternalPort.Port);
     }
     [Theory]
-    [MemberData(nameof(ServerApplicationCommandsData.SetDataFor_UpdateServerApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException), MemberType = typeof(ServerApplicationCommandsData))]
-    public async Task UpdateServerApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException(UpdateServerApplicationCommand dto)
+    [MemberData(nameof(ServerApplicationCommandsData.SetDataFor_UpdateServerApplicationCommandHandler_WhenIdDoesntExist_ShouldThrowNotFoundException), MemberType = typeof(ServerApplicationCommandsData))]
+    public async Task UpdateServerApplicationCommandHandler_WhenIdDoesntExist_ShouldThrowNotFoundException(UpdateServerApplicationCommand dto)
     {
-        await Assert.ThrowsAsync<ApplicationException>(() => _updateServerApplicationCommandHandler.Handle(dto, CancellationToken.None));
+        await Assert.ThrowsAsync<NotFoundException>(() => _updateHandler.Handle(dto, CancellationToken.None));
     }
     #endregion
 
@@ -134,22 +134,22 @@ public class ServerApplicationCommandsTests : IClassFixture<TestRunFixture>
     [InlineData(2, false)]
     public async Task UpdateStateServerApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded(int id, bool IsActive)
     {
-        await _updateStateServerApplicationCommandHandler.Handle(new UpdateStateServerApplicationCommand { Id = id, IsActive = IsActive }, CancellationToken.None);
+        await _updateStateHandler.Handle(new UpdateStateServerApplicationCommand { Id = id, IsActive = IsActive }, CancellationToken.None);
 
         var updated = await _fixture.MemoryMainDbContext.ServerApplications.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
         Assert.NotNull(updated);
         Assert.Equal(id, updated.Id);
-        Assert.Equal(RowStateEnum.Active, updated.State);
+        Assert.Equal(IsActive ? RowStateEnum.Active : RowStateEnum.DeActive, updated.State);
     }
 
 
     [Theory]
     [InlineData(999, true)]
     [InlineData(999, false)]
-    public async Task UpdateStateServerApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException(int id, bool IsActive)
+    public async Task UpdateStateServerApplicationCommandHandler_WhenIdDoesntExist_ShouldThrowNotFoundException(int id, bool IsActive)
     {
-        await Assert.ThrowsAsync<NotFoundException>(() => _updateStateServerApplicationCommandHandler.Handle(new UpdateStateServerApplicationCommand { Id = id, IsActive = IsActive }, CancellationToken.None));
+        await Assert.ThrowsAsync<NotFoundException>(() => _updateStateHandler.Handle(new UpdateStateServerApplicationCommand { Id = id, IsActive = IsActive }, CancellationToken.None));
     }
     #endregion
 

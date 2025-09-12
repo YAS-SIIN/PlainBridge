@@ -3,7 +3,7 @@ using PlainBridge.Api.Application.UseCases.HostApplication.Commands;
 
 namespace PlainBridge.Api.UnitTests.Application.UseCases.HostApplication;
 
-public class HostApplicationCommandsData
+public static class HostApplicationCommandsData
 {
     public static IEnumerable<object[]> SetDataFor_CreateHostApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded()
     {
@@ -16,7 +16,7 @@ public class HostApplicationCommandsData
         }};
     }
 
-    public static IEnumerable<object[]> SetDataFor_CreateHostApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException()
+    public static IEnumerable<object[]> SetDataFor_CreateHostApplicationCommandHandler__WhenDomainIsExisted_ShouldThrowDuplicatedException()
     {
         yield return new object[] { new CreateHostApplicationCommand
         {
@@ -38,7 +38,7 @@ public class HostApplicationCommandsData
         }};
     }
 
-    public static IEnumerable<object[]> SetDataFor_UpdateHostApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowException()
+    public static IEnumerable<object[]> SetDataFor_UpdateHostApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowApplicationException()
     {
         yield return new object[] { new UpdateHostApplicationCommand
         {

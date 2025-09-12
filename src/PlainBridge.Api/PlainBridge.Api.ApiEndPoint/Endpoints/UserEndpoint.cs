@@ -1,13 +1,17 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using PlainBridge.Api.ApiEndPoint.Abstractions;
+using PlainBridge.Api.Application.Features.User.Commands;
+using PlainBridge.Api.Application.Features.User.Queries;
 using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.Services.User;
+using PlainBridge.Api.Application.UseCases.ServerApplication.Queries;
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
 using PlainBridge.SharedApplication.Extensions;
+using PlainBridge.SharedApplication.Mediator;
 
 namespace PlainBridge.Api.ApiEndPoint.Endpoints;
 
@@ -17,9 +21,9 @@ public class UserEndpoint : IEndpoint
     {
         var app = builder.MapGroup("api/User");
         // GetAllAsync
-        app.MapGet("", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IUserService userService) =>
+        app.MapGet("", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IMediator mediator) =>
         {
-            var data = await userService.GetAllAsync(cancellationToken);
+            var data = await mediator.Send(new GetAllUsersQuery(), cancellationToken);
             return Results.Ok(ResultDto<IList<UserDto>>.ReturnData(
                 data,
                 ResultCodeEnum.Success,
@@ -44,9 +48,9 @@ public class UserEndpoint : IEndpoint
         .RequireAuthorization(new Microsoft.AspNetCore.Authorization.AuthorizeAttribute { AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme });
 
         // CreateAsync
-        app.MapPost("", async ([FromBody] UserDto user, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IUserService userService) =>
+        app.MapPost("", async ([FromBody] CreateUserCommand user, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IMediator mediator) =>
         {
-            var id = await userService.CreateAsync(user, cancellationToken);
+            var id = await mediator.Send(user, cancellationToken);
             return Results.Created($"/user/{id}", ResultDto<Guid>.ReturnData(
                 id,
                 ResultCodeEnum.Success,
@@ -55,14 +59,14 @@ public class UserEndpoint : IEndpoint
         }).WithName("CreateUser");
 
         // ChangePasswordAsync
-        app.MapPatch("ChangePassword", async ([FromBody] ChangeUserPasswordDto changeUserPassword, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IUserService userService, ISessionService sessionService) =>
+        app.MapPatch("ChangePassword", async ([FromBody] ChangeUserPasswordCommand changeUserPassword, CancellationToken cancellationToken, ILoggerFactory loggerFactory, ISessionService sessionService, IMediator mediator) =>
         {
             var user = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (user == null)
                 throw new NotFoundException("user");
 
             changeUserPassword.Id = user.Id;
-            await userService.ChangePasswordAsync(changeUserPassword, cancellationToken);
+            await mediator.Send(changeUserPassword, cancellationToken);
             return Results.Ok(ResultDto<object>.ReturnData(
                 null,
                 ResultCodeEnum.Success,
@@ -73,14 +77,14 @@ public class UserEndpoint : IEndpoint
 
 
         // UpdateAsync
-        app.MapPatch("{id:long}", async ([FromBody] UserDto user, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IUserService userService, ISessionService sessionService) =>
+        app.MapPatch("{id:long}", async ([FromBody] UpdateUserCommand user, CancellationToken cancellationToken, ILoggerFactory loggerFactory, IMediator mediator, ISessionService sessionService) =>
         {
             var currentUser = await sessionService.GetCurrentUserAsync(cancellationToken);
             if (currentUser == null)
                 throw new NotFoundException("user");
 
             user.Id = currentUser.Id;
-            await userService.UpdateAsync(user, cancellationToken);
+            await mediator.Send(user, cancellationToken);
             return Results.Ok(ResultDto<object>.ReturnData(
                 null,
                 ResultCodeEnum.Success,
@@ -91,7 +95,7 @@ public class UserEndpoint : IEndpoint
 
 
         // ChangePasswordAsync
-        app.MapPost("RefreshToken", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IUserService userService, ISessionService sessionService) =>
+        app.MapPost("RefreshToken", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, ISessionService sessionService) =>
         {
             await sessionService.RefreshTokenAsync(cancellationToken);
            

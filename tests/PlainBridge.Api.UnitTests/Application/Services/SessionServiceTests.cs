@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using PlainBridge.Api.Application.Features.User.Queries;
 using PlainBridge.Api.Application.Services.Session;
-using PlainBridge.Api.Application.Services.Token;
-using PlainBridge.Api.Application.Services.User;
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.Api.Infrastructure.Persistence.Cache;
 using PlainBridge.SharedApplication.DTOs;
+using PlainBridge.SharedApplication.Mediator;
 
 namespace PlainBridge.Api.UnitTests.Application.Services;
 
@@ -22,7 +22,7 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
     private readonly ISessionService _sessionService;
     private readonly Mock<ILogger<SessionService>> _mockLoggerSessionService;
     private readonly Mock<IHttpContextAccessor> _mockIHttpContextAccessor;
-    private readonly Mock<IUserService> _mockIUserService;
+    private readonly Mock<IMediator> _mockIMediator;
     private readonly Mock<ICacheManagement> _mockICacheManagement;
     private readonly Mock<IHttpClientFactory> _mockIHttpClientFactory;
     private readonly Mock<IOptions<ApplicationSettings>> _mockApplicationSetting;
@@ -32,15 +32,15 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
         _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
         _mockLoggerSessionService = new Mock<ILogger<SessionService>>();
         _mockIHttpContextAccessor = new Mock<IHttpContextAccessor>();
-        _mockIUserService = new Mock<IUserService>();
+        _mockIMediator = new Mock<IMediator>();
         _mockICacheManagement = new Mock<ICacheManagement>();
         _mockIHttpClientFactory = new Mock<IHttpClientFactory>();
         _mockApplicationSetting = new Mock<IOptions<ApplicationSettings>>();
         _sessionService = new SessionService(
             _mockLoggerSessionService.Object,
             _mockIHttpContextAccessor.Object,
-            _mockIUserService.Object,
             _mockICacheManagement.Object,
+            _mockIMediator.Object,
             _mockIHttpClientFactory.Object,
             _mockApplicationSetting.Object
         );
@@ -58,7 +58,7 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
         _mockIHttpContextAccessor.Setup(x => x.HttpContext).Returns(context);
 
         var expectedUser = new UserDto { ExternalId = userId, Username = "TestUser" };
-        _mockIUserService.Setup(x => x.GetUserByExternalIdAsync(userId, It.IsAny<CancellationToken>()))
+        _mockIMediator.Setup(x => x.Send(new GetUserByExternalIdQuery { ExternalId = userId }, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedUser);
 
         // Act

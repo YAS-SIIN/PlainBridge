@@ -1,8 +1,7 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Moq;
-using PlainBridge.Api.Application.Services.User;
+using Moq; 
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.Api.Infrastructure.ExternalServices.Identity;
 using PlainBridge.SharedApplication.DTOs;

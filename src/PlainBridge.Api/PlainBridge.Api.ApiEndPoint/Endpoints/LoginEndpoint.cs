@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using PlainBridge.Api.ApiEndPoint.Abstractions;
+using PlainBridge.Api.Application.Features.User.Commands;
+using PlainBridge.Api.Application.Features.User.Queries;
 using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.Services.Token;
 using PlainBridge.Api.Application.Services.User;
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.Api.Infrastructure.Persistence.Cache;
 using PlainBridge.SharedApplication.Exceptions;
+using PlainBridge.SharedApplication.Mediator;
 
 namespace PlainBridge.Api.ApiEndPoint.Endpoints;
 
@@ -14,11 +17,11 @@ public class LoginEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder builder)
     {
-        var app = builder.MapGroup(""); 
+        var app = builder.MapGroup("");
         app.MapBffManagementEndpoints();
-     
 
-        app.MapGet("/", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHttpContextAccessor _httpContextAccessor, ITokenService _tokenService, ICacheManagement _cacheManagement, ISessionService _sessionService, IUserService _userService, IOptions<ApplicationSettings> _applicationSettings) =>
+
+        app.MapGet("/", async (CancellationToken cancellationToken, ILoggerFactory loggerFactory, IHttpContextAccessor _httpContextAccessor, ITokenService _tokenService, ICacheManagement _cacheManagement, ISessionService _sessionService, IMediator _mediator, IOptions<ApplicationSettings> _applicationSettings) =>
         {
             var logger = loggerFactory.CreateLogger(nameof(LoginEndpoint));
 
@@ -29,7 +32,7 @@ public class LoginEndpoint : IEndpoint
                 token = await _httpContextAccessor.HttpContext.GetTokenAsync("access_token");
             var idToken = await _httpContextAccessor.HttpContext.GetTokenAsync("id_token");
             var refreshToken = await _httpContextAccessor.HttpContext.GetTokenAsync("refresh_token");
-             
+
 
             var jwtSecurityToken = _tokenService.ParseToken(token);
             var sub = jwtSecurityToken.Claims.Single(claim => claim.Type == "sub").Value;
@@ -46,7 +49,7 @@ public class LoginEndpoint : IEndpoint
 
             try
             {
-                await _userService.GetUserByExternalIdAsync(sub, cancellationToken);
+                await _mediator.Send(new GetUserByExternalIdQuery { ExternalId = sub }, cancellationToken);
             }
             catch (NotFoundException)
             {
@@ -54,7 +57,7 @@ public class LoginEndpoint : IEndpoint
 
                 if (customerProfile is not null)
                 {
-                    var user = new UserDto
+                    var user = new CreateUserCommand
                     {
                         ExternalId = sub,
                         Username = customerProfile.Username,
@@ -63,8 +66,8 @@ public class LoginEndpoint : IEndpoint
                         Name = customerProfile.Name,
                         Family = customerProfile.Family
                     };
-                    await _userService.CreateLocallyAsync(user, cancellationToken);
-                } 
+                    await _mediator.Send(user, cancellationToken);
+                }
             }
 
             var baseUri = new Uri(_applicationSettings.Value.PlainBridgeWebUrl);

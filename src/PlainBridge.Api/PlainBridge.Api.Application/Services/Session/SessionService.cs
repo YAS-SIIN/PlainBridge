@@ -4,17 +4,17 @@ using IdentityModel.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using PlainBridge.Api.Application.Services.Token;
-using PlainBridge.Api.Application.Services.User;
+using PlainBridge.Api.Application.Features.User.Queries;
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.Api.Infrastructure.Persistence.Cache;
 using PlainBridge.SharedApplication.DTOs;
+using PlainBridge.SharedApplication.Mediator;
 using System.Text.Json;
 
 namespace PlainBridge.Api.Application.Services.Session;
 
 
-public class SessionService(ILogger<SessionService> _logger, IHttpContextAccessor _httpContextAccessor, IUserService _userService, ICacheManagement _cacheManagement, IHttpClientFactory _httpClientFactory, IOptions<ApplicationSettings> _applicationSettings) : ISessionService
+public class SessionService(ILogger<SessionService> _logger, IHttpContextAccessor _httpContextAccessor, ICacheManagement _cacheManagement, IMediator _mediator, IHttpClientFactory _httpClientFactory, IOptions<ApplicationSettings> _applicationSettings) : ISessionService
 {
     public async Task<UserDto> GetCurrentUserAsync(CancellationToken cancellationToken)
     {
@@ -45,8 +45,8 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
             return await Task.FromResult<UserDto>(null!);
         }
         
-        _logger.LogInformation("Fetching user by external ID: {UserId}", userId.Value);
-        var customer = await _userService.GetUserByExternalIdAsync(userId.Value, cancellationToken);
+        _logger.LogInformation("Fetching user by external ID: {UserId}", userId.Value); 
+        var customer = await _mediator.Send(new GetUserByExternalIdQuery { ExternalId = userId.Value }, cancellationToken);
         _logger.LogInformation("User fetched successfully.");
         return customer;
     }

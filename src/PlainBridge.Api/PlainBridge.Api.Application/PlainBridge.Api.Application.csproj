@@ -8,11 +8,11 @@
 
   <ItemGroup>
     <Compile Remove="Handler\**" />
-    <Compile Remove="UseCases\Queries\**" />
+    <Compile Remove="Features\Queries\**" />
     <EmbeddedResource Remove="Handler\**" />
-    <EmbeddedResource Remove="UseCases\Queries\**" />
+    <EmbeddedResource Remove="Features\Queries\**" />
     <None Remove="Handler\**" />
-    <None Remove="UseCases\Queries\**" />
+    <None Remove="Features\Queries\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,10 +27,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\PlainBridge.SharedApplication\PlainBridge.SharedApplication.csproj" />
     <ProjectReference Include="..\PlainBridge.Api.Infrastructure\PlainBridge.Api.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="UseCases\User\" />
   </ItemGroup>
 
 </Project>

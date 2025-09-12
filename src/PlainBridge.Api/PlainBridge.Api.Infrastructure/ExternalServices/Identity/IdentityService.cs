@@ -41,7 +41,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         return httpClient;
     }
 
-    public async Task<ResultDto<string>> CreateUserAsync(UserDto user, CancellationToken cancellationToken)
+    public async Task<ResultDto<string>> CreateUserAsync(UserRequest user, CancellationToken cancellationToken)
     {
         var httpClient = await InitializeHttpClientAsync(cancellationToken);
 
@@ -74,7 +74,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         return userCreationResult;
     }
 
-    public async Task<ResultDto<string>> ChangePasswordAsync(ChangeUserPasswordDto changeUserPassword, CancellationToken cancellationToken)
+    public async Task<ResultDto<string>> ChangePasswordAsync(ChangeUserPasswordRequest changeUserPassword, CancellationToken cancellationToken)
     {
         var httpClient = await InitializeHttpClientAsync(cancellationToken);
 
@@ -98,7 +98,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         return userChangePasswordResult;
     }
 
-    public async Task<ResultDto<string>> UpdateUserAsync(UserDto user, CancellationToken cancellationToken)
+    public async Task<ResultDto<string>> UpdateUserAsync(UserRequest user, CancellationToken cancellationToken)
     {
         var httpClient = await InitializeHttpClientAsync(cancellationToken);
 

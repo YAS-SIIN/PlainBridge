@@ -20,10 +20,10 @@ public class UpdateUserCommandHandler(ILogger<UpdateUserCommandHandler> _logger,
         if (existedUser == null)
         {
             _logger.LogWarning("User not found for update. Id: {UserId}", request.Id);
-            throw new NotFoundException(nameof(UserDto), new List<KeyValuePair<string, object>>() { new KeyValuePair<string, object>(nameof(UserDto.Id), request.Id) });
+            throw new NotFoundException(nameof(UserRequest), new List<KeyValuePair<string, object>>() { new KeyValuePair<string, object>(nameof(UserRequest.Id), request.Id) });
         }
 
-        UserDto userDto = new()
+        UserRequest userDto = new()
         {
             Id = request.Id,
             AppId = existedUser.AppId.ViewId,

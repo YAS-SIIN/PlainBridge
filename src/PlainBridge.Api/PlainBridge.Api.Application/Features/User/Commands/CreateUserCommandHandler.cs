@@ -24,7 +24,7 @@ public class CreateUserCommandHandler(ILogger<CreateUserCommandHandler> _logger,
             throw new DuplicatedException($"{request.Username} or {request.Email}");
         }
 
-        UserDto userDto = new()
+        UserRequest userDto = new()
         {
             Id = request.Id,
             AppId = request.AppId,

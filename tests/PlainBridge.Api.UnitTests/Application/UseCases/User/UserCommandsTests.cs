@@ -53,7 +53,7 @@ public class UserCommandsTests : IClassFixture<TestRunFixture>
     public async Task CreateUserCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded(CreateUserCommand cmd)
     {
         string externalId = Guid.NewGuid().ToString();
-        _mockIdentityService.Setup(x => x.CreateUserAsync(It.IsAny<UserDto>(), It.IsAny<CancellationToken>()))
+        _mockIdentityService.Setup(x => x.CreateUserAsync(It.IsAny<UserRequest>(), It.IsAny<CancellationToken>()))
              .ReturnsAsync(new ResultDto<string> { Data = externalId, ResultCode = ResultCodeEnum.Success });
 
         var appId = await _createHandler.Handle(cmd, CancellationToken.None);
@@ -61,7 +61,7 @@ public class UserCommandsTests : IClassFixture<TestRunFixture>
 
         var created = await _fixture.MemoryMainDbContext.Users.FirstOrDefaultAsync(x => x.Username == cmd.Username);
 
-        _mockIdentityService.Verify(x => x.CreateUserAsync(It.IsAny<UserDto>(), It.IsAny<CancellationToken>()), Times.Once);
+        _mockIdentityService.Verify(x => x.CreateUserAsync(It.IsAny<UserRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         Assert.NotNull(created);
         Assert.Equal(externalId, created.ExternalId);
         Assert.Equal(cmd.Username, created.Username);
@@ -82,11 +82,11 @@ public class UserCommandsTests : IClassFixture<TestRunFixture>
     public async Task CreateUserCommandHandler_WhenIdentityFails_ShouldThrow(CreateUserCommand cmd)
     {
         _mockIdentityService
-            .Setup(x => x.CreateUserAsync(It.IsAny<UserDto>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.CreateUserAsync(It.IsAny<UserRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ResultDto<string> { Data = null, ResultCode = ResultCodeEnum.Error });
 
         await Assert.ThrowsAsync<ApplicationException>(() => _createHandler.Handle(cmd, CancellationToken.None));
-        _mockIdentityService.Verify(x => x.CreateUserAsync(It.IsAny<UserDto>(), It.IsAny<CancellationToken>()), Times.Once);
+        _mockIdentityService.Verify(x => x.CreateUserAsync(It.IsAny<UserRequest>(), It.IsAny<CancellationToken>()), Times.Once);
     }
     #endregion
 
@@ -123,7 +123,7 @@ public class UserCommandsTests : IClassFixture<TestRunFixture>
     public async Task UpdateUserCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded(UpdateUserCommand cmd)
     {
         string externalId = Guid.NewGuid().ToString();
-        _mockIdentityService.Setup(x => x.UpdateUserAsync(It.IsAny<UserDto>(), It.IsAny<CancellationToken>()))
+        _mockIdentityService.Setup(x => x.UpdateUserAsync(It.IsAny<UserRequest>(), It.IsAny<CancellationToken>()))
              .ReturnsAsync(new ResultDto<string> { Data = externalId, ResultCode = ResultCodeEnum.Success });
 
         await _updateHandler.Handle(cmd, CancellationToken.None);
@@ -149,7 +149,7 @@ public class UserCommandsTests : IClassFixture<TestRunFixture>
     public async Task UpdateUserCommandHandler_WhenIdentityFails_ShouldThrow(UpdateUserCommand cmd)
     {
         _mockIdentityService
-            .Setup(x => x.UpdateUserAsync(It.IsAny<UserDto>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.UpdateUserAsync(It.IsAny<UserRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ResultDto<string> { ResultCode = ResultCodeEnum.Error });
 
         await Assert.ThrowsAsync<ApplicationException>(() => _updateHandler.Handle(cmd, CancellationToken.None));
@@ -163,12 +163,12 @@ public class UserCommandsTests : IClassFixture<TestRunFixture>
     public async Task ChangeUserPasswordCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded(ChangeUserPasswordCommand cmd)
     {
         _mockIdentityService
-            .Setup(x => x.ChangePasswordAsync(It.IsAny<ChangeUserPasswordDto>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.ChangePasswordAsync(It.IsAny<ChangeUserPasswordRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ResultDto<string> { ResultCode = ResultCodeEnum.Success });
 
         await _changePasswordHandler.Handle(cmd, CancellationToken.None);
 
-        _mockIdentityService.Verify(x => x.ChangePasswordAsync(It.IsAny<ChangeUserPasswordDto>(), It.IsAny<CancellationToken>()), Times.Once);
+        _mockIdentityService.Verify(x => x.ChangePasswordAsync(It.IsAny<ChangeUserPasswordRequest>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Theory]
@@ -183,7 +183,7 @@ public class UserCommandsTests : IClassFixture<TestRunFixture>
     public async Task ChangeUserPasswordCommandHandler_WhenIdentityFails_ShouldThrowApplicationException(ChangeUserPasswordCommand cmd)
     {
         _mockIdentityService
-            .Setup(x => x.ChangePasswordAsync(It.IsAny<ChangeUserPasswordDto>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.ChangePasswordAsync(It.IsAny<ChangeUserPasswordRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ResultDto<string> { ResultCode = ResultCodeEnum.Error });
 
         await Assert.ThrowsAsync<ApplicationException>(() => _changePasswordHandler.Handle(cmd, CancellationToken.None));

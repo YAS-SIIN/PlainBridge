@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Client.Application.Handler.HttpRequest;
 using PlainBridge.Client.Application.Handler.WebSocket;
 using PlainBridge.Client.Application.Services.ClientBus;

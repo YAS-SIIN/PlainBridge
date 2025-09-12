@@ -23,9 +23,9 @@ public class ChangeUserPasswordCommandHandler(ILogger<ChangeUserPasswordCommandH
         if (user == null)
         {
             _logger.LogWarning("User not found for password change. Id: {UserId}", request.Id);
-            throw new NotFoundException(nameof(UserDto), new List<KeyValuePair<string, object>>() { new KeyValuePair<string, object>(nameof(UserDto.Id), request.Id) });
+            throw new NotFoundException(nameof(UserRequest), new List<KeyValuePair<string, object>>() { new KeyValuePair<string, object>(nameof(UserRequest.Id), request.Id) });
         }
-        ChangeUserPasswordDto changeUserPasswordDto = new()
+        ChangeUserPasswordRequest changeUserPasswordDto = new()
         {
             Id = request.Id,
             CurrentPassword = request.CurrentPassword,

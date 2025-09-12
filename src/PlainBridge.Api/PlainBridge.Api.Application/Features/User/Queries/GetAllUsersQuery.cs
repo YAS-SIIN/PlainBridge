@@ -1,5 +1,6 @@
 ﻿
 
+using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.SharedApplication.Mediator;
 

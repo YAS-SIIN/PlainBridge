@@ -4,6 +4,7 @@ using IdentityModel.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Features.User.Queries;
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.Api.Infrastructure.Persistence.Cache;

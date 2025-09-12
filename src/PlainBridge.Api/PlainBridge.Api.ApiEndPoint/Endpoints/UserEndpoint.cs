@@ -1,10 +1,10 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using PlainBridge.Api.ApiEndPoint.Abstractions;
+using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Features.User.Commands;
 using PlainBridge.Api.Application.Features.User.Queries;
-using PlainBridge.Api.Application.Services.Session;
-using PlainBridge.Api.Infrastructure.DTOs;
+using PlainBridge.Api.Application.Services.Session; 
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;

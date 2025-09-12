@@ -1,7 +1,8 @@
 ﻿
 using System.Text.Json.Serialization;
 
-namespace PlainBridge.SharedApplication.DTOs;
+namespace PlainBridge.Api.Application.DTOs;
+
 public record UserProfileViewDto
 {
     [JsonPropertyName("preferred_username")]

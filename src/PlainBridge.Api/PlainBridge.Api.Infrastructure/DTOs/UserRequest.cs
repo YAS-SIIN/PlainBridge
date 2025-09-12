@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 
 namespace PlainBridge.Api.Infrastructure.DTOs;
 
-public record UserDto
+public record UserRequest
 {
     public long Id { get; set; }
 

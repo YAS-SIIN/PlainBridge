@@ -3,7 +3,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace PlainBridge.Api.Infrastructure.DTOs;
-public record ChangeUserPasswordDto
+public record ChangeUserPasswordRequest
 {
     public long Id { get; set; }
 

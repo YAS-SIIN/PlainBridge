@@ -49,6 +49,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         {
             user.Username,
             user.Password,
+            user.RePassword,
             user.Email,
             user.PhoneNumber,
             user.Name,
@@ -80,7 +81,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
 
         var jsonObject = new
         {
-            UserId = changeUserPassword.Id,
+            UserId = changeUserPassword.UserId,
             changeUserPassword.CurrentPassword,
             changeUserPassword.NewPassword
         };
@@ -106,6 +107,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         {
             user.Username,
             user.Password,
+            user.RePassword,
             user.Email,
             user.PhoneNumber,
             user.Name,

@@ -20,19 +20,17 @@ public class UpdateUserCommandHandler(ILogger<UpdateUserCommandHandler> _logger,
         if (existedUser == null)
         {
             _logger.LogWarning("User not found for update. Id: {UserId}", request.Id);
-            throw new NotFoundException(nameof(UserRequest), new List<KeyValuePair<string, object>>() { new KeyValuePair<string, object>(nameof(UserRequest.Id), request.Id) });
+            throw new NotFoundException(nameof(UserRequest), new List<KeyValuePair<string, object>>() { new KeyValuePair<string, object>(nameof(UserRequest.UserId), request.Id) });
         }
 
         UserRequest userDto = new()
         {
-            Id = request.Id,
-            AppId = existedUser.AppId.ViewId,
+            UserId = existedUser.ExternalId,
             Username = existedUser.Username,
             Email = existedUser.Email,  
             //State = request.State,  
             Name = request.Name,
             Family = request.Family,
-            ExternalId = existedUser.ExternalId,
         };
         var userUpdatingResult = await _identityService.UpdateUserAsync(userDto, cancellationToken);
 

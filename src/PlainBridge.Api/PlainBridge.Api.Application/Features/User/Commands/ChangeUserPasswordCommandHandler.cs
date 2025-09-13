@@ -23,13 +23,14 @@ public class ChangeUserPasswordCommandHandler(ILogger<ChangeUserPasswordCommandH
         if (user == null)
         {
             _logger.LogWarning("User not found for password change. Id: {UserId}", request.Id);
-            throw new NotFoundException(nameof(UserRequest), new List<KeyValuePair<string, object>>() { new KeyValuePair<string, object>(nameof(UserRequest.Id), request.Id) });
+            throw new NotFoundException(nameof(UserRequest), new List<KeyValuePair<string, object>>() { new KeyValuePair<string, object>(nameof(UserRequest.UserId), request.Id) });
         }
         ChangeUserPasswordRequest changeUserPasswordDto = new()
         {
-            Id = request.Id,
+            UserId = user.ExternalId,
             CurrentPassword = request.CurrentPassword,
-            NewPassword = request.NewPassword
+            NewPassword = request.NewPassword,
+            RePassword = request.NewPassword
         };
         var userChangePasswordResult = await _identityService.ChangePasswordAsync(changeUserPasswordDto, cancellationToken);
 

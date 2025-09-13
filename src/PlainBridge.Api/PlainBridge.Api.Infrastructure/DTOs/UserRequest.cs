@@ -7,14 +7,8 @@ namespace PlainBridge.Api.Infrastructure.DTOs;
 
 public record UserRequest
 {
-    public long Id { get; set; }
-
-    [Display(Name = "Application Id")]
-    public Guid AppId { get; set; }
-
-    [Display(Name = "External Id")]
-    public string ExternalId { get; set; }
-
+    public string UserId { get; set; }
+     
     [Display(Name = "Username")]
     [Required]
     [StringLength(150, MinimumLength = 3)]
@@ -23,7 +17,11 @@ public record UserRequest
     [Display(Name = "Password")]
     [Required] 
     public string Password { get; set; }
-     
+
+    [Display(Name = "Confirm password")]
+    [Compare("Password", ErrorMessage = "Passwords do not match.")]
+    public string RePassword { get; set; }
+
     [Display(Name = "Email")]
     [Required]
     [StringLength(200, MinimumLength = 5)]

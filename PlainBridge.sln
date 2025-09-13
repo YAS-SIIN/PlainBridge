@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.36105.23
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11010.61 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.AppHost", "src\PlainBridge.AppHost\PlainBridge.AppHost.csproj", "{A8F45856-6B0A-4DCA-AB0B-4706594FEBBC}"
 EndProject
@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.ServiceDefaults
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Api.ApiEndPoint", "src\PlainBridge.Api\PlainBridge.Api.ApiEndPoint\PlainBridge.Api.ApiEndPoint.csproj", "{BA567B7B-F626-A289-8143-2EC6D282416E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Api.UnitTests", "tests\PlainBridge.Api.UnitTests\PlainBridge.Api.UnitTests.csproj", "{EA664E3A-ECC0-4FB3-8152-7AD7F7F38830}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Api.Tests", "tests\PlainBridge.Api.Tests\PlainBridge.Api.Tests.csproj", "{EA664E3A-ECC0-4FB3-8152-7AD7F7F38830}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -38,9 +38,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlainBridge.Web", "PlainBri
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "PlainBridge.Web.UI", "src\PlainBridge.Web\PlainBridge.Web.UI\PlainBridge.Web.UI.esproj", "{0F04302C-307C-B6D9-3921-29C25579EDA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Server.UnitTests", "tests\PlainBridge.Server.UnitTests\PlainBridge.Server.UnitTests.csproj", "{56141240-B7DE-4084-B15B-6DB8E3FA1828}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Server.Tests", "tests\PlainBridge.Server.Tests\PlainBridge.Server.Tests.csproj", "{56141240-B7DE-4084-B15B-6DB8E3FA1828}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.IdentityServer.IntegrationTests", "tests\PlainBridge.IdentityServer.IntegrationTests\PlainBridge.IdentityServer.IntegrationTests.csproj", "{AD624F28-CF02-4C11-B3F2-0AEC65CF0C6B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.IdentityServer.Tests", "tests\PlainBridge.IdentityServer.Tests\PlainBridge.IdentityServer.Tests.csproj", "{AD624F28-CF02-4C11-B3F2-0AEC65CF0C6B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlainBridge.Client", "PlainBridge.Client", "{F9EDDE0C-4DFE-4BB7-A754-19FBA01E5A47}"
 EndProject

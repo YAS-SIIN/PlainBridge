@@ -5,6 +5,7 @@ using Duende.IdentityServer.Licensing;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using PlainBridge.IdentityServer.EndPoint.Application.Services.User;
 using PlainBridge.IdentityServer.EndPoint.DTOs;
 using PlainBridge.IdentityServer.EndPoint.ErrorHandling;
 using PlainBridge.IdentityServer.EndPoint.Infrastructure.Data;
@@ -66,6 +67,7 @@ public static class DependencyResolver
         services.AddExceptionHandler<ErrorHandler>();
 
         services.AddLocalApiAuthentication();
+        services.AddScoped<IUserServices, UserServices>();
 
         services.AddHttpServices();
 

@@ -26,15 +26,14 @@ public class CreateUserCommandHandler(ILogger<CreateUserCommandHandler> _logger,
 
         UserRequest userDto = new()
         {
-            Id = request.Id,
-            AppId = request.AppId,
+            UserId = request.ExternalId,
             Username = request.Username,
             Email = request.Email,
             Password = request.Password, 
+            RePassword = request.RePassword, 
             PhoneNumber = request.PhoneNumber,
             Name = request.Name,
-            Family = request.Family,
-            ExternalId = request.ExternalId
+            Family = request.Family
         };
 
         var userCreationResult = await _identityService.CreateUserAsync(userDto, cancellationToken);

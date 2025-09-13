@@ -3,10 +3,10 @@
 using Castle.Core.Resource;
 
 using Microsoft.EntityFrameworkCore;
-using PlainBridge.Api.Domain.Entities;
 using PlainBridge.Api.Domain.HostAggregate;
 using PlainBridge.Api.Domain.ServerAggregate;
 using PlainBridge.Api.Domain.ServerAggregate.ValueObjects;
+using PlainBridge.Api.Domain.UserAggregate;
 using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
 using PlainBridge.SharedDomain.Base.Enums;
 using PlainBridge.SharedDomain.Base.ValueObjects;

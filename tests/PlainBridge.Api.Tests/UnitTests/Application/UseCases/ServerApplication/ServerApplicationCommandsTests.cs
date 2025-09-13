@@ -123,8 +123,7 @@ public class ServerApplicationCommandsTests : IClassFixture<TestRunFixture>
         await Assert.ThrowsAsync<NotFoundException>(() => _updateHandler.Handle(dto, CancellationToken.None));
     }
     #endregion
-
-
+     
     #region UpdateStateServerApplicationCommandHandler
      
     [Theory]

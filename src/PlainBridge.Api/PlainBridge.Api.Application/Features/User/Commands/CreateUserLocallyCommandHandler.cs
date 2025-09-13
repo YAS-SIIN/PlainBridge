@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using PlainBridge.Api.Domain.Entities;
 using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
 using PlainBridge.SharedApplication.Exceptions;
 using PlainBridge.SharedApplication.Mediator;
@@ -23,7 +22,7 @@ public class CreateUserLocallyCommandHandler(ILogger<CreateUserLocallyCommandHan
             _logger.LogWarning("User already exists with username: {Username} or email: {Email}", request.Username, request.Email);
             throw new DuplicatedException($"{request.Username} or {request.Email}");
         }
-        var newUser = Domain.Entities.User.Create(request.ExternalId, request.Username, request.Email, request.PhoneNumber, request.Name, request.Family, request.ExternalId);
+        var newUser = Domain.UserAggregate.User.Create(request.ExternalId, request.Username, request.Email, request.PhoneNumber, request.Name, request.Family, request.ExternalId);
 
         var createdUser = await _dbContext.Users.AddAsync(newUser, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);

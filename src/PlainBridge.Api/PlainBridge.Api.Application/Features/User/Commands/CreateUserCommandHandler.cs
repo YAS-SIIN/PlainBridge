@@ -2,7 +2,6 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using PlainBridge.Api.Domain.Entities;
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.Api.Infrastructure.ExternalServices.Identity;
 using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
@@ -44,7 +43,7 @@ public class CreateUserCommandHandler(ILogger<CreateUserCommandHandler> _logger,
             throw new ApplicationException("User creation on identity server failed");
         }
 
-        var newUser = Domain.Entities.User.Create(userCreationResult!.Data!, request.Username, request.Email, request.PhoneNumber, request.Name, request.Family, request.ExternalId);
+        var newUser = Domain.UserAggregate.User.Create(userCreationResult!.Data!, request.Username, request.Email, request.PhoneNumber, request.Name, request.Family, request.ExternalId);
 
         var createdUser = await _dbContext.Users.AddAsync(newUser, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);

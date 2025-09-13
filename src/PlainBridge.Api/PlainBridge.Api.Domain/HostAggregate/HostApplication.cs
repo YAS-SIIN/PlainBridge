@@ -4,8 +4,8 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PlainBridge.Api.Domain.Entities;
 using PlainBridge.Api.Domain.HostAggregate.ValueObjects;
+using PlainBridge.Api.Domain.UserAggregate;
 using PlainBridge.SharedDomain.Base;
 using PlainBridge.SharedDomain.Base.Enums;
 using PlainBridge.SharedDomain.Base.ValueObjects;

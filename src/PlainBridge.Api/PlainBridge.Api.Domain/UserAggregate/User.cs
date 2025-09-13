@@ -1,14 +1,15 @@
 ﻿
-using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PlainBridge.Api.Domain.HostAggregate;
 using PlainBridge.Api.Domain.ServerAggregate;
+using PlainBridge.Api.Domain.UserAggregate.ValueObjects;
 using PlainBridge.SharedDomain.Base;
 using PlainBridge.SharedDomain.Base.Enums;
 using PlainBridge.SharedDomain.Base.ValueObjects;
+using System.ComponentModel.DataAnnotations;
 
-namespace PlainBridge.Api.Domain.Entities;
+namespace PlainBridge.Api.Domain.UserAggregate;
 
 public class User : BaseEntity<long>
 {
@@ -17,9 +18,10 @@ public class User : BaseEntity<long>
         ServerApplications = new HashSet<ServerApplication>();
         HostApplications = new HashSet<HostApplication>();
     }
+
     public AppId AppId { get; set; }
     public string ExternalId { get; set; }
-    public string Username { get; set; }
+    public UserName Username { get; set; }
     public string Email { get; set; }
     public string? PhoneNumber { get; set; }
     public string Name { get; set; }
@@ -41,7 +43,7 @@ public class User : BaseEntity<long>
         return new User
         {
             AppId = AppId.CreateUniqueId(),
-            Username = username,
+            Username = UserName.Create(username),
             Email = email,
             PhoneNumber = phoneNumber,
             Name = name,

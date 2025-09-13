@@ -29,7 +29,7 @@ public record UserRequestDto
 
     [Display(Name = "Phone number")]
     [StringLength(20)]
-    [RegularExpression(@"^\+?[0-9\s\-()]+$", ErrorMessage = "Invalid phone number format.")]
+    [RegularExpression(@"^\+[0-9\s\-()]+$", ErrorMessage = "Invalid phone number format.")]
     public string? PhoneNumber { get; set; }
 
     [Display(Name = "Name")]

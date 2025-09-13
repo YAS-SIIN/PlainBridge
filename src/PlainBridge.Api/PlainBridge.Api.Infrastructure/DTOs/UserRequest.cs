@@ -12,7 +12,7 @@ public record UserRequest
     [Display(Name = "Username")]
     [Required]
     [StringLength(150, MinimumLength = 3)]
-    public string Username { get; set; }
+    public string UserName { get; set; }
 
     [Display(Name = "Password")]
     [Required] 

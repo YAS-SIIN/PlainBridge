@@ -2,6 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using PlainBridge.Api.Domain.HostAggregate.ValueObjects;
 using PlainBridge.Api.Infrastructure.ExternalServices.Messaging;
 using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
 using PlainBridge.SharedApplication.Exceptions;
@@ -14,7 +15,9 @@ public class CreateHostApplicationCommandHandler(ILogger<CreateHostApplicationCo
     public async Task<Guid> Handle(CreateHostApplicationCommand request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Creating host application with domain: {Domain}", request.Domain);
-        var isDomainExists = await _dbContext.HostApplications.AnyAsync(x => x.Domain.HostDomainName == request.Domain, cancellationToken);
+        
+        var isDomainExists = await _dbContext.HostApplications
+            .AnyAsync(x => x.Domain.HostDomainName == request.Domain, cancellationToken);
         if (isDomainExists)
         {
             _logger.LogWarning("Host application with domain {Domain} already exists.", request.Domain);

@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using PlainBridge.Api.Domain.Entities;
 using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
@@ -27,7 +26,7 @@ public class GetServerApplicationQueryHandler(ILogger<GetServerApplicationQueryH
             AppId = serverApp.AppId.ViewId,
             ServerApplicationAppId = serverApp.ServerApplicationViewId != Guid.Empty ? serverApp.ServerApplicationViewId.ToString() : null,
             UserId = serverApp.UserId,
-            UserName = serverApp.User.Username,
+            UserName = serverApp.User.UserName.UserNameValue,
             Name = serverApp.Name,
             InternalPort = serverApp.InternalPort.Port,
             Description = serverApp.Description,

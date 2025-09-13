@@ -7,7 +7,13 @@ namespace PlainBridge.Api.Domain.HostAggregate.ValueObjects;
  
 public sealed class InternalUrl : BaseValueObject<InternalUrl>
 {
-    public required string InternalUrlValue { get; init; }
+
+    public InternalUrl() { }
+    private InternalUrl(string internalUrlValue)
+    {
+        InternalUrlValue = internalUrlValue;
+    }
+    public string InternalUrlValue { get; set; }
 
     public override IEnumerable<object> GetEqualityComponents()
     {
@@ -17,7 +23,7 @@ public sealed class InternalUrl : BaseValueObject<InternalUrl>
     public static InternalUrl Create(string internalUrlValue)
     {
         EnsureDomain(internalUrlValue);
-        return new InternalUrl { InternalUrlValue = internalUrlValue };
+        return new InternalUrl(internalUrlValue);
     }
 
 
@@ -27,5 +33,5 @@ public sealed class InternalUrl : BaseValueObject<InternalUrl>
         if (internalUrlValue.Length > 200)
             throw new ApplicationException("Domain must be 200 characters or fewer.");
     }
-
+     
 }

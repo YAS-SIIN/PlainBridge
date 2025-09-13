@@ -57,7 +57,7 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
         var context = new DefaultHttpContext { User = principal };
         _mockIHttpContextAccessor.Setup(x => x.HttpContext).Returns(context);
 
-        var expectedUser = new UserDto { ExternalId = userId, Username = "TestUser" };
+        var expectedUser = new UserDto(Guid.Empty, userId, "TestUser", "", "", "", "");
         _mockIMediator.Setup(x => x.Send(It.IsAny<GetUserByExternalIdQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedUser);
 
@@ -67,7 +67,7 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
         // Assert
         Assert.NotNull(result);
         Assert.Equal(userId, result.ExternalId);
-        Assert.Equal("TestUser", result.Username);
+        Assert.Equal("TestUser", result.UserName);
     }
 
     [Fact]

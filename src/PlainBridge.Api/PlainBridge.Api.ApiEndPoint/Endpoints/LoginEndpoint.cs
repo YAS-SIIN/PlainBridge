@@ -59,7 +59,7 @@ public class LoginEndpoint : IEndpoint
                     var user = new CreateUserCommand
                     {
                         ExternalId = sub,
-                        Username = customerProfile.Username,
+                        UserName = customerProfile.Username,
                         Email = customerProfile.Email,
                         PhoneNumber = customerProfile.PhoneNumber,
                         Name = customerProfile.Name,

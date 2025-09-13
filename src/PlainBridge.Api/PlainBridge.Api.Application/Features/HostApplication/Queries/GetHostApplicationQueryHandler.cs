@@ -27,7 +27,7 @@ public class GetHostApplicationQueryHandler(ILogger<GetHostApplicationQueryHandl
             Id = hostApp.Id,
             AppId = hostApp.AppId.ViewId,
             UserId = hostApp.UserId,
-            UserName = hostApp.User.Username,
+            UserName = hostApp.User.UserName.UserNameValue,
             Name = hostApp.Name,
             Domain = hostApp.Domain.HostDomainName,
             InternalUrl = hostApp.InternalUrl.InternalUrlValue,

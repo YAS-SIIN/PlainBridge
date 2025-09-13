@@ -92,7 +92,7 @@ public class HostApplicationTypeConfiguration : BaseEntityTypeConfiguration<Host
         builder.OwnsOne(u => u.Domain, owned =>
         {
             owned.Property(p => p.HostDomainName)
-                 .HasColumnName("Domain")
+                 .HasColumnName(nameof(Domain))
                  .IsRequired().HasMaxLength(200);
              
             owned.WithOwner();
@@ -101,7 +101,7 @@ public class HostApplicationTypeConfiguration : BaseEntityTypeConfiguration<Host
         builder.OwnsOne(u => u.InternalUrl, owned =>
         {
             owned.Property(p => p.InternalUrlValue)
-                 .HasColumnName("Domain")
+                 .HasColumnName(nameof(InternalUrl))
                  .IsRequired().HasMaxLength(200);
              
             owned.WithOwner();

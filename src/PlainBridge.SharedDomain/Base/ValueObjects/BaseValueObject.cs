@@ -19,6 +19,20 @@ public abstract class BaseValueObject<T> where T : BaseValueObject<T>
     public static bool operator !=(BaseValueObject<T> left, BaseValueObject<T> right)
         => !left.Equals(right);
 
+    protected static bool EqualOperator(BaseValueObject<T> left, BaseValueObject<T> right)
+    {
+        if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
+        {
+            return false;
+        }
+        return ReferenceEquals(left, right) || left.Equals(right);
+    }
+
+    protected static bool NotEqualOperator(BaseValueObject<T> left, BaseValueObject<T> right)
+    {
+        return !(EqualOperator(left, right));
+    }
+
     public override int GetHashCode()
         => GetEqualityComponents()
                 .Select(x => x?.GetHashCode() ?? 0)

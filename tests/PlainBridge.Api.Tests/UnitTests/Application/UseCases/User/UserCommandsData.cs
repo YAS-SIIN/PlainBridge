@@ -14,7 +14,7 @@ public static class UserCommandsData
         {
             new CreateUserCommand
             {
-                Username = "new.user1",
+                UserName = "new.user1",
                 Password = "Pass@12345",
                 Email = "new.user1@test.local",
                 Name = "New",
@@ -31,7 +31,7 @@ public static class UserCommandsData
             new CreateUserCommand
             {
                 // Assume this username already exists in seeded data
-                Username = "TestUser1",
+                UserName = "TestUser1",
                 Password = "Pass@12345",
                 Email = "admin.dup@test.local",
                 Name = "Admin",
@@ -46,7 +46,7 @@ public static class UserCommandsData
         {
             new CreateUserCommand
             {
-                Username = "identity.fail",
+                UserName = "identity.fail",
                 Password = "Pass@12345",
                 Email = "identity.fail@test.local",
                 Name = "Ident",
@@ -61,7 +61,7 @@ public static class UserCommandsData
     {
         yield return new object[] { new CreateUserLocallyCommand
         {
-            Username = "NewUserLocally",
+            UserName = "NewUserLocally",
             Email = "newuserLocally@PlainBridge.com",
             PhoneNumber = "+989120000000",
             Name = "New",
@@ -76,7 +76,7 @@ public static class UserCommandsData
     {
         yield return new object[] { new CreateUserLocallyCommand
         {
-            Username = "TestUser1",
+            UserName = "TestUser1",
             Email = "TestUser1@PlainBridge.com",
             PhoneNumber = "+989120000000",
             Name = "New",

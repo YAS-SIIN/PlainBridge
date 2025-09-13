@@ -14,10 +14,10 @@ public class CreateUserLocallyCommand : BaseCommand<long>, IRequest<Guid>
     [Display(Name = "External Id")]
     public string ExternalId { get; set; }
 
-    [Display(Name = "Username")]
+    [Display(Name = "UserName")]
     [Required]
     [StringLength(150, MinimumLength = 3)]
-    public string Username { get; set; }
+    public string UserName { get; set; }
 
     [Display(Name = "Password")]
     [Required]

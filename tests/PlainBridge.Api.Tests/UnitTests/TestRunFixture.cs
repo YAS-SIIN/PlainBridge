@@ -5,6 +5,7 @@ using Castle.Core.Resource;
 using Microsoft.EntityFrameworkCore;
 using PlainBridge.Api.Domain.HostAggregate;
 using PlainBridge.Api.Domain.ServerAggregate;
+using PlainBridge.Api.Domain.ServerAggregate.Enums;
 using PlainBridge.Api.Domain.ServerAggregate.ValueObjects;
 using PlainBridge.Api.Domain.UserAggregate;
 using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
@@ -91,7 +92,7 @@ public class TestRunFixture : IAsyncLifetime
             {
                 var serverApp = ServerApplication.Create(
                     Guid.Empty,
-                    Domain.ServerAggregate.Enums.ServerApplicationTypeEnum.SharePort,
+                    ServerApplicationTypeEnum.SharePort,
                     $"TestTitle{i}",
                     2020 + i,
                     MemoryMainDbContext.Users.ToList()[i - 1].Id,

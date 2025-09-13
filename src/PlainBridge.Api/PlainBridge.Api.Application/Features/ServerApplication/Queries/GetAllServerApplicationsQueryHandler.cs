@@ -21,7 +21,7 @@ public class GetAllServerApplicationsQueryHandler(ILogger<GetAllServerApplicatio
             AppId = x.AppId.ViewId,
             ServerApplicationAppId = x.ServerApplicationViewId != Guid.Empty ? x.ServerApplicationViewId.ToString() : null,
             UserId = x.UserId,
-            UserName = x.User.Username,
+            UserName = x.User.UserName.UserNameValue,
             Name = x.Name,
             InternalPort = x.InternalPort.Port,
             Description = x.Description,

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PlainBridge.Api.Domain.HostAggregate;
 using PlainBridge.Api.Domain.ServerAggregate;
+using PlainBridge.Api.Domain.ServerAggregate.ValueObjects;
 using PlainBridge.Api.Domain.UserAggregate.ValueObjects;
 using PlainBridge.SharedDomain.Base;
 using PlainBridge.SharedDomain.Base.Enums;
@@ -21,7 +22,7 @@ public class User : BaseEntity<long>
 
     public AppId AppId { get; set; }
     public string ExternalId { get; set; }
-    public UserName Username { get; set; }
+    public UserName UserName { get; set; }
     public string Email { get; set; }
     public string? PhoneNumber { get; set; }
     public string Name { get; set; }
@@ -34,7 +35,6 @@ public class User : BaseEntity<long>
     public static User Create(string externalId, string username, string email, string? phoneNumber, string name, string family, string? description)
     {
         EnsureName(name); 
-        EnsureUsername(username);
         EnsureEmail(email);
         EnsurePhoneNumber(phoneNumber);
         EnsureFamily(family);
@@ -43,7 +43,7 @@ public class User : BaseEntity<long>
         return new User
         {
             AppId = AppId.CreateUniqueId(),
-            Username = UserName.Create(username),
+            UserName = UserName.Create(username),
             Email = email,
             PhoneNumber = phoneNumber,
             Name = name,
@@ -89,13 +89,6 @@ public class User : BaseEntity<long>
             throw new ApplicationException("Family must be 150 characters or fewer.");
     }
 
-    private static void EnsureUsername(string username)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(username);
-        if (username.Length > 150)
-            throw new ApplicationException("Username must be 150 characters or fewer.");
-    }
-
 
     private static void EnsureEmail(string email)
     {
@@ -117,7 +110,7 @@ public class User : BaseEntity<long>
         // Optionally, you can add a regex check for phone number format here
         if (!string.IsNullOrWhiteSpace(phoneNumber))
         {
-            var phoneRegex = new System.Text.RegularExpressions.Regex(@"^\+?[1-9]\d{1,14}$");
+            var phoneRegex = new System.Text.RegularExpressions.Regex(@"^\+[1-9]\d{1,14}$");
             if (!phoneRegex.IsMatch(phoneNumber))
                 throw new ApplicationException("Phone number format is not valid.");
         }
@@ -147,10 +140,16 @@ public class UserTypeConfiguration : BaseEntityTypeConfiguration<User, long>
 
         builder.Property(b => b.Name).IsRequired().HasMaxLength(150);
         builder.Property(b => b.Family).IsRequired().HasMaxLength(150);
-        builder.Property(b => b.Email).IsRequired().HasMaxLength(200);
-        builder.Property(b => b.Username).IsRequired().HasMaxLength(150);
+        builder.Property(b => b.Email).IsRequired().HasMaxLength(200); 
         builder.Property(b => b.PhoneNumber).HasMaxLength(20);
 
+
+        builder.OwnsOne(sa => sa.UserName, owned =>
+        {
+            owned.Property(p => p.UserNameValue)
+                 .HasColumnName(nameof(UserName))
+                 .IsRequired();
+        });
 
     }
 }

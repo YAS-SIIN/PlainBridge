@@ -9,6 +9,7 @@ using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
 using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.SharedDomain.Base.ValueObjects;
 
 namespace PlainBridge.Api.Application.UseCases.ServerApplication.Commands;
 
@@ -17,12 +18,12 @@ public class CreateServerApplicationCommandHandler(ILogger<CreateServerApplicati
     public async Task<Guid> Handle(CreateServerApplicationCommand request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Creating server application with Name: {Name}", request.Name);
-
-
+         
         Guid parsedId = Guid.Empty;
         if (request.ServerApplicationType == ServerApplicationTypeEnum.UsePort)
         {
             Guid.TryParse(request.ServerApplicationAppId, out parsedId);
+
             if (!_dbContext.ServerApplications.Any(x => x.AppId.ViewId == parsedId))
             {
                 _logger.LogError("Referenced ServerApplicationAppId not found: {AppId}", request.ServerApplicationAppId);

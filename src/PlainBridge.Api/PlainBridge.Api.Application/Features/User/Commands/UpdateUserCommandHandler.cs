@@ -1,7 +1,6 @@
 ﻿
 
-using Microsoft.Extensions.Logging;
-using PlainBridge.Api.Domain.Entities;
+using Microsoft.Extensions.Logging; 
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.Api.Infrastructure.ExternalServices.Identity;
 using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
@@ -26,9 +25,9 @@ public class UpdateUserCommandHandler(ILogger<UpdateUserCommandHandler> _logger,
         UserRequest userDto = new()
         {
             UserId = existedUser.ExternalId,
-            Username = existedUser.Username,
-            Email = existedUser.Email,  
-            //State = request.State,  
+            UserName = existedUser.UserName.UserNameValue,
+            Email = existedUser.Email,
+            //State = request.State,
             Name = request.Name,
             Family = request.Family,
         };
@@ -36,7 +35,7 @@ public class UpdateUserCommandHandler(ILogger<UpdateUserCommandHandler> _logger,
 
         if (userUpdatingResult is null || userUpdatingResult.ResultCode != ResultCodeEnum.Success || userUpdatingResult.Data is null)
         {
-            _logger.LogError("User creation on identity server failed for username: {Username}", existedUser.Username);
+            _logger.LogError("User creation on identity server failed for username: {Username}", existedUser.UserName);
             throw new ApplicationException("User creation on identity server failed");
         }
 

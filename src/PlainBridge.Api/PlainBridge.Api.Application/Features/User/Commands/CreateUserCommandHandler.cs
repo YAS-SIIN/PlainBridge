@@ -15,18 +15,18 @@ public class CreateUserCommandHandler(ILogger<CreateUserCommandHandler> _logger,
 {
     public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Creating user: {Username}, {Email}", request.Username, request.Email);
-        var existedUser = await _dbContext.Users.AnyAsync(x => x.Username == request.Username || x.Email == request.Email, cancellationToken);
+        _logger.LogInformation("Creating user: {UserName}, {Email}", request.UserName, request.Email);
+        var existedUser = await _dbContext.Users.AnyAsync(x => x.UserName.UserNameValue == request.UserName || x.Email.Equals(request.Email), cancellationToken);
         if (existedUser)
         {
-            _logger.LogWarning("User already exists with username: {Username} or email: {Email}", request.Username, request.Email);
-            throw new DuplicatedException($"{request.Username} or {request.Email}");
+            _logger.LogWarning("User already exists with username: {UserName} or email: {Email}", request.UserName, request.Email);
+            throw new DuplicatedException($"{request.UserName} or {request.Email}");
         }
 
         UserRequest userDto = new()
         {
             UserId = request.ExternalId,
-            Username = request.Username,
+            UserName = request.UserName,
             Email = request.Email,
             Password = request.Password, 
             RePassword = request.RePassword, 
@@ -39,16 +39,16 @@ public class CreateUserCommandHandler(ILogger<CreateUserCommandHandler> _logger,
 
         if (userCreationResult is null || userCreationResult.ResultCode != ResultCodeEnum.Success || userCreationResult.Data is null)
         {
-            _logger.LogError("User creation on identity server failed for username: {Username}", request.Username);
+            _logger.LogError("User creation on identity server failed for username: {Username}", request.UserName);
             throw new ApplicationException("User creation on identity server failed");
         }
 
-        var newUser = Domain.UserAggregate.User.Create(userCreationResult!.Data!, request.Username, request.Email, request.PhoneNumber, request.Name, request.Family, request.ExternalId);
+        var newUser = Domain.UserAggregate.User.Create(userCreationResult!.Data!, request.UserName, request.Email, request.PhoneNumber, request.Name, request.Family, request.ExternalId);
 
         var createdUser = await _dbContext.Users.AddAsync(newUser, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
         newUser = createdUser.Entity;
-        _logger.LogInformation("User created successfully: {Username}", request.Username);
+        _logger.LogInformation("User created successfully: {Username}", request.UserName);
         return newUser.AppId.ViewId;
     }
 }

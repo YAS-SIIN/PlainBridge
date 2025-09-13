@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using PlainBridge.Api.Application.UseCases.HostApplication.Commands;
+using PlainBridge.Api.Domain.HostAggregate.ValueObjects;
 using PlainBridge.Api.Infrastructure.ExternalServices.Messaging;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Exceptions;
@@ -54,8 +55,8 @@ public class HostApplicationCommandsTests : IClassFixture<TestRunFixture>
     }
 
     [Theory]
-    [MemberData(nameof(HostApplicationCommandsData.SetDataFor_CreateHostApplicationCommandHandler__WhenDomainIsExisted_ShouldThrowDuplicatedException), MemberType = typeof(HostApplicationCommandsData))]
-    public async Task CreateHostApplicationCommandHandler__WhenDomainIsExisted_ShouldThrowDuplicatedException(CreateHostApplicationCommand dto)
+    [MemberData(nameof(HostApplicationCommandsData.CreateHostApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowDuplicatedException), MemberType = typeof(HostApplicationCommandsData))]
+    public async Task CreateHostApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowDuplicatedException(CreateHostApplicationCommand dto)
     {
         await Assert.ThrowsAsync<DuplicatedException>(() => _createHandler.Handle(dto, CancellationToken.None));
     }

@@ -16,15 +16,7 @@ public class GetAllUsersQueryHandler(ILogger<GetAllUsersQueryHandler> _logger, M
         _logger.LogInformation("Getting all users.");
         var res = await _dbContext.Users.AsNoTracking().ToListAsync(cancellationToken);
         _logger.LogInformation("Found {UserCount} users.", res.Count);
-        return res.Select(x => new UserDto
-        {
-            Username = x.Username,
-            Email = x.Email,
-            PhoneNumber = x.PhoneNumber,
-            Name = x.Name,
-            Family = x.Family,
-            ExternalId = x.ExternalId
-        }).ToList();
+        return res.Select(x => new UserDto(x.AppId.ViewId, x.ExternalId, x.UserName.UserNameValue, x.Email, x.PhoneNumber, x.Name, x.Family)).ToList();
     }
 
 }

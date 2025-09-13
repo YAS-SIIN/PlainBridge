@@ -57,12 +57,12 @@ public class UserCommandsTests : IClassFixture<TestRunFixture>
         var appId = await _createHandler.Handle(cmd, CancellationToken.None);
         Assert.NotEqual(Guid.Empty, appId);
 
-        var created = await _fixture.MemoryMainDbContext.Users.FirstOrDefaultAsync(x => x.Username == cmd.Username);
+        var created = await _fixture.MemoryMainDbContext.Users.FirstOrDefaultAsync(x => x.UserName.UserNameValue == cmd.UserName);
 
         _mockIdentityService.Verify(x => x.CreateUserAsync(It.IsAny<UserRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         Assert.NotNull(created);
         Assert.Equal(externalId, created.ExternalId);
-        Assert.Equal(cmd.Username, created.Username);
+        Assert.Equal(cmd.UserName, created.UserName.UserNameValue);
         Assert.Equal(cmd.Email, created.Email);
         Assert.Equal(cmd.Name, created.Name);
         Assert.Equal(cmd.Family, created.Family);
@@ -98,9 +98,9 @@ public class UserCommandsTests : IClassFixture<TestRunFixture>
 
         Assert.NotEqual(Guid.Empty, appId);
 
-        var created = await _fixture.MemoryMainDbContext.Users.FirstOrDefaultAsync(x => x.Username == cmd.Username);
+        var created = await _fixture.MemoryMainDbContext.Users.FirstOrDefaultAsync(x => x.UserName.UserNameValue == cmd.UserName);
         Assert.NotNull(created);
-        Assert.Equal(cmd.Username, created.Username);
+        Assert.Equal(cmd.UserName, created.UserName.UserNameValue);
         Assert.Equal(cmd.Email, created.Email);
         Assert.Equal(cmd.Name, created.Name);
         Assert.Equal(cmd.Family, created.Family);

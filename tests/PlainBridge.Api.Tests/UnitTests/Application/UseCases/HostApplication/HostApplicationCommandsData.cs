@@ -15,7 +15,7 @@ public static class HostApplicationCommandsData
         }};
     }
 
-    public static IEnumerable<object[]> SetDataFor_CreateHostApplicationCommandHandler__WhenDomainIsExisted_ShouldThrowDuplicatedException()
+    public static IEnumerable<object[]> CreateHostApplicationCommandHandler_WhenDomainIsExisted_ShouldThrowDuplicatedException()
     {
         yield return new object[] { new CreateHostApplicationCommand
         {

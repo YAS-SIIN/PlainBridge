@@ -23,15 +23,6 @@ public class GetUserByExternalIdQueryHandler(ILogger<GetUserByExternalIdQueryHan
         }
 
         _logger.LogInformation("User found with external id: {ExternalId}", request.ExternalId);
-        return new UserDto
-        {
-            Id = user.Id,
-            Username = user.Username,
-            Email = user.Email,
-            PhoneNumber = user.PhoneNumber,
-            Name = user.Name,
-            Family = user.Family,
-            ExternalId = user.ExternalId
-        };
+        return new UserDto(user.AppId.ViewId, user.ExternalId, user.UserName.UserNameValue, user.Email, user.PhoneNumber, user.Name, user.Family);
     }
 }

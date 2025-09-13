@@ -19,7 +19,7 @@ public class GetAllHostApplicationsQueryHandler(ILogger<GetAllHostApplicationsQu
             Id = x.Id,
             AppId = x.AppId.ViewId,
             UserId = x.UserId,
-            UserName = x.User.Username,
+            UserName = x.User.UserName.UserNameValue,
             Name = x.Name,
             Domain = x.Domain.HostDomainName,
             InternalUrl = x.InternalUrl.InternalUrlValue,

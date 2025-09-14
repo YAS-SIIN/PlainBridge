@@ -2,26 +2,15 @@
 using System.Net.WebSockets;
 using Duende.Bff.Yarp;
 using Duende.IdentityModel;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Cookies; 
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Options; 
 using PlainBridge.Client.ApiEndPoint.Endpoints;
 using PlainBridge.Client.ApiEndPoint.ErrorHandling;
 using PlainBridge.Client.Application.DTOs;
-using PlainBridge.Client.Application.Handler.HttpRequest;
-using PlainBridge.Client.Application.Handler.WebSocket;
-using PlainBridge.Client.Application.Helpers.Http;
-using PlainBridge.Client.Application.Management.Cache;
-using PlainBridge.Client.Application.Management.WebSocket;
-using PlainBridge.Client.Application.Services.ClientBus;
-using PlainBridge.Client.Application.Services.ServerBus;
-using PlainBridge.Client.Application.Services.SharePortSocket;
-using PlainBridge.Client.Application.Services.Signal;
-using PlainBridge.Client.Application.Services.UsePortSocket;
-using PlainBridge.Client.Application.Services.WebSocket;
+using PlainBridge.Client.Application;
+
 using Serilog;
 
 namespace PlainBridge.Client.ApiEndPoint;
@@ -59,17 +48,7 @@ public static class DependencyResolver
 
         services.AddHttpContextAccessor();
         services.AddProblemDetails();
-        services.AddSingleton<IHttpHelper, HttpHelper>();
-        services.AddSingleton<ICacheManagement, CacheManagement>();
-        services.AddSingleton<IWebSocketManagement, WebSocketManagement>();
-        services.AddSingleton<IWebSocketService, WebSocketService>();
-        services.AddSingleton<IServerBusService, ServerBusService>();
-        services.AddSingleton<IHttpRequestHandler, HttpRequestHandler>();
-        services.AddSingleton<IWebSocketHandler, WebSocketHandler>();
-        services.AddSingleton<ISharePortSocketService, SharePortSocketService>();
-        services.AddSingleton<IUsePortSocketService, UsePortSocketService>();
-        services.AddSingleton<IClientBusService, ClientBusService>();
-        services.AddSingleton<ISignalService, SignalService>();
+        services.AddClientApplicationProjectServices();
 
         services.AddAuthorization();
         services.AddAuthentication(appSettings.Value);

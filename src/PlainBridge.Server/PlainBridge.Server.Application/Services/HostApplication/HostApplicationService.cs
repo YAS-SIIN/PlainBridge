@@ -5,14 +5,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PlainBridge.Server.Application.DTOs;
-using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
-using PlainBridge.Server.Application.Management.Cache; 
+using PlainBridge.Server.Application.Management.Cache;
+using PlainBridge.Server.Application.Services.PlainBridgeApiClient;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
 namespace PlainBridge.Server.Application.Services.HostApplication;
 
-public class HostApplicationService(ILogger<HostApplicationService> _logger, IPlainBridgeApiClientHandler _plainBridgeApiClientHandler, ICacheManagement _cache, IOptions<ApplicationSettings> _appSettings) : IHostApplicationService
+public class HostApplicationService(ILogger<HostApplicationService> _logger, IPlainBridgeApiClientService _plainBridgeApiClientHandler, ICacheManagement _cache, IOptions<ApplicationSettings> _appSettings) : IHostApplicationService
 {
 
 

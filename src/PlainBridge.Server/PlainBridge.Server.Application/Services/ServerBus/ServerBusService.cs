@@ -1,14 +1,14 @@
 ﻿
 using System.Text;
-using System.Text.Json; 
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
+using PlainBridge.Server.Application.Services.PlainBridgeApiClient;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
 namespace PlainBridge.Server.Application.Services.ServerBus;
 
-public class ServerBusService(ILogger<ServerBusService> _logger, IConnection _connection, IPlainBridgeApiClientHandler _plainBridgeApiClientHandler) : IServerBusService
+public class ServerBusService(ILogger<ServerBusService> _logger, IConnection _connection, IPlainBridgeApiClientService _plainBridgeApiClientHandler) : IServerBusService
 { 
 
     public async Task InitializeConsumerAsync(CancellationToken cancellationToken)

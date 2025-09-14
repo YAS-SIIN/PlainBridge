@@ -2,7 +2,6 @@
 
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection;
-using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 using PlainBridge.Server.Application.Management.Cache;
 using PlainBridge.Server.Application.Management.ResponseCompletionSources;
 using PlainBridge.Server.Application.Services.ApiExternalBus;
@@ -10,6 +9,7 @@ using PlainBridge.Server.Application.Services.AppProjectConsumer;
 using PlainBridge.Server.Application.Services.HostApplication;
 using PlainBridge.Server.Application.Services.HttpRequestProxy;
 using PlainBridge.Server.Application.Services.Identity;
+using PlainBridge.Server.Application.Services.PlainBridgeApiClient;
 using PlainBridge.Server.Application.Services.ServerApplication;
 using PlainBridge.Server.Application.Services.ServerBus;
 using PlainBridge.Server.Application.Services.WebSocket;
@@ -22,7 +22,7 @@ public static class DependencyResolver
     {
 
          
-        services.AddSingleton<IPlainBridgeApiClientHandler, PlainBridgeApiClientHandler>();
+        services.AddSingleton<IPlainBridgeApiClientService, PlainBridgeApiClientService>();
         services.AddSingleton<IServerApplicationService, ServerApplicationService>();
         services.AddSingleton<IHostApplicationService, HostApplicationService>();
         services.AddSingleton<ICacheManagement, CacheManagement>();

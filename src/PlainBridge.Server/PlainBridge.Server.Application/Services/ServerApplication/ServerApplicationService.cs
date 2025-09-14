@@ -1,15 +1,15 @@
-﻿ 
+﻿
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using PlainBridge.Server.Application.DTOs;
-using PlainBridge.Server.Application.Handler.PlainBridgeApiClient;
 using PlainBridge.Server.Application.Management.Cache;
-using PlainBridge.SharedApplication.Enums; 
+using PlainBridge.Server.Application.Services.PlainBridgeApiClient;
+using PlainBridge.SharedApplication.Enums;
 
 namespace PlainBridge.Server.Application.Services.ServerApplication;
 
-public class ServerApplicationService(ILogger<ServerApplicationService> _logger, IPlainBridgeApiClientHandler _plainBridgeApiClientHandler, IOptions<ApplicationSettings> _applicationSetting, ICacheManagement _cache) : IServerApplicationService
+public class ServerApplicationService(ILogger<ServerApplicationService> _logger, IPlainBridgeApiClientService _plainBridgeApiClientHandler, IOptions<ApplicationSettings> _applicationSetting, ICacheManagement _cache) : IServerApplicationService
 { 
     public async Task UpdateServerApplicationAsync(CancellationToken cancellationToken)
     {

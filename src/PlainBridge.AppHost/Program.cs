@@ -1,6 +1,4 @@
-using System.Globalization;
-using System.Runtime.InteropServices;
-using Aspire.Hosting;
+using System.Globalization; 
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
@@ -121,3 +119,4 @@ finally
 {
     simpleLogger.Information("Shut down complete");
 }
+ 

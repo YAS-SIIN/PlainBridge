@@ -12,5 +12,5 @@ public record HostApplicationDto : BaseDto<long>
     public string Domain { get; set; } = string.Empty;
     public string InternalUrl { get; set; } = string.Empty;
 
-    public string GetProjectHost(string defaultDomain) => $"{this.Domain.ToLower()}{defaultDomain}";
+    public string GetProjectHost(string? defaultDomain) => $"{Domain.ToLower()}{defaultDomain}";
 }

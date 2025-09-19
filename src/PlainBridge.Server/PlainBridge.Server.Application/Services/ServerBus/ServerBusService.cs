@@ -13,6 +13,7 @@ public class ServerBusService(ILogger<ServerBusService> _logger, IConnection _co
 
     public async Task InitializeConsumerAsync(CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Initializing Server Bus Service...");
         var queueName = "server_bus";
         var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
@@ -34,7 +35,7 @@ public class ServerBusService(ILogger<ServerBusService> _logger, IConnection _co
 
             await channel.ExchangeDeclareAsync(clientExchangeName, "direct", false, false, null, cancellationToken: cancellationToken);
             await channel.QueueDeclareAsync(clientQueueName, false, false, false, null, cancellationToken: cancellationToken);
-            await channel.QueueBindAsync(clientQueueName, clientExchangeName, null, cancellationToken: cancellationToken);
+            await channel.QueueBindAsync(clientQueueName, clientExchangeName, null!, cancellationToken: cancellationToken);
 
             var serverApplications = await _plainBridgeApiClientHandler.GetServerApplicationsAsync(cancellationToken);
 

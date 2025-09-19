@@ -21,6 +21,7 @@ public class ServerApplicationConsumerService(ILogger<ServerApplicationConsumerS
 
     private async Task InitializeRequestConsumerAsync(CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Initializing Server Application Consumer Service...");
         var queueName = "server_network_requests";
         var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
         await channel.QueueDeclareAsync(queueName, false, false, false, null, cancellationToken: cancellationToken);

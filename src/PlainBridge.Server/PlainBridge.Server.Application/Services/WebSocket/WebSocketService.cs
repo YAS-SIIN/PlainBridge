@@ -13,6 +13,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
 using System.Net.WebSockets;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -24,11 +25,15 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
 
     public async Task HandleWebSocketAsync(IWebSocketManagement webSocketManagement, HostApplicationDto hostApplication, CancellationToken cancellationToken)
     {
-        await _cacheManagement.SetGetWebSocketAsync(hostApplication.GetProjectHost(_applicationSettings.Value.DefaultDomain), webSocketManagement, cancellationToken);
-        await InitializeRabbitMQAsync(hostApplication?.UserName!, cancellationToken);
-         
+    
         try
         {
+            if (hostApplication is null)  return; 
+
+            _logger.LogInformation("Handling WebSocket connection for host: {Host}", hostApplication?.GetProjectHost(_applicationSettings.Value.DefaultDomain));
+            await _cacheManagement.SetGetWebSocketAsync(hostApplication!.GetProjectHost(_applicationSettings.Value.DefaultDomain), webSocketManagement, cancellationToken);
+            await InitializeRabbitMQAsync(hostApplication.UserName!, cancellationToken);
+
             var buffer = new byte[1024];
             while (webSocketManagement != null && webSocketManagement is not null)
             {
@@ -45,7 +50,7 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
                 };
 
                 var message = JsonSerializer.Serialize(webSocketData);
-                await PublishWebSocketDataToRabbitMQAsync(hostApplication?.UserName!, hostApplication?.GetProjectHost(_applicationSettings.Value.DefaultDomain)!, hostApplication?.InternalUrl!, message, cancellationToken);
+                await PublishWebSocketDataToRabbitMQAsync(hostApplication.UserName!, hostApplication.GetProjectHost(_applicationSettings.Value.DefaultDomain)!, hostApplication.InternalUrl!, message, cancellationToken);
             }
         }
         finally
@@ -57,6 +62,7 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
 
     public async Task InitializeConsumerAsync(CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Initializing WebSocket Client Bus Service...");
         var queueName = "websocket_client_bus";
         var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
@@ -77,10 +83,10 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
             {
                 var response = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-                if (!ea.BasicProperties.Headers.TryGetValue("Host", out var hostByteArray))
+                if (!ea.BasicProperties.Headers!.TryGetValue("Host", out var hostByteArray))
                     throw new NotFoundException("Host not found");
 
-                var host = Encoding.UTF8.GetString((byte[])hostByteArray);
+                var host = Encoding.UTF8.GetString((byte[])hostByteArray!);
 
                 var requestModel = JsonSerializer.Deserialize<WebSocketDto>(response);
                 var webSocket = await _cacheManagement.SetGetWebSocketAsync(host, cancellationToken: cancellationToken);
@@ -89,7 +95,7 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
 
                 var arraySegment = new ArraySegment<byte>(requestModel?.Payload!, 0, requestModel?.PayloadCount ?? 0);
                 await webSocket.SendAsync(arraySegment,
-                        requestModel.MessageType,
+                        requestModel!.MessageType,
                         requestModel.EndOfMessage,
                         cancellationToken);
             }

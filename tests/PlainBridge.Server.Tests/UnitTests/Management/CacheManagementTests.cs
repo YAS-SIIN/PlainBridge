@@ -19,7 +19,7 @@ public class CacheManagementTests : IClassFixture<ServerUnitTestRunFixture>
        
         _fixture = fixture;
         _hybrid = _fixture.Services.BuildServiceProvider().GetRequiredService<HybridCache>();
-        _cacheManagement = new CacheManagement(new Mock<Microsoft.Extensions.Logging.ILogger<CacheManagement>>().Object, _hybrid, _fixture.AppSettings);
+        _cacheManagement = new CacheManagement(new Mock<Microsoft.Extensions.Logging.ILogger<CacheManagement>>().Object, _hybrid);
     }
 
 

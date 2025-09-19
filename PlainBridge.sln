@@ -52,6 +52,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Api.Tests", "te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Client.Tests", "tests\PlainBridge.Client.Tests\PlainBridge.Client.Tests.csproj", "{DD842B8E-BDE2-487C-9462-A43FBB33A764}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Tests", "tests\PlainBridge.Tests\PlainBridge.Tests.csproj", "{A8B82388-5338-47A1-9CF7-D8028C48ECC7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -132,6 +134,10 @@ Global
 		{DD842B8E-BDE2-487C-9462-A43FBB33A764}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD842B8E-BDE2-487C-9462-A43FBB33A764}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD842B8E-BDE2-487C-9462-A43FBB33A764}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8B82388-5338-47A1-9CF7-D8028C48ECC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8B82388-5338-47A1-9CF7-D8028C48ECC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8B82388-5338-47A1-9CF7-D8028C48ECC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8B82388-5338-47A1-9CF7-D8028C48ECC7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -160,6 +166,7 @@ Global
 		{0DE64927-4E41-44CE-875D-93A5E498176F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{DB0B2DAA-29A7-9106-8203-FE5C0437C450} = {F78BFF6E-5711-4394-8C2E-2BF79B2E899E}
 		{DD842B8E-BDE2-487C-9462-A43FBB33A764} = {F78BFF6E-5711-4394-8C2E-2BF79B2E899E}
+		{A8B82388-5338-47A1-9CF7-D8028C48ECC7} = {F78BFF6E-5711-4394-8C2E-2BF79B2E899E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4E8B8F9B-822C-426B-B920-DFA6BA23C3D1}

@@ -10,17 +10,18 @@ public class WebSocketProxyMiddleware(RequestDelegate _next, ILogger<WebSocketPr
 {
     public async Task Invoke(HttpContext context)
     {
+        _logger.LogInformation("WebSocketProxyMiddleware invoked for request: {Method} {Path}", context.Request.Method, context.Request.Path);
         CancellationToken cancellationToken = context.RequestAborted;
         using var scope = _serviceProvider.CreateScope();
         var hostApplicationService = scope.ServiceProvider.GetRequiredService<IHostApplicationService>();
         var webSocketService = scope.ServiceProvider.GetRequiredService<IWebSocketService>();
         var applicationSettings = scope.ServiceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<ApplicationSettings>>().Value;
-        IWebSocketManagement webSocketManagement = null;
+        IWebSocketManagement webSocketManagement = null!;
         
         var requestId = Guid.NewGuid().ToString();
         var host = context.Request.Host;
 
-        var project = await hostApplicationService.GetByHostAsync(host.Value, cancellationToken);
+        var project = await hostApplicationService.GetByHostAsync(host!.Value!, cancellationToken);
 
         if (context.WebSockets.IsWebSocketRequest)
         {

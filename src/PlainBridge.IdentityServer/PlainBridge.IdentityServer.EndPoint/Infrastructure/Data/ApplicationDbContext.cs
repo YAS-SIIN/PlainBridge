@@ -14,7 +14,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
     }
 
-    public DbSet<IdentityUser> IdentityUsers { get; set; } = null!;
+    public DbSet<ApplicationUser> IdentityUsers { get; set; } = null!;
     public DbSet<IdentityRole> IdentityRoles { get; set; } = null!;
 
     //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

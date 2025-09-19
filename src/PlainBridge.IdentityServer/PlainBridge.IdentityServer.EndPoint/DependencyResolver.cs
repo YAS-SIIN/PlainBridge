@@ -1,15 +1,16 @@
-﻿using System.Globalization;
-using System.Text;
-using Duende.IdentityServer;
+﻿using Duende.IdentityServer;
 using Duende.IdentityServer.Licensing;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PlainBridge.IdentityServer.EndPoint.Application.Services.User;
+using PlainBridge.IdentityServer.EndPoint.Domain.Entities;
 using PlainBridge.IdentityServer.EndPoint.DTOs;
 using PlainBridge.IdentityServer.EndPoint.ErrorHandling;
 using PlainBridge.IdentityServer.EndPoint.Infrastructure.Data;
 using Serilog;
+using System.Globalization;
+using System.Text;
 
 namespace PlainBridge.IdentityServer.EndPoint;
 
@@ -42,7 +43,7 @@ public static class DependencyResolver
         // Use developer signing credentials in Development to avoid file system key store writes
 
 
-        services.AddIdentity<IdentityUser, IdentityRole>(options =>
+        services.AddIdentity<ApplicationUser, IdentityRole>(options =>
         {
             options.Password.RequireDigit = false;
             options.Password.RequireLowercase = false;

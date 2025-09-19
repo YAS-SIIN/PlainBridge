@@ -1,12 +1,11 @@
 ﻿
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
-
-using System.Threading.Tasks;
+ 
 
 namespace PlainBridge.Api.Infrastructure.ExternalServices.Messaging;
 
-public class RabbitMqEventBus(ILogger<RabbitMqEventBus> _logger, IConnection _connection) : IEventBus
+public class RabbitMQEventBus(ILogger<RabbitMQEventBus> _logger, IConnection _connection) : IEventBus
 {
     public async Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken) where TEvent : class
     {

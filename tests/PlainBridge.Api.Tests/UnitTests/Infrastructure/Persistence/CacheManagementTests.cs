@@ -1,12 +1,12 @@
-using Microsoft.Extensions.Caching.Hybrid; 
+using Microsoft.Extensions.Caching.Hybrid;
 using Moq;
 using PlainBridge.Api.Infrastructure.Persistence.Cache;
 using PlainBridge.Api.Tests.UnitTests.Infrastructure.Utils;
 using PlainBridge.SharedApplication.DTOs;
 
-namespace PlainBridge.Api.Tests.UnitTests.Infrastructure.Management.Cache;
+namespace PlainBridge.Api.Tests.UnitTests.Infrastructure.Persistence;
 
-[Collection("ServerUnitTestRun")]
+[Collection("ApiUnitTestRun")]
 public class CacheManagementTests : IClassFixture<ApiInfrastructureUnitTestRunFixture>
 {
     private readonly ApiInfrastructureUnitTestRunFixture _fixture;

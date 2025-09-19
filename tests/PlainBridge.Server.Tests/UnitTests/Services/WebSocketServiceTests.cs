@@ -9,6 +9,7 @@ using RabbitMQ.Client;
 
 namespace PlainBridge.Server.Tests.UnitTests.Services;
 
+[Collection("ServerUnitTestRun")]
 public class WebSocketServiceTests
 {
     private readonly IWebSocketService _webSocketService;

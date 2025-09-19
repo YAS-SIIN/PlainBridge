@@ -18,7 +18,7 @@ public static class DependencyResolver
         // Add services to the container 
 
 
-        services.AddScoped<IEventBus, RabbitMqEventBus>();
+        services.AddScoped<IEventBus, RabbitMQEventBus>();
         services.AddScoped<ICacheManagement, CacheManagement>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddDbContext<MainDbContext>(options => options.UseInMemoryDatabase("PlainBridgeApiDBContext"));

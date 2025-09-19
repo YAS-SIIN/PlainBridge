@@ -1,7 +1,4 @@
-﻿
-using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+﻿ 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PlainBridge.Server.Application.DTOs;
@@ -12,7 +9,10 @@ using PlainBridge.SharedApplication.Enums;
 using PlainBridge.SharedApplication.Exceptions;
 namespace PlainBridge.Server.Application.Services.HostApplication;
 
-public class HostApplicationService(ILogger<HostApplicationService> _logger, IPlainBridgeApiClientService _plainBridgeApiClientHandler, ICacheManagement _cache, IOptions<ApplicationSettings> _appSettings) : IHostApplicationService
+public class HostApplicationService(ILogger<HostApplicationService> _logger, 
+    IPlainBridgeApiClientService _plainBridgeApiClientHandler, 
+    ICacheManagement _cache, 
+    IOptions<ApplicationSettings> _appSettings) : IHostApplicationService
 {
 
 
@@ -33,7 +33,7 @@ public class HostApplicationService(ILogger<HostApplicationService> _logger, IPl
 
     public async Task UpdateHostApplicationAsync(CancellationToken cancellationToken)
     {
-        var hostApplications = await _plainBridgeApiClientHandler.GetHostApplicationsAsync(CancellationToken.None);
+        var hostApplications = await _plainBridgeApiClientHandler.GetHostApplicationsAsync(cancellationToken);
          
         if (hostApplications is not null && hostApplications.Any())
         {

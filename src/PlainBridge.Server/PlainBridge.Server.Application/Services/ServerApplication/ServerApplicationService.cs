@@ -1,20 +1,19 @@
 ﻿
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-
-using PlainBridge.Server.Application.DTOs;
+using Microsoft.Extensions.Logging; 
 using PlainBridge.Server.Application.Management.Cache;
 using PlainBridge.Server.Application.Services.PlainBridgeApiClient;
 using PlainBridge.SharedApplication.Enums;
 
 namespace PlainBridge.Server.Application.Services.ServerApplication;
 
-public class ServerApplicationService(ILogger<ServerApplicationService> _logger, IPlainBridgeApiClientService _plainBridgeApiClientHandler, IOptions<ApplicationSettings> _applicationSetting, ICacheManagement _cache) : IServerApplicationService
+public class ServerApplicationService(ILogger<ServerApplicationService> _logger, 
+    IPlainBridgeApiClientService _plainBridgeApiClientHandler,
+    ICacheManagement _cache) : IServerApplicationService
 { 
     public async Task UpdateServerApplicationAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Updating server applications from API.");
-        var serverApplications = await _plainBridgeApiClientHandler.GetServerApplicationsAsync(CancellationToken.None);
+        var serverApplications = await _plainBridgeApiClientHandler.GetServerApplicationsAsync(cancellationToken);
 
         if (serverApplications == null)
         {

@@ -20,7 +20,10 @@ using System.Threading;
 
 namespace PlainBridge.Server.Application.Services.WebSocket;
 
-public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagement _cacheManagement, IConnection _connection, IOptions<ApplicationSettings> _applicationSettings) : IWebSocketService
+public class WebSocketService(ILogger<WebSocketService> _logger, 
+    ICacheManagement _cacheManagement, 
+    IConnection _connection, 
+    IOptions<ApplicationSettings> _applicationSettings) : IWebSocketService
 {
 
     public async Task HandleWebSocketAsync(IWebSocketManagement webSocketManagement, HostApplicationDto hostApplication, CancellationToken cancellationToken)

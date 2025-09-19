@@ -9,7 +9,8 @@ using System.Text;
 
 namespace PlainBridge.Server.Application.Services.AppProjectConsumer;
 
-public class ServerApplicationConsumerService(ILogger<ServerApplicationConsumerService> _logger, ICacheManagement _cacheManagement, IConnection _connection) : IServerApplicationConsumerService
+public class ServerApplicationConsumerService(ILogger<ServerApplicationConsumerService> _logger, 
+    ICacheManagement _cacheManagement, IConnection _connection) : IServerApplicationConsumerService
 {
  
 

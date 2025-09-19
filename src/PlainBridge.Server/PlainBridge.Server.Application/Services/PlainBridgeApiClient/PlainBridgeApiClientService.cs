@@ -11,7 +11,10 @@ using PlainBridge.SharedApplication.Enums;
 
 namespace PlainBridge.Server.Application.Services.PlainBridgeApiClient;
 
-public class PlainBridgeApiClientService(ILogger<PlainBridgeApiClientService> _logger, IOptions<ApplicationSettings> _applicationSettings, IHttpClientFactory _httpClientFactory, IIdentityService _identityService) : IPlainBridgeApiClientService
+public class PlainBridgeApiClientService(ILogger<PlainBridgeApiClientService> _logger, 
+    IOptions<ApplicationSettings> _applicationSettings, 
+    IHttpClientFactory _httpClientFactory, 
+    IIdentityService _identityService) : IPlainBridgeApiClientService
 {
  
     public async Task<IList<HostApplicationDto>?> GetHostApplicationsAsync(CancellationToken cancellationToken)

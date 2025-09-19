@@ -62,7 +62,7 @@ public class WebSocketService(ILogger<WebSocketService> _logger, IWebSocketManag
             var buffer = new byte[1024 * 4];
             do
             {
-                var receiveResult = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                var receiveResult = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationToken);
                 if (receiveResult.MessageType == System.Net.WebSockets.WebSocketMessageType.Close)
                     break;
 

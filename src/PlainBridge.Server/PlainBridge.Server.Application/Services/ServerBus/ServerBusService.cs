@@ -8,7 +8,9 @@ using RabbitMQ.Client.Events;
 
 namespace PlainBridge.Server.Application.Services.ServerBus;
 
-public class ServerBusService(ILogger<ServerBusService> _logger, IConnection _connection, IPlainBridgeApiClientService _plainBridgeApiClientHandler) : IServerBusService
+public class ServerBusService(ILogger<ServerBusService> _logger, 
+    IConnection _connection, 
+    IPlainBridgeApiClientService _plainBridgeApiClientHandler) : IServerBusService
 { 
 
     public async Task InitializeConsumerAsync(CancellationToken cancellationToken)

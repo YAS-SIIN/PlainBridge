@@ -52,7 +52,7 @@ public class WebSocketHandler(ILogger<WebSocketHandler> _logger, IWebSocketServi
                 await webSocket.SendAsync(arraySegment,
                     requestModel.MessageType,
                     requestModel.EndOfMessage,
-                    CancellationToken.None);
+                    cancellationToken);
             }
             catch (Exception ex)
             {

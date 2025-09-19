@@ -4,19 +4,20 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using PlainBridge.Api.Application.UseCases.HostApplication.Queries;
 using PlainBridge.Api.Application.UseCases.ServerApplication.Queries;
+using PlainBridge.Api.Tests.UnitTests.Application.Utils;
 using PlainBridge.SharedApplication.Exceptions;
 
 namespace PlainBridge.Api.Tests.UnitTests.Application.UseCases.ServerApplication;
 
 [Collection("ApiUnitTestRun")]
-public class ServerApplicationQueriesTests : IClassFixture<TestRunFixture>
+public class ServerApplicationQueriesTests : IClassFixture<ApiApplcationUnitTestRunFixture>
 {
-    private readonly TestRunFixture _fixture;
+    private readonly ApiApplcationUnitTestRunFixture _fixture;
     private readonly GetAllServerApplicationsQueryHandler _getAllServerApplicationsQueryHandler;
     private readonly GetServerApplicationQueryHandler _getServerApplicationQueryHandler; 
 
 
-    public ServerApplicationQueriesTests(TestRunFixture fixture)
+    public ServerApplicationQueriesTests(ApiApplcationUnitTestRunFixture fixture)
     {
         _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
 

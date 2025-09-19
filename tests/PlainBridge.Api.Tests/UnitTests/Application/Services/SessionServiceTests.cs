@@ -11,14 +11,15 @@ using PlainBridge.Api.Application.Features.User.Queries;
 using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.Api.Infrastructure.Persistence.Cache;
+using PlainBridge.Api.Tests.UnitTests.Application.Utils;
 using PlainBridge.SharedApplication.Mediator;
 
 namespace PlainBridge.Api.Tests.UnitTests.Application.Services;
 
 [Collection("ApiUnitTestRun")]
-public class SessionServiceTests : IClassFixture<TestRunFixture>
+public class SessionServiceTests : IClassFixture<ApiApplcationUnitTestRunFixture>
 {
-    private readonly TestRunFixture _fixture;
+    private readonly ApiApplcationUnitTestRunFixture _fixture;
     private readonly ISessionService _sessionService;
     private readonly Mock<ILogger<SessionService>> _mockLoggerSessionService;
     private readonly Mock<IHttpContextAccessor> _mockIHttpContextAccessor;
@@ -27,7 +28,7 @@ public class SessionServiceTests : IClassFixture<TestRunFixture>
     private readonly Mock<IHttpClientFactory> _mockIHttpClientFactory;
     private readonly Mock<IOptions<ApplicationSettings>> _mockApplicationSetting;
 
-    public SessionServiceTests(TestRunFixture fixture)
+    public SessionServiceTests(ApiApplcationUnitTestRunFixture fixture)
     {
         _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
         _mockLoggerSessionService = new Mock<ILogger<SessionService>>();

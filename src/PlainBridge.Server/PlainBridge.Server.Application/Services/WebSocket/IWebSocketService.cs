@@ -1,11 +1,10 @@
-﻿using PlainBridge.Server.Application.Management.WebSocketManagement; 
+﻿using PlainBridge.Server.Application.Management.WebSocket; 
 using PlainBridge.SharedApplication.DTOs;
 
-namespace PlainBridge.Server.Application.Services.WebSocket
+namespace PlainBridge.Server.Application.Services.WebSocket;
+
+public interface IWebSocketService
 {
-    public interface IWebSocketService
-    {
-        Task HandleWebSocketAsync(IWebSocketManagement webSocketManagement, HostApplicationDto hostApplication, CancellationToken cancellationToken);
-        Task InitializeConsumerAsync(CancellationToken cancellationToken);
-    }
+    Task HandleWebSocketAsync(IWebSocketManagement webSocketManagement, HostApplicationDto hostApplication, CancellationToken cancellationToken);
+    Task InitializeConsumerAsync(CancellationToken cancellationToken);
 }

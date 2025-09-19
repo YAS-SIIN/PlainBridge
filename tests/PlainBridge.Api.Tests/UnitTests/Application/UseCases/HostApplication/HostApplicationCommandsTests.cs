@@ -6,6 +6,7 @@ using Moq;
 using PlainBridge.Api.Application.UseCases.HostApplication.Commands;
 using PlainBridge.Api.Domain.HostAggregate.ValueObjects;
 using PlainBridge.Api.Infrastructure.ExternalServices.Messaging;
+using PlainBridge.Api.Tests.UnitTests.Application.Utils;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Exceptions;
 using PlainBridge.SharedDomain.Base.Enums;
@@ -13,9 +14,9 @@ using PlainBridge.SharedDomain.Base.Enums;
 namespace PlainBridge.Api.Tests.UnitTests.Application.UseCases.HostApplication;
 
 [Collection("ApiUnitTestRun")]
-public class HostApplicationCommandsTests : IClassFixture<TestRunFixture>
+public class HostApplicationCommandsTests : IClassFixture<ApiApplcationUnitTestRunFixture>
 {
-    private readonly TestRunFixture _fixture;
+    private readonly ApiApplcationUnitTestRunFixture _fixture;
     private readonly CreateHostApplicationCommandHandler _createHandler;
     private readonly UpdateHostApplicationCommandHandler _updateHandler;
     private readonly DeleteHostApplicationCommandHandler _deleteHandler;
@@ -24,7 +25,7 @@ public class HostApplicationCommandsTests : IClassFixture<TestRunFixture>
     private readonly Mock<IEventBus> _mockEventBus;
 
 
-    public HostApplicationCommandsTests(TestRunFixture fixture)
+    public HostApplicationCommandsTests(ApiApplcationUnitTestRunFixture fixture)
     {
         _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
         _mockEventBus = new Mock<IEventBus>();

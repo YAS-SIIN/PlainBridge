@@ -5,18 +5,19 @@ using System.Text;
 using Microsoft.Extensions.Caching.Hybrid;
 using Moq;
 using PlainBridge.Api.Application.Services.Token;
+using PlainBridge.Api.Tests.UnitTests.Application.Utils;
 using StackExchange.Redis;
 
 namespace PlainBridge.Api.Tests.UnitTests.Application.Services;
 
 [Collection("ApiUnitTestRun")]
-public class TokenServiceTests : IClassFixture<TestRunFixture>
+public class TokenServiceTests : IClassFixture<ApiApplcationUnitTestRunFixture>
 {
-    private readonly TestRunFixture _fixture;
+    private readonly ApiApplcationUnitTestRunFixture _fixture;
     private readonly ITokenService _tokenService;
     private readonly Mock<HybridCache> _mockDb;
 
-    public TokenServiceTests(TestRunFixture fixture)
+    public TokenServiceTests(ApiApplcationUnitTestRunFixture fixture)
     {
         _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
         _mockDb = new Mock<HybridCache>();

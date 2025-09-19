@@ -1,12 +1,11 @@
 ﻿
 
-using System.Net.WebSockets; 
+using System.Net.WebSockets;
 
-namespace PlainBridge.Server.Application.Management.WebSocketManagement;
+namespace PlainBridge.Server.Application.Management.WebSocket;
 
-public class WebSocketManagement(WebSocket _websocket) : IWebSocketManagement
-{
-    public ClientWebSocketOptions Options => throw new NotImplementedException();
+public class WebSocketManagement(System.Net.WebSockets.WebSocket _websocket) : IWebSocketManagement
+{ 
 
     public Task ConnectAsync(Uri uri, CancellationToken cancellationToken = default!) => throw new NotImplementedException();
 

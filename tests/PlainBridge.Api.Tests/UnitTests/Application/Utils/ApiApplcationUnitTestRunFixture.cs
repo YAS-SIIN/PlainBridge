@@ -1,27 +1,21 @@
-﻿
-
-using Castle.Core.Resource;
-
+﻿ 
 using Microsoft.EntityFrameworkCore;
 using PlainBridge.Api.Domain.HostAggregate;
 using PlainBridge.Api.Domain.ServerAggregate;
-using PlainBridge.Api.Domain.ServerAggregate.Enums;
-using PlainBridge.Api.Domain.ServerAggregate.ValueObjects;
+using PlainBridge.Api.Domain.ServerAggregate.Enums; 
 using PlainBridge.Api.Domain.UserAggregate;
-using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
-using PlainBridge.SharedDomain.Base.Enums;
-using PlainBridge.SharedDomain.Base.ValueObjects;
+using PlainBridge.Api.Infrastructure.Persistence.Data.Context; 
 
 
-namespace PlainBridge.Api.Tests.UnitTests;
+namespace PlainBridge.Api.Tests.UnitTests.Application.Utils;
 
 
-public class TestRunFixture : IAsyncLifetime
+public class ApiApplcationUnitTestRunFixture : IAsyncLifetime
 {
 
 
     public MainDbContext MemoryMainDbContext;
-    public TestRunFixture()
+    public ApiApplcationUnitTestRunFixture()
     {
 
         var dbContextOptionsBuilder = new DbContextOptionsBuilder<MainDbContext>();

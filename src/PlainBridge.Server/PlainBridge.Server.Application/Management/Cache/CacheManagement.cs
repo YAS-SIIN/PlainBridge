@@ -3,7 +3,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PlainBridge.Server.Application.DTOs;
-using PlainBridge.Server.Application.Management.WebSocketManagement; 
+using PlainBridge.Server.Application.Management.WebSocket; 
 using PlainBridge.SharedApplication.DTOs;
 
 namespace PlainBridge.Server.Application.Management.Cache;
@@ -25,7 +25,7 @@ public class CacheManagement(ILogger<CacheManagement> _logger, HybridCache _hybr
             async ct => value, 
             cancellationToken: cancellationToken);
 
-    public async Task<IWebSocketManagement?> SetGetWebSocketAsync(string host, IWebSocketManagement value = default!, CancellationToken cancellationToken = default!) => await
+    public async Task<IWebSocketManagement> SetGetWebSocketAsync(string host, IWebSocketManagement value = default!, CancellationToken cancellationToken = default!) => await
         _hybridCache.GetOrCreateAsync($"webSocket:{host}",
             async ct => value,
             cancellationToken: cancellationToken);

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 using PlainBridge.Server.Application.DTOs;
 using PlainBridge.Server.Application.Management.Cache;
-using PlainBridge.Server.Application.Management.WebSocketManagement;
+using PlainBridge.Server.Application.Management.WebSocket;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Exceptions;
 
@@ -26,8 +26,7 @@ public class WebSocketService(ILogger<WebSocketService> _logger, ICacheManagemen
     {
         await _cacheManagement.SetGetWebSocketAsync(hostApplication.GetProjectHost(_applicationSettings.Value.DefaultDomain), webSocketManagement, cancellationToken);
         await InitializeRabbitMQAsync(hostApplication?.UserName!, cancellationToken);
-
-
+         
         try
         {
             var buffer = new byte[1024];

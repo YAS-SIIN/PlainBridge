@@ -1,6 +1,6 @@
 ﻿
 using PlainBridge.Server.Application.DTOs;
-using PlainBridge.Server.Application.Management.WebSocketManagement;
+using PlainBridge.Server.Application.Management.WebSocket;
 using PlainBridge.Server.Application.Services.HostApplication;
 using PlainBridge.Server.Application.Services.WebSocket;
 

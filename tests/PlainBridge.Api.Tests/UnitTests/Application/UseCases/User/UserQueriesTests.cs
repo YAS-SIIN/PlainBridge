@@ -2,18 +2,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using PlainBridge.Api.Application.Features.User.Queries;
+using PlainBridge.Api.Tests.UnitTests.Application.Utils;
 using PlainBridge.SharedApplication.Exceptions;
 
 namespace PlainBridge.Api.Tests.UnitTests.Application.UseCases.User;
 
 [Collection("ApiUnitTestRun")]
-public class UserQueriesTests : IClassFixture<TestRunFixture>
+public class UserQueriesTests : IClassFixture<ApiApplcationUnitTestRunFixture>
 {
-    private readonly TestRunFixture _fixture;
+    private readonly ApiApplcationUnitTestRunFixture _fixture;
     private readonly GetAllUsersQueryHandler _getAllHandler;
     private readonly GetUserByExternalIdQueryHandler _getByExternalIdHandler; 
 
-    public UserQueriesTests(TestRunFixture fixture)
+    public UserQueriesTests(ApiApplcationUnitTestRunFixture fixture)
     {
         _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
 

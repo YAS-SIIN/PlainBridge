@@ -3,24 +3,25 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
-using PlainBridge.SharedApplication.Exceptions; 
+using PlainBridge.SharedApplication.Exceptions;
 using PlainBridge.Api.Application.Features.User.Commands;
 using PlainBridge.Api.Infrastructure.ExternalServices.Identity;
 using PlainBridge.Api.Infrastructure.DTOs;
+using PlainBridge.Api.Tests.UnitTests.Application.Utils;
 
 namespace PlainBridge.Api.Tests.UnitTests.Application.UseCases.User;
 
 [Collection("ApiUnitTestRun")]
-public class UserCommandsTests : IClassFixture<TestRunFixture>
+public class UserCommandsTests : IClassFixture<ApiApplcationUnitTestRunFixture>
 {
-    private readonly TestRunFixture _fixture;
+    private readonly ApiApplcationUnitTestRunFixture _fixture;
     private readonly Mock<IIdentityService> _mockIdentityService;
     private readonly CreateUserCommandHandler _createHandler;
     private readonly CreateUserLocallyCommandHandler _createLocallyHandler;
     private readonly UpdateUserCommandHandler _updateHandler;
     private readonly ChangeUserPasswordCommandHandler _changePasswordHandler;
 
-    public UserCommandsTests(TestRunFixture fixture)
+    public UserCommandsTests(ApiApplcationUnitTestRunFixture fixture)
     {
         _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
         _mockIdentityService = new Mock<IIdentityService>();

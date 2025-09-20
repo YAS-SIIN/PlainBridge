@@ -26,7 +26,8 @@ public class WebSocketProxyMiddleware(RequestDelegate _next, ILogger<WebSocketPr
         if (context.WebSockets.IsWebSocketRequest)
         {
             var webSocketConnection = await context.WebSockets.AcceptWebSocketAsync();
-            webSocketManagement = new WebSocketManagement(webSocketConnection);
+            var loggerWebSocketManagement = scope.ServiceProvider.GetRequiredService<ILogger<WebSocketManagement>>();
+            webSocketManagement = new WebSocketManagement(loggerWebSocketManagement, webSocketConnection);
             await webSocketService.HandleWebSocketAsync(webSocketManagement, project, cancellationToken);
         }
         else

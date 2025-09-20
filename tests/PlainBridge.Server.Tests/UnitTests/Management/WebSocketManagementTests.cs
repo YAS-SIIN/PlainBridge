@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Moq;
 using PlainBridge.Server.Application.Management.WebSocket;
 using System.Net.WebSockets;
@@ -12,7 +13,7 @@ public class WebSocketManagementTests
     {
         _clientWebSocket = new Mock<WebSocket>();
 
-        webSocketManagement = new WebSocketManagement(_clientWebSocket.Object);
+        webSocketManagement = new WebSocketManagement(new Mock<ILogger<WebSocketManagement>>().Object, _clientWebSocket.Object);
     }
 
     #region ReceiveAsync

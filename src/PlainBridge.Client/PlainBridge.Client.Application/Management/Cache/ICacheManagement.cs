@@ -8,7 +8,7 @@ namespace PlainBridge.Client.Application.Management.Cache;
 public interface ICacheManagement
 {
     Task<HostApplicationDto> SetGetHostApplicationAsync(string host, HostApplicationDto value = default!, CancellationToken cancellationToken = default!);
-    Task<ServerApplicationDto> SetGetServerApplicationAsync(Guid appId, ServerApplicationDto value = default!, CancellationToken cancellationToken = default!);
+    Task<ServerApplicationDto> SetGetServerApplicationAsync(string appId, ServerApplicationDto value = default!, CancellationToken cancellationToken = default!);
     Task<ServerApplicationDto> SetGetServerApplicationAsync(string username, int port, ServerApplicationDto value = default!, CancellationToken cancellationToken = default!);
     Task<List<ServerApplicationDto>> SetGetServerApplicationsAsync(List<ServerApplicationDto> value = default!, CancellationToken cancellationToken = default!);
     Task<IWebSocketManagement> SetGetWebSocketAsync(string host, IWebSocketManagement value = default!, CancellationToken cancellationToken = default!);

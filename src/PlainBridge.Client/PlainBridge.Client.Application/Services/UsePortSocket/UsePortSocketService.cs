@@ -18,6 +18,7 @@ public class UsePortSocketService(ILogger<UsePortSocketService> logger, IConnect
 
     public async Task InitializeAsync(string username, List<ServerApplicationDto> serverApplications, CancellationToken cancellationToken)
     {
+        logger.LogInformation("Initializing UsePortSocketService for user {username}", username);
         foreach (var appProject in serverApplications.Where(x => x.ServerApplicationType == ServerApplicationTypeEnum.UsePort))
         {
             var tcpListener = await _cacheManagement.SetGetTcpListenerAsync(appProject.InternalPort, cancellationToken: cancellationToken);

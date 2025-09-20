@@ -37,8 +37,10 @@ public class HttpRequestProxyServiceTests
         // Arrange  
         var _mockChannel = new Mock<IChannel>();
         _mockConnection.Setup(m => m.CreateChannelAsync(default, _cancellationToken)).ReturnsAsync(_mockChannel.Object);
+
         // Act
         await _httpRequestProxyService.InitializeConsumerAsync(_cancellationToken);
+
         // Assert
         _mockConnection.Verify(m => m.CreateChannelAsync(default, _cancellationToken), Times.Once);
         _mockApiExternalBusService.Verify(m => m.InitializeAsync(_cancellationToken), Times.Once);  

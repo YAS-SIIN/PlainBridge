@@ -1,7 +1,7 @@
- 
-using Microsoft.Extensions.DependencyInjection; 
 
-namespace PlainBridge.Server.Tests.Utils;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace PlainBridge.Server.Tests.UnitTests.Utils;
 
  
 public class ServerUnitTestRunFixture : IAsyncLifetime

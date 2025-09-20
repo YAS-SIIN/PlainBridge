@@ -17,8 +17,7 @@ public class WebSocketServiceTests
     private readonly Mock<ILogger<WebSocketService>> _mockLogger = new();
     private readonly Mock<ICacheManagement> _mockCacheManagement = new();
     private readonly Mock<IConnection> _mockConnection = new();
-
-
+     
     private readonly CancellationToken _cancellationToken = CancellationToken.None;
     public WebSocketServiceTests()
     {

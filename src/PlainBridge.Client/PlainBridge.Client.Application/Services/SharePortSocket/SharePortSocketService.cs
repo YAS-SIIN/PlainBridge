@@ -22,6 +22,7 @@ public class SharePortSocketService(ILogger<SharePortSocketService> _logger, ICo
 
     public async Task InitializeAsync(string username, List<ServerApplicationDto> appProjects, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Starting shareport socket service ...");
         var queueName = $"{username}_client_shareport_network_packets";
 
         var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
@@ -35,23 +36,23 @@ public class SharePortSocketService(ILogger<SharePortSocketService> _logger, ICo
             var message = Encoding.UTF8.GetString(body);
             var packetModel = JsonSerializer.Deserialize<PacketDto>(message);
 
-            var useportUsername = Encoding.UTF8.GetString(ea.BasicProperties.Headers["useport_username"] as byte[]);
-            var useportPort = int.Parse(ea.BasicProperties.Headers["useport_port"].ToString()!);
-            var useportConnectionId = Encoding.UTF8.GetString(ea.BasicProperties.Headers["useport_connectionid"] as byte[]);
+            var useportUsername = Encoding.UTF8.GetString(ea.BasicProperties.Headers!["useport_username"]! as byte[]);
+            var useportPort = int.Parse(ea.BasicProperties.Headers!["useport_port"]!.ToString()!);
+            var useportConnectionId = Encoding.UTF8.GetString(ea.BasicProperties.Headers!["useport_connectionid"]! as byte[]);
 
 
             var sharePortCacheModel = await _cacheManagement.SetSharePortModelAsync(useportUsername, useportPort, useportConnectionId.ToString(), cancellationToken: cancellationToken);
             if (sharePortCacheModel is null)
             {
                 var client = new TcpClient();
-                await client.ConnectAsync(new IPEndPoint(IPAddress.Parse("127.0.0.1"), int.Parse(ea.BasicProperties.Headers["sharedport_port"].ToString()!)));
+                await client.ConnectAsync(new IPEndPoint(IPAddress.Parse("127.0.0.1"), int.Parse(ea.BasicProperties.Headers!["sharedport_port"]!.ToString()!)));
                 var handleTcpClientResponsesTask = Task.Run(async () => await HandleTcpClientResponsesAsync(client, useportUsername, useportPort, useportConnectionId, cancellationToken));
 
                 sharePortCacheModel = new(client, handleTcpClientResponsesTask);
                 await _cacheManagement.SetSharePortModelAsync(useportUsername, useportPort, useportConnectionId, sharePortCacheModel, cancellationToken: cancellationToken);
             }
 
-            await sharePortCacheModel.TcpClient.GetStream().WriteAsync(packetModel.Buffer, 0, packetModel.Count, cancellationToken);
+            await sharePortCacheModel.TcpClient.GetStream().WriteAsync(packetModel!.Buffer, 0, packetModel.Count, cancellationToken);
 
             await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
         };

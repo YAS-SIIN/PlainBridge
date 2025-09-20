@@ -29,8 +29,10 @@ public class ServerBusServiceTests
         // Arrange  
         var _mockChannel = new Mock<IChannel>();
         _mockConnection.Setup(m => m.CreateChannelAsync(default, _cancellationToken)).ReturnsAsync(_mockChannel.Object);
+
         // Act
         await _serverBusService.InitializeConsumerAsync(_cancellationToken);
+
         // Assert
         _mockConnection.Verify(m => m.CreateChannelAsync(default, _cancellationToken), Times.Once);
     }

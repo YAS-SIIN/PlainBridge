@@ -3,7 +3,7 @@
 using Aspire.Hosting.Testing; 
 using PlainBridge.Tests.Utils; 
 
-namespace PlainBridge.Tests.Server;
+namespace PlainBridge.Tests.Client;
 
 [Collection("AppHostIntegrationTestRun")]
 public class ClientTests : IClassFixture<AppHostIntegrationTestRunFixture>

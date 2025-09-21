@@ -23,7 +23,7 @@ public class IdsTests : IClassFixture<AppHostIntegrationTestRunFixture>
         _cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(60));
 
         var res = await _fixture.InjectedDistributedApplication.ResourceNotifications
-        .WaitForResourceHealthyAsync("ids-endpoint", _cancellationTokenSource.Token);
+        .WaitForResourceHealthyAsync("identityserver-endpoint", _cancellationTokenSource.Token);
 
         // Assert
         Assert.NotNull(res);

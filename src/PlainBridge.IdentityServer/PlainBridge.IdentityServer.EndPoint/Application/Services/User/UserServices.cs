@@ -15,11 +15,7 @@ namespace PlainBridge.IdentityServer.EndPoint.Application.Services.User;
 
 public class UserServices(
     ILogger<UserServices> _logger, 
-    UserManager<ApplicationUser> _userManager, 
-    TestUserStore _users, 
-    IEventService _events, 
-    IIdentityServerInteractionService _interaction,
-    IHttpContextAccessor _httpContextAccessor
+    UserManager<ApplicationUser> _userManager
 ) : IUserServices
 {
 
@@ -97,40 +93,6 @@ public class UserServices(
         return user;
 
     }
-
-    public async Task LoginUserForTestAsync(UserLoginDto model)
-    {
-        var context = await _interaction.GetAuthorizationContextAsync("");
-        // validate username/password against in-memory store
-        if (_users.ValidateCredentials(model.Username, model.Password))
-        {
-            var user = _users.FindByUsername(model.Username);
-            await _events.RaiseAsync(new UserLoginSuccessEvent(user.Username, user.SubjectId, user.Username, clientId: context?.Client.ClientId));
-        
-            // only set explicit expiration here if user chooses "remember me". 
-            // otherwise we rely upon expiration configured in cookie middleware.
-            var props = new AuthenticationProperties();
-       
-            // issue authentication cookie with subject ID and username
-            var isuser = new IdentityServerUser(user.SubjectId)
-            {
-                DisplayName = user.Username
-            };
-
-            // Use the injected IHttpContextAccessor to get the current HttpContext instance
-            var httpContext = _httpContextAccessor.HttpContext;
-            if (httpContext != null)
-            {
-                await httpContext.SignInAsync(isuser, props);
-            }
-            else
-            {
-                _logger.LogError("HttpContext is null during user login.");
-                throw new ApplicationException("HttpContext is not available.");
-            }
-        }
-    }
-
 
 
 }

@@ -2,7 +2,7 @@
 using Aspire.Hosting.Testing; 
 using PlainBridge.Tests.Utils; 
 
-namespace PlainBridge.Tests.Server;
+namespace PlainBridge.Tests.Api;
 
 [Collection("AppHostIntegrationTestRun")]
 public class ApiTests : IClassFixture<AppHostIntegrationTestRunFixture>

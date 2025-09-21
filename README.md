@@ -2,7 +2,7 @@
 
 Expose your local applications to the world — safely.
 
-PlainBridge is an end‑to‑end sample/product that demonstrates how to build a modern, cloud‑ready tunneling platform with .NET Aspire. It packages an identity service, backend APIs, a public routing server, a client agent, and an Angular web app into a single distributed application you can run locally with one command.
+PlainBridge is a microservice-based end‑to‑end sample/product that demonstrates how to build a modern, cloud‑ready tunneling platform with .NET Aspire. It packages an identity service, backend APIs, a public routing server, a client agent, and an Angular web app into a single distributed application you can run locally with one command.
 
 Why this repository is worth your time
 - Built with .NET 9 and .NET Aspire 9.x (new, opinionated distributed app model in the .NET ecosystem)

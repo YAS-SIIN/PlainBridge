@@ -9,6 +9,41 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7.4
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      rabbitmq:
+        image: rabbitmq:4.1-management
+        ports:
+          - 5672:5672
+          - 15672:15672
+        env:
+          RABBITMQ_DEFAULT_USER: guest
+          RABBITMQ_DEFAULT_PASS: guest
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      elastic:
+        image: elasticsearch:8.17.3
+        ports:
+          - 9200:9200
+        env:
+          discovery.type: single-node
+          xpack.security.enabled: "false"
+        options: >-
+          --health-cmd "bash -c 'curl -s http://localhost:9200 >/dev/null'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 12
     env:
       DOTNET_NOLOGO: true
       DOTNET_CLI_TELEMETRY_OPTOUT: true
@@ -48,11 +83,15 @@ jobs:
 
       - name: Test
         shell: bash
+        env:
+          ConnectionStrings__cache: "localhost:6379"
+          ConnectionStrings__messaging: "amqp://guest:guest@localhost:5672"
+          ConnectionStrings__elasticsearch: "http://localhost:9200"
         run: |
           set -e
           for proj in $(find tests -name '*.csproj' -type f); do
             echo "Running tests for $proj"
-            dotnet test "$proj" -c Release --no-build --logger "trx;LogFileName=$(basename "$proj").trx"
+            dotnet test "$proj" -c Release --no-build --logger trx
           done
 
       - name: Upload test results

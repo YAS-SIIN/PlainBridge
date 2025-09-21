@@ -144,11 +144,17 @@ For compose deployments, see infra/.env for port and image mappings.
 ![Aspire Graph](https://github.com/YAS-SIIN/PlainBridge/blob/master/docs/images/resources-graph.png)
 Small, connected graph showing Redis, RabbitMQ, and the API/Server/Client/IDS/Angular apps.
 
+
+
 ![Aspire Table](https://github.com/YAS-SIIN/PlainBridge/blob/master/docs/images/resources-table.png)
 Tabular view with URLs for each running resource.
 
+
+
 ![Identity Login](https://github.com/YAS-SIIN/PlainBridge/blob/master/docs/images/ids-login.png)
 Duende IdentityServer login page (local user and Google button placeholder).
+
+
 
 ![Web Dashboard](https://github.com/YAS-SIIN/PlainBridge/blob/master/docs/images/web-dashboard.png)
 Angular UI landing dashboard after sign-in.

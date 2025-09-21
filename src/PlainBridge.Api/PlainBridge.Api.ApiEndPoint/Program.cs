@@ -54,7 +54,7 @@ try
     {
         builder.WebHost.ConfigureKestrel(options =>
         {
-            options.ListenAnyIP(5001, listenOptions =>
+            options.ListenAnyIP(int.Parse(Environment.GetEnvironmentVariable("API_PROJECT_PORT") ?? "5001"), listenOptions =>
             {
                 listenOptions.UseHttps(); // HTTP/3 requires HTTPS
                 listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;

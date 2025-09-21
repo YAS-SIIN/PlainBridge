@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using Duende.Bff.Yarp;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -107,7 +108,10 @@ public static class Extensions
 
     public static IServiceCollection AddHttpServices(this IServiceCollection services)
     {
-        services.AddHttpClient("Api"); ;
+        services.AddHttpClient("Api", a=>
+        {
+            a.DefaultRequestVersion = HttpVersion.Version30;
+        });
 
         return services;
     }

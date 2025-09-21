@@ -1,6 +1,10 @@
-using System.Globalization; 
+using Aspire.Hosting.Docker.Resources.ComposeNodes;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using PlainBridge.AppHost.DTOs;
 using Serilog;
+using System.Globalization; 
 
 
 var simpleLogger = new LoggerConfiguration()
@@ -14,6 +18,10 @@ try
 {
     var builder = DistributedApplication.CreateBuilder(args);
 
+    builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
+
+    var appSettings = builder.Services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSettings>>();
+
     var dc = builder.AddDockerComposeEnvironment("plain-bridge");
 
     var cache = builder.AddRedis("cache")
@@ -24,30 +32,32 @@ try
     IResourceBuilder<ElasticsearchResource> elasticsearch = default!;
 
     var identityServerEndpoint = builder.AddProject<Projects.PlainBridge_IdentityServer_EndPoint>("identityserver-endpoint")
-        .WithUrl("https://localhost:5003");
+        .WithUrl($"https://localhost:{appSettings.Value.PlainBridgeIdsPort.ToString()}")
+        .WithEnvironment("IDS_PROJECT_PORT", appSettings.Value.PlainBridgeIdsPort.ToString());
 
     var apiEndpoint = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-endpoint")
-        .WithUrl("https://localhost:5001")
+        .WithUrl($"https://localhost:{appSettings.Value.PlainBridgeApiPort.ToString()}")
         .WithReference(rabbitmq)
         .WithReference(cache)
         .WithReference(identityServerEndpoint)
         .WaitFor(cache)
         .WaitFor(rabbitmq)
-        .WaitFor(identityServerEndpoint);
-
+        .WaitFor(identityServerEndpoint)
+        .WithEnvironment("API_PROJECT_PORT", appSettings.Value.PlainBridgeApiPort.ToString());
 
     var serverEndpoint = builder.AddProject<Projects.PlainBridge_Server_ApiEndPoint>("server-endpoint")
-        .WithUrl("https://localhost:5002")
+        .WithUrl($"https://localhost:{appSettings.Value.PlainBridgeServerPort.ToString()}")
         .WithReference(cache)
         .WithReference(rabbitmq)
         .WithReference(apiEndpoint)
         .WaitFor(cache)
         .WaitFor(rabbitmq)
-        .WaitFor(apiEndpoint);
+        .WaitFor(apiEndpoint)
+        .WithEnvironment("SERVER_PROJECT_PORT", appSettings.Value.PlainBridgeServerPort.ToString());
 
 
     var angularWebUi = builder.AddNpmApp("angular-webui", "../PlainBridge.Web/PlainBridge.Web.UI")
-        .WithHttpEndpoint(port: 5004, env: "PORT")
+        .WithHttpEndpoint(port: appSettings.Value.PlainBridgeWebPort, env: "PORT")
         .WithReference(apiEndpoint)
         .WithReference(identityServerEndpoint)
         .WaitFor(identityServerEndpoint)
@@ -56,14 +66,16 @@ try
         .PublishAsDockerFile();
 
 
+    // Fix: Convert int to string before interpolating into WithUrl to avoid CS0315
     var clientEndpoint = builder.AddProject<Projects.PlainBridge_Client_ApiEndPoint>("client-endpoint")
-        .WithUrl("https://localhost:5005")
+        .WithUrl($"https://localhost:{appSettings.Value.PlainBridgeClientPort.ToString()}")
         .WithReference(cache)
         .WithReference(rabbitmq)
         .WithReference(serverEndpoint)
         .WaitFor(cache)
         .WaitFor(rabbitmq)
-        .WaitFor(serverEndpoint);
+        .WaitFor(serverEndpoint)
+        .WithEnvironment("CLIENT_PROJECT_PORT", appSettings.Value.PlainBridgeClientPort.ToString());
 
 
 

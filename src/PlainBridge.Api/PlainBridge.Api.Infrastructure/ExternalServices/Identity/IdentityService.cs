@@ -60,7 +60,6 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         var uri = new Uri($"{_applicationSettings.Value.PlainBridgeIdsUrl}/api/User");
 
         HttpResponseMessage? response;
-
         response = await httpClient.PostAsync(uri.ToString(), content);
 
         var responseString = await response.Content.ReadAsStringAsync(cancellationToken);

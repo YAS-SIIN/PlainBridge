@@ -56,7 +56,7 @@ public class LoginEndpoint : IEndpoint
 
                 if (customerProfile is not null)
                 {
-                    var user = new CreateUserCommand
+                    var user = new CreateUserLocallyCommand
                     {
                         ExternalId = sub,
                         UserName = customerProfile.Username,

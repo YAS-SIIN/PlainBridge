@@ -11,15 +11,15 @@ namespace PlainBridge.Tests.Utils;
 public class AppHostIntegrationTestRunFixture : IAsyncLifetime
 {
     private IDistributedApplicationTestingBuilder _distributedApplicationTestingBuilder;
-    private DistributedApplication _distributedApplication;
+    public DistributedApplication InjectedDistributedApplication; 
     public AppHostIntegrationTestRunFixture()
     {
         _distributedApplicationTestingBuilder = default!;
-        _distributedApplication = default!;
+        InjectedDistributedApplication = default!;
     }
     public async Task DisposeAsync()
     {
-        await _distributedApplication.StopAsync();
+        await InjectedDistributedApplication.StopAsync();
         await _distributedApplicationTestingBuilder.DisposeAsync();
         await Task.CompletedTask;
     }
@@ -33,9 +33,27 @@ public class AppHostIntegrationTestRunFixture : IAsyncLifetime
            .AddFilter("Microsoft.AspNetCore", LogLevel.Warning)
            .AddFilter("Aspire.Hosting.Dcp", LogLevel.Warning));
 
-         _distributedApplication = await _distributedApplicationTestingBuilder.BuildAsync();
+         InjectedDistributedApplication = await _distributedApplicationTestingBuilder.BuildAsync();
 
-        await _distributedApplication.StartAsync();
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(40));
+
+        //await InjectedDistributedApplication.ResourceNotifications.WaitForResourceHealthyAsync(
+        //           "api-endpoint",
+        //           cts.Token);
+
+        //await InjectedDistributedApplication.ResourceNotifications.WaitForResourceHealthyAsync(
+        //           "server-endpoint",
+        //           cts.Token);
+
+        //await InjectedDistributedApplication.ResourceNotifications.WaitForResourceHealthyAsync(
+        //           "client-endpoint",
+        //           cts.Token);
+
+        //await InjectedDistributedApplication.ResourceNotifications.WaitForResourceHealthyAsync(
+        //           "identityserver-endpoint",
+        //           cts.Token);
+
+        await InjectedDistributedApplication.StartAsync();
 
     }
 }

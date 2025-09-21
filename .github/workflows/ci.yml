@@ -29,13 +29,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      - name: Restore
+      - name: Restore (.NET projects only)
+        shell: bash
         run: |
-          dotnet restore PlainBridge.sln
+          set -e
+          find src -name '*.csproj' -print0 | xargs -0 -n1 dotnet restore
+          find tests -name '*.csproj' -print0 | xargs -0 -n1 dotnet restore
 
-      - name: Build (Release)
+      - name: Build (Release, .NET projects only)
+        shell: bash
         run: |
-          dotnet build PlainBridge.sln -c Release --no-restore
+          set -e
+          find src -name '*.csproj' -print0 | xargs -0 -n1 dotnet build -c Release --no-restore
 
       - name: Test (all except Server.Tests)
         shell: bash

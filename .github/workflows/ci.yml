@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Cache NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore (all .csproj)
+        shell: bash
+        run: |
+          set -e
+          find src -name '*.csproj' -print0 | xargs -0 -n1 dotnet restore
+          find tests -name '*.csproj' -print0 | xargs -0 -n1 dotnet restore
+
+      - name: Build (Release)
+        shell: bash
+        run: |
+          set -e
+          dotnet build src/PlainBridge.AppHost/PlainBridge.AppHost.csproj -c Release --no-restore
+          dotnet build src/PlainBridge.Api/PlainBridge.Api.ApiEndPoint/PlainBridge.Api.ApiEndPoint.csproj -c Release --no-restore
+          dotnet build src/PlainBridge.Server/PlainBridge.Server.ApiEndPoint/PlainBridge.Server.ApiEndPoint.csproj -c Release --no-restore
+          dotnet build src/PlainBridge.Client/PlainBridge.Client.ApiEndPoint/PlainBridge.Client.ApiEndPoint.csproj -c Release --no-restore
+          dotnet build src/PlainBridge.IdentityServer/PlainBridge.IdentityServer.EndPoint/PlainBridge.IdentityServer.EndPoint.csproj -c Release --no-restore
+
+      - name: Test
+        shell: bash
+        run: |
+          set -e
+          for proj in $(find tests -name '*.csproj' -type f); do
+            echo "Running tests for $proj"
+            dotnet test "$proj" -c Release --no-build --logger "trx;LogFileName=$(basename "$proj").trx"
+          done
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            **/*.trx

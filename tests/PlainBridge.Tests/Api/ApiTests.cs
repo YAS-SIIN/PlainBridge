@@ -4,6 +4,7 @@ using PlainBridge.Tests.Utils;
 
 namespace PlainBridge.Tests.Server;
 
+[Collection("AppHostIntegrationTestRun")]
 public class ApiTests : IClassFixture<AppHostIntegrationTestRunFixture>
 {
     private readonly AppHostIntegrationTestRunFixture _fixture;
@@ -19,9 +20,16 @@ public class ApiTests : IClassFixture<AppHostIntegrationTestRunFixture>
     {
         // Arrange
         _cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+
+        var res = await _fixture.InjectedDistributedApplication.ResourceNotifications
+       .WaitForResourceHealthyAsync("api-endpoint", _cancellationTokenSource.Token);
+
         var httpClient = _fixture.InjectedDistributedApplication.CreateHttpClient("api-endpoint");
 
-        httpClient.BaseAddress = new Uri("https://localhost:5001");
+        var port = int.Parse(Environment.GetEnvironmentVariable("API_PROJECT_PORT") ?? "5001");
+        // Get the server URL that Aspire allocated (http/https) 
+
+        httpClient.BaseAddress = new Uri($"https://localhost:{port}");
         // Act
         var result = await httpClient.GetAsync("/", _cancellationTokenSource.Token);
         var response = await result.Content.ReadAsStringAsync(_cancellationTokenSource.Token);
@@ -30,7 +38,5 @@ public class ApiTests : IClassFixture<AppHostIntegrationTestRunFixture>
         Assert.NotNull(response); 
     }
       
-
-
 
 }

@@ -103,7 +103,7 @@ try
         // Suppress ASPIRECOMPUTE001 diagnostic for WithComputeEnvironment usage
 #pragma warning disable ASPIRECOMPUTE001
         clientEndpoint.WithComputeEnvironment(dc);
-
+ 
     }
     // Suppress ASPIRECOMPUTE001 diagnostic for WithComputeEnvironment usage
 #pragma warning disable ASPIRECOMPUTE001

@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using Elastic.Clients.Elasticsearch;
 using PlainBridge.IdentityServer.EndPoint.DTOs;
+using PlainBridge.IdentityServer.Tests.IntegrationTests.Utils;
 using PlainBridge.SharedApplication.DTOs;
 using PlainBridge.SharedApplication.Enums;
 

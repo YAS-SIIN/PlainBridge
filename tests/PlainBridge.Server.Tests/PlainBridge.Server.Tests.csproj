@@ -13,6 +13,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.9" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
@@ -30,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\PlainBridge.Server\PlainBridge.Server.ApiEndPoint\PlainBridge.Server.ApiEndPoint.csproj" />
     <ProjectReference Include="..\..\src\PlainBridge.Server\PlainBridge.Server.Application\PlainBridge.Server.Application.csproj" />
     <ProjectReference Include="..\..\src\PlainBridge.SharedApplication\PlainBridge.SharedApplication.csproj" />
   </ItemGroup>

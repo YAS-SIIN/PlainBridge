@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using PlainBridge.IdentityServer.EndPoint.DTOs;
 using PlainBridge.SharedApplication.DTOs;
 
-namespace PlainBridge.IdentityServer.Tests.IntegrationTests;
+namespace PlainBridge.IdentityServer.Tests.IntegrationTests.Utils;
 
 
 public class IntegrationTestRunFixture : IAsyncLifetime

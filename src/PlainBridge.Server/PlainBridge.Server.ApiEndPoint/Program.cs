@@ -1,10 +1,11 @@
-using System.Globalization; 
+using System.Globalization;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Ingest.Elasticsearch;
 using Elastic.Serilog.Sinks;
-using PlainBridge.Server.ApiEndPoint; 
+using PlainBridge.Server.ApiEndPoint;
 using PlainBridge.Server.Application.DTOs;
 using Serilog;
+using Microsoft.AspNetCore.TestHost; // Add this using directive at the top
 
 var simpleLogger = new LoggerConfiguration()
     .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
@@ -20,12 +21,12 @@ try
     builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
 
     builder.AddServiceDefaults();
-    
+
     builder.AddRedisClient(connectionName: "cache");
     builder.AddRedisDistributedCache(connectionName: "cache");
     builder.AddRabbitMQClient(connectionName: "messaging");
     builder.AddElasticsearchClient(connectionName: "elasticsearch");
-     
+
     builder.Host.UseSerilog((ctx, services, lc) =>
     {
         lc.ReadFrom.Services(services)
@@ -41,24 +42,20 @@ try
             lc.WriteTo.Elasticsearch(elasticConfig);
         }
     }, preserveStaticLogger: true);
-      
+
 
     builder.Services.AddServerProjectServices();
 
-    // Configure Kestrel to support HTTP/3 only when not running in a container
-    var inContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
-    if (!inContainer)
+    builder.WebHost.ConfigureKestrel(options =>
     {
-        builder.WebHost.ConfigureKestrel(options =>
+        options.ListenAnyIP(int.Parse(Environment.GetEnvironmentVariable("SERVER_PROJECT_PORT") ?? "5002"), listenOptions =>
         {
-            options.ListenAnyIP(int.Parse(Environment.GetEnvironmentVariable("SERVER_PROJECT_PORT") ?? "5002"), listenOptions =>
-            {
-                listenOptions.UseHttps(); // HTTP/3 requires HTTPS
-                listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
-            });
+            listenOptions.UseHttps(); // HTTP/3 requires HTTPS
+            listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
         });
-    }
+    });
 
+ 
     var app = builder.Build();
 
     //app.Services.GetRequiredService<IWebSocketManagement>().();
@@ -73,5 +70,8 @@ catch (Exception ex) when (ex is not HostAbortedException)
 }
 finally
 {
-    simpleLogger.Information("Shut down complete"); 
+    simpleLogger.Information("Shut down complete");
 }
+
+
+public partial class Program { }

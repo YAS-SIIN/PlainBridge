@@ -2,6 +2,7 @@
 using System.Globalization;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Serilog.Sinks;
+using Microsoft.AspNetCore.TestHost;
 using PlainBridge.Client.ApiEndPoint;
 using PlainBridge.Client.Application.DTOs;
 using Serilog;
@@ -43,10 +44,7 @@ try
     builder.Services.AddClientProjectServices();
      
 
-    // Configure Kestrel to support HTTP/3 only when not running in a container
-    var inContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
-    if (!inContainer)
-    {
+  
         builder.WebHost.ConfigureKestrel(options =>
         {
             options.ListenAnyIP(int.Parse(Environment.GetEnvironmentVariable("CLIENT_PROJECT_PORT") ?? "5005"), listenOptions =>
@@ -54,8 +52,10 @@ try
                 listenOptions.UseHttps(); // HTTP/3 requires HTTPS
                 listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
             });
-        });
-    }
+        }); 
+
+
+
     var app = builder.Build();
 
     app.MapDefaultEndpoints();

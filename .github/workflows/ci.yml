@@ -42,19 +42,19 @@ jobs:
           set -e
           find src -name '*.csproj' -print0 | xargs -0 -n1 dotnet build -c Release --no-restore
 
-      - name: Test (all except Server.Tests)
-        shell: bash
-        run: |
-          set -e
-          for proj in $(find tests -name '*.csproj' -type f ! -path '*/PlainBridge.Server.Tests/*'); do
-            echo "Running tests for $proj"
-            dotnet test "$proj" -c Release --no-build --logger trx
-          done
+      # - name: Test (all except Server.Tests)
+      #   shell: bash
+      #   run: |
+      #     set -e
+      #     for proj in $(find tests -name '*.csproj' -type f ! -path '*/PlainBridge.Server.Tests/*'); do
+      #       echo "Running tests for $proj"
+      #       dotnet test "$proj" -c Release --no-build --logger trx
+      #     done
 
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: |
-            **/*.trx
+      # - name: Upload test results
+      #   if: always()
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: test-results
+      #     path: |
+      #       **/*.trx

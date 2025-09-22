@@ -15,12 +15,12 @@ Why this repository is worth your time
 
 
 ## What is PlainBridge?
-PlainBridge makes your local apps reachable from the internet using a central “Server” that relays HTTP and WebSocket traffic to a “Client” running on your machine. Authentication and authorization are handled by a Duende IdentityServer instance. You manage projects, domains, and clients via a Web UI and a backend API.
+PlainBridge makes your local apps reachable from the internet using a central “Server” that relays HTTP and WebSocket traffic to a “Client” running on your machine. Authentication and authorization are handled by a Duende IdentityServer instance. You manage host applications, server applications, domains, and clients via a Web UI and a backend API.
 
 High‑level components
 - PlainBridge IDS: Duende IdentityServer for secure sign‑in and API protection
-- PlainBridge API: management APIs for customers/projects/domains (+ BFF endpoints)
-- PlainBridge Web: Angular front‑end for customers to create and configure projects
+- PlainBridge API: management APIs for customers/host applications/server applications/domains (+ BFF endpoints)
+- PlainBridge Web: Angular front‑end for customers to create and configure host applications/server applications
 - PlainBridge Server: public entry point that routes HTTP/WebSocket traffic to the right client
 - PlainBridge Client: agent on the user machine that forwards traffic to local apps and returns responses
 

@@ -145,7 +145,7 @@ For compose deployments, see infra/.env for port and image mappings.
 
 ![Aspire Graph](https://github.com/YAS-SIIN/PlainBridge/blob/master/docs/images/resources-graph.png)
 ![Aspire Graph2](https://github.com/YAS-SIIN/PlainBridge/blob/master/docs/images/resources-graph2.png)
-Small, connected graph showing Redis, RabbitMQ, and the API/Server/Client/IDS/Angular apps.
+Small, connected graph showing Redis, ElasticSearch, RabbitMQ, and the API/Server/Client/IDS/Angular apps.
 
 
 

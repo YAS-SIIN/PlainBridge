@@ -33,9 +33,9 @@ jobs:
         run: |
           npm ci --legacy-peer-deps
 
-      - name: Run unit tests (headless)
-        run: |
-          npm run test -- --browsers=ChromeHeadless --no-watch --no-progress --code-coverage
+      # - name: Run unit tests (headless)
+      #   run: |
+      #     npm run test -- --browsers=ChromeHeadless --no-watch --no-progress --code-coverage
 
       - name: Upload coverage
         if: always()

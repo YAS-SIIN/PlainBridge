@@ -2,7 +2,9 @@
 
 Expose your local applications to the world — safely.
 
-PlainBridge is a microservice-based end‑to‑end sample/product that demonstrates how to build a modern, cloud‑ready tunneling platform with .NET Aspire. It packages an identity service, backend APIs, a public routing server, a client agent, and an Angular web app into a single distributed application you can run locally with one command.
+<img width="400" height="400" alt="ChatGPT Image Sep 21, 2025, 07_29_20 PM" src="https://github.com/user-attachments/assets/0b67a9c1-5703-4c80-9a2b-db8012690855" />
+
+PlainBridge is a **microservice-based** end‑to‑end sample/product that demonstrates how to build a modern, cloud‑ready tunneling platform with .NET Aspire. It packages an identity service, backend APIs, a public routing server, a client agent, and an Angular web app into a single distributed application you can run locally with one command.
 
 Why this repository is worth your time
 - Built with .NET 9 and .NET Aspire 9.x (new, opinionated distributed app model in the .NET ecosystem)
@@ -13,12 +15,12 @@ Why this repository is worth your time
 
 
 ## What is PlainBridge?
-PlainBridge makes your local apps reachable from the internet using a central “Server” that relays HTTP and WebSocket traffic to a “Client” running on your machine. Authentication and authorization are handled by a Duende IdentityServer instance. You manage projects, domains, and clients via a Web UI and a backend API.
+PlainBridge makes your local apps reachable from the internet using a central “Server” that relays HTTP and WebSocket traffic to a “Client” running on your machine. Authentication and authorization are handled by a Duende IdentityServer instance. You manage host applications, server applications, domains, and clients via a Web UI and a backend API.
 
 High‑level components
 - PlainBridge IDS: Duende IdentityServer for secure sign‑in and API protection
-- PlainBridge API: management APIs for customers/projects/domains (+ BFF endpoints)
-- PlainBridge Web: Angular front‑end for customers to create and configure projects
+- PlainBridge API: management APIs for customers/host applications/server applications/domains (+ BFF endpoints)
+- PlainBridge Web: Angular front‑end for customers to create and configure host applications/server applications
 - PlainBridge Server: public entry point that routes HTTP/WebSocket traffic to the right client
 - PlainBridge Client: agent on the user machine that forwards traffic to local apps and returns responses
 

@@ -1,5 +1,6 @@
 ﻿
 using System.Text.Json;
+using Duende.Bff;
 using Duende.IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;

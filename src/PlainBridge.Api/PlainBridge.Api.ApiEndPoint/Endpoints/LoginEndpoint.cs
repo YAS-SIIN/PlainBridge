@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Duende.Bff;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using PlainBridge.Api.ApiEndPoint.Abstractions;
 using PlainBridge.Api.Application.Features.User.Commands;

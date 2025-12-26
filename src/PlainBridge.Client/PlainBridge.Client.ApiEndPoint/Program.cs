@@ -1,6 +1,6 @@
 
 using System.Globalization;
-using Elastic.Clients.Elasticsearch;
+//using Aspire.Elastic.Clients.Elasticsearch;
 using Elastic.Serilog.Sinks;
 using Microsoft.AspNetCore.TestHost;
 using PlainBridge.Client.ApiEndPoint;
@@ -22,7 +22,7 @@ try
     builder.AddServiceDefaults();
 
     builder.AddRabbitMQClient(connectionName: "messaging");
-    builder.AddElasticsearchClient(connectionName: "elasticsearch");
+    //builder.Services.AddElasticsearchClient(connectionName: "elasticsearch");
 
     builder.Host.UseSerilog((ctx, services, lc) =>
     {
@@ -33,10 +33,10 @@ try
 
         if (!ctx.HostingEnvironment.IsDevelopment())
         {
-            var esClient = services.GetRequiredService<ElasticsearchClient>();
-            var elasticConfig = new ElasticsearchSinkOptions(esClient.Transport) { BootstrapMethod = Elastic.Ingest.Elasticsearch.BootstrapMethod.Failure };
+            //var esClient = services.GetRequiredService<ElasticsearchClient>();
+            //var elasticConfig = new ElasticsearchSinkOptions(esClient.Transport) { BootstrapMethod = Elastic.Ingest.Elasticsearch.BootstrapMethod.Failure };
 
-            lc.WriteTo.Elasticsearch(elasticConfig);
+            //lc.WriteTo.Elasticsearch(elasticConfig);
         }
     }, preserveStaticLogger: true);
 

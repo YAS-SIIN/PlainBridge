@@ -56,7 +56,7 @@ try
         .WithEnvironment("SERVER_PROJECT_PORT", appSettings.Value.PlainBridgeServerPort.ToString());
 
 
-    var angularWebUi = builder.AddNpmApp("angular-webui", "../PlainBridge.Web/PlainBridge.Web.UI")
+    var angularWebUi = builder.AddJavaScriptApp("angular-webui", "../PlainBridge.Web/PlainBridge.Web.UI")
         .WithHttpEndpoint(port: appSettings.Value.PlainBridgeWebPort, env: "PORT")
         .WithReference(apiEndpoint)
         .WithReference(identityServerEndpoint)

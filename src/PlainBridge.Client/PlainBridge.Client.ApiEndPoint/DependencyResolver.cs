@@ -12,6 +12,7 @@ using PlainBridge.Client.Application.DTOs;
 using PlainBridge.Client.Application;
 
 using Serilog;
+using Duende.Bff;
 
 namespace PlainBridge.Client.ApiEndPoint;
 

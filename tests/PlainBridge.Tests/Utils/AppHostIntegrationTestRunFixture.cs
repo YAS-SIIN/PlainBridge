@@ -30,10 +30,10 @@ public class AppHostIntegrationTestRunFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        Environment.SetEnvironmentVariable("API_PROJECT_PORT", "5001");
-        Environment.SetEnvironmentVariable("SERVER_PROJECT_PORT", "5002");
-        Environment.SetEnvironmentVariable("IDS_PROJECT_PORT", "5003");
-        Environment.SetEnvironmentVariable("CLIENT_PROJECT_PORT", "5005");
+        Environment.SetEnvironmentVariable("API_PROJECT_PORT", "5051");
+        Environment.SetEnvironmentVariable("SERVER_PROJECT_PORT", "5052");
+        Environment.SetEnvironmentVariable("IDS_PROJECT_PORT", "5053");
+        Environment.SetEnvironmentVariable("CLIENT_PROJECT_PORT", "5055");
 
         _distributedApplicationTestingBuilder = await DistributedApplicationTestingBuilder.CreateAsync<Projects.PlainBridge_AppHost>();
         _distributedApplicationTestingBuilder.Services.AddLogging(logging => logging

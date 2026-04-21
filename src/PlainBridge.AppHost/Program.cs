@@ -22,7 +22,7 @@ try
 
     var appSettings = builder.Services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSettings>>();
 
-    var dc = builder.AddDockerComposeEnvironment("plain-bridge");
+    //var dc = builder.AddDockerComposeEnvironment("plain-bridge");
 
     var cache = builder.AddRedis("cache")
         .WithRedisInsight();
@@ -57,7 +57,9 @@ try
 
 
     var angularWebUi = builder.AddJavaScriptApp("angular-webui", "../PlainBridge.Web/PlainBridge.Web.UI")
+        .WithRunScript("start")
         .WithHttpEndpoint(port: appSettings.Value.PlainBridgeWebPort, env: "PORT")
+        .WithNpm(install: false) // Set to true if you want to use pnpm instead of npm
         .WithReference(apiEndpoint)
         .WithReference(identityServerEndpoint)
         .WaitFor(identityServerEndpoint)
@@ -100,25 +102,22 @@ try
         .WithReference(elasticsearch)
         .WaitFor(elasticsearch);
 
-        // Suppress ASPIRECOMPUTE001 diagnostic for WithComputeEnvironment usage
-#pragma warning disable ASPIRECOMPUTE001
-        clientEndpoint.WithComputeEnvironment(dc);
- 
+        //clientEndpoint.WithComputeEnvironment(dc);
+
     }
-    // Suppress ASPIRECOMPUTE001 diagnostic for WithComputeEnvironment usage
-#pragma warning disable ASPIRECOMPUTE001
-    identityServerEndpoint.WithComputeEnvironment(dc);
-    cache.WithComputeEnvironment(dc);
-    rabbitmq.WithComputeEnvironment(dc);
-    apiEndpoint.WithComputeEnvironment(dc);
-    serverEndpoint.WithComputeEnvironment(dc);
-    clientEndpoint.WithComputeEnvironment(dc);
+
+    //identityServerEndpoint.WithComputeEnvironment(dc);
+    //cache.WithComputeEnvironment(dc);
+    //rabbitmq.WithComputeEnvironment(dc);
+    //apiEndpoint.WithComputeEnvironment(dc);
+    //serverEndpoint.WithComputeEnvironment(dc);
+    //clientEndpoint.WithComputeEnvironment(dc);
 
     //builder.AddDockerfile("PlainBridge-AppHost", "relative/context/path")
     //    .WithReference(apiEndpoint)
-    //    .WithReference(identityserverEndpoint)
+    //    .WithReference(identityServerEndpoint)
     //    .WithReference(serverEndpoint)
-    //    .WithReference(angularWebUi);   
+    //    .WithReference(angularWebUi);
 
     await builder.Build().RunAsync();
 

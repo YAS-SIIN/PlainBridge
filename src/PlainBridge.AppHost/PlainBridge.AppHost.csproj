@@ -12,13 +12,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="13.1.0" />
-    <PackageReference Include="Aspire.Hosting.Docker" Version="13.1.0-preview.1.25616.3" />
-    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.1.0" />
-    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="13.1.0" />
-    <PackageReference Include="Aspire.Hosting.Redis" Version="13.1.0" />
-    <PackageReference Include="Elastic.Aspire.Hosting.Elasticsearch" Version="9.3.0" />
-    <PackageReference Include="Serilog" Version="4.3.0" />
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="13.2.2" />
+    <PackageReference Include="Aspire.Hosting.Docker" Version="13.2.2" />
+    <PackageReference Include="Aspire.Hosting.Elasticsearch" Version="13.2.0" />
+    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.2.2" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="13.2.2" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="13.2.2" />
+    <PackageReference Include="Serilog" Version="4.3.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
   </ItemGroup>
 

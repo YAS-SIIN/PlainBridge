@@ -26,7 +26,7 @@ public class ApiTests : IClassFixture<AppHostIntegrationTestRunFixture>
 
         var httpClient = _fixture.InjectedDistributedApplication.CreateHttpClient("api-endpoint");
 
-        var port = int.Parse(Environment.GetEnvironmentVariable("API_PROJECT_PORT") ?? "5001");
+        var port = int.Parse(Environment.GetEnvironmentVariable("API_PROJECT_PORT") ?? "5051");
         // Get the server URL that Aspire allocated (http/https) 
 
         httpClient.BaseAddress = new Uri($"https://localhost:{port}");

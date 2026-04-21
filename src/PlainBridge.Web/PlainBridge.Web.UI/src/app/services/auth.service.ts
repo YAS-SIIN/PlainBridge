@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -47,7 +48,7 @@ export class AuthService {
 
   public logout(): void {
     this.removeToken();
-    window.location.href = 'https://localhost:5001/bff/login';
+    window.location.href = `${environment.identityServerUrl}/bff/logout`;
   }
 
   public isAuthenticated(): boolean {
@@ -56,6 +57,6 @@ export class AuthService {
 
   public login(): void {
     // Redirect to IdentityServer login
-    window.location.href = 'https://localhost:5001/bff/login';
+    window.location.href = `${environment.identityServerUrl}/bff/login`;
   }
 }

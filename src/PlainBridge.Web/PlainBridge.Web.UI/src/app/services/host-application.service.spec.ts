@@ -28,7 +28,7 @@ describe('HostApplicationService', () => {
   });
 
   it('should GET list', () => {
-    const url = `${environment.apiUrl}/HostApplication`;
+    const url = `${environment.apiUrl}/api/HostApplication`;
     service.getAllApplications().subscribe();
     const req = httpMock.expectOne(url);
     expect(req.request.method).toBe('GET');
@@ -37,7 +37,7 @@ describe('HostApplicationService', () => {
 
   it('should GET by id', () => {
     const id = 10;
-    const url = `${environment.apiUrl}/HostApplication/${id}`;
+    const url = `${environment.apiUrl}/api/HostApplication/${id}`;
     service.getApplication(id).subscribe();
     const req = httpMock.expectOne(url);
     expect(req.request.method).toBe('GET');
@@ -45,7 +45,7 @@ describe('HostApplicationService', () => {
   });
 
   it('should POST create with body', () => {
-    const url = `${environment.apiUrl}/HostApplication`;
+    const url = `${environment.apiUrl}/api/HostApplication`;
     const body = { name: 'A' } as any;
     service.createApplication(body).subscribe();
     const req = httpMock.expectOne(url);
@@ -56,7 +56,7 @@ describe('HostApplicationService', () => {
 
   it('should PATCH update with body', () => {
     const id = 3;
-    const url = `${environment.apiUrl}/HostApplication/${id}`;
+    const url = `${environment.apiUrl}/api/HostApplication/${id}`;
     const body = { name: 'B' } as any;
     service.updateApplication(id, body).subscribe();
     const req = httpMock.expectOne(url);
@@ -68,7 +68,7 @@ describe('HostApplicationService', () => {
   it('should PATCH UpdateState with empty body', () => {
     const id = 5;
     const isActive = true;
-    const url = `${environment.apiUrl}/HostApplication/UpdateState/${id}/${isActive}`;
+    const url = `${environment.apiUrl}/api/HostApplication/UpdateState/${id}/${isActive}`;
     service.patchIsActive(id, isActive).subscribe();
     const req = httpMock.expectOne(url);
     expect(req.request.method).toBe('PATCH');
@@ -79,7 +79,7 @@ describe('HostApplicationService', () => {
   it('should send Authorization header when token exists', () => {
     sessionStorage.setItem('auth_token', 'abc');
     service.getAllApplications().subscribe();
-    const req = httpMock.expectOne(`${environment.apiUrl}/HostApplication`);
+    const req = httpMock.expectOne(`${environment.apiUrl}/api/HostApplication`);
     expect(req.request.headers.get('Authorization')).toMatch(/^Bearer\s/);
     req.flush({ resultCode: 0, data: [] });
   });

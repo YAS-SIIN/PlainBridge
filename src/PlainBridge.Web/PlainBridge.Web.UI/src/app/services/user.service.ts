@@ -8,7 +8,7 @@ import { ResultDto, UserDto, ChangeUserPasswordDto, CreateUserDto } from '../mod
   providedIn: 'root'
 })
 export class UserService {
-  private readonly apiUrl = `${environment.apiUrl}/User`;
+  private readonly apiUrl = `${environment.apiUrl}/api/User`;
 
   constructor(private http: HttpClient) {}
 

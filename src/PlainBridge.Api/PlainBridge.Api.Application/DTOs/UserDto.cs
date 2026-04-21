@@ -12,9 +12,10 @@ public record UserDto : BaseDto<long>
     public string Name { get; set; } 
     public string Family { get; set; }
 
-    public UserDto(Guid appId, string externalId, string userName, string email, string? phoneNumber, string name, string family)
+    public UserDto(Guid appId, long id, string externalId, string userName, string email, string? phoneNumber, string name, string family)
     {
         AppId = appId;
+        Id = id;
         ExternalId = externalId;
         UserName = userName;
         Email = email;

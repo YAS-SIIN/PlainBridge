@@ -28,15 +28,15 @@ describe('AuthInterceptor', () => {
 
   it('adds Authorization header when token present', () => {
     sessionStorage.setItem('auth_token', 'xyz');
-    http.get(`${environment.apiUrl}/_ping`).subscribe();
-    const req = httpMock.expectOne(`${environment.apiUrl}/_ping`);
+    http.get(`${environment.apiUrl}/api/_ping`).subscribe();
+    const req = httpMock.expectOne(`${environment.apiUrl}/api/_ping`);
     expect(req.request.headers.get('Authorization')).toBe('Bearer xyz');
     req.flush({ ok: true });
   });
 
   it('does not add Authorization when token missing', () => {
-    http.get(`${environment.apiUrl}/_ping`).subscribe();
-    const req = httpMock.expectOne(`${environment.apiUrl}/_ping`);
+    http.get(`${environment.apiUrl}/api/_ping`).subscribe();
+    const req = httpMock.expectOne(`${environment.apiUrl}/api/_ping`);
     expect(req.request.headers.has('Authorization')).toBeFalse();
     req.flush({ ok: true });
   });

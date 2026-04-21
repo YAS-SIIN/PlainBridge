@@ -28,7 +28,7 @@ describe('UserService', () => {
 
   it('GET /User/GetCurrentUser', () => {
     service.getCurrentUser().subscribe();
-    const req = httpMock.expectOne(`${environment.apiUrl}/User/GetCurrentUser`);
+    const req = httpMock.expectOne(`${environment.apiUrl}/api/User/GetCurrentUser`);
     expect(req.request.method).toBe('GET');
     req.flush({ resultCode: 0, data: {} });
   });
@@ -36,7 +36,7 @@ describe('UserService', () => {
   it('PATCH /User/ChangePassword with dto', () => {
     const dto = { id: 1, currentPassword: 'a', newPassword: 'b', confirmPassword: 'b' };
     service.changePassword(dto as any).subscribe();
-    const req = httpMock.expectOne(`${environment.apiUrl}/User/ChangePassword`);
+    const req = httpMock.expectOne(`${environment.apiUrl}/api/User/ChangePassword`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.body).toEqual(dto);
     req.flush({ resultCode: 0, data: {} });

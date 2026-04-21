@@ -2,11 +2,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Threading;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.IdentityModel.Tokens;
-using StackExchange.Redis;
-using PlainBridge.SharedApplication.Extensions;
 
 namespace PlainBridge.Api.Application.Services.Token;
 

@@ -22,7 +22,7 @@ try
 
     var appSettings = builder.Services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSettings>>();
 
-    //var dc = builder.AddDockerComposeEnvironment("plain-bridge");
+    var dc = builder.AddDockerComposeEnvironment("plain-bridge");
 
     var cache = builder.AddRedis("cache")
         .WithRedisInsight();
@@ -102,16 +102,16 @@ try
         .WithReference(elasticsearch)
         .WaitFor(elasticsearch);
 
-        //clientEndpoint.WithComputeEnvironment(dc);
+        clientEndpoint.WithComputeEnvironment(dc);
 
     }
 
-    //identityServerEndpoint.WithComputeEnvironment(dc);
-    //cache.WithComputeEnvironment(dc);
-    //rabbitmq.WithComputeEnvironment(dc);
-    //apiEndpoint.WithComputeEnvironment(dc);
-    //serverEndpoint.WithComputeEnvironment(dc);
-    //clientEndpoint.WithComputeEnvironment(dc);
+    identityServerEndpoint.WithComputeEnvironment(dc);
+    cache.WithComputeEnvironment(dc);
+    rabbitmq.WithComputeEnvironment(dc);
+    apiEndpoint.WithComputeEnvironment(dc);
+    serverEndpoint.WithComputeEnvironment(dc);
+    clientEndpoint.WithComputeEnvironment(dc);
 
     //builder.AddDockerfile("PlainBridge-AppHost", "relative/context/path")
     //    .WithReference(apiEndpoint)

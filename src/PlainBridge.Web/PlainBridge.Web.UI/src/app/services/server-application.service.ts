@@ -8,7 +8,7 @@ import { ResultDto, ServerApplicationDto } from '../models';
   providedIn: 'root'
 })
 export class ServerApplicationService {
-  private readonly apiUrl = `${environment.apiUrl}/ServerApplication`;
+  private readonly apiUrl = `${environment.apiUrl}/api/ServerApplication`;
 
   constructor(private http: HttpClient) {}
 

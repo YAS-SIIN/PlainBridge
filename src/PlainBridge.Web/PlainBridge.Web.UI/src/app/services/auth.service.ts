@@ -48,7 +48,7 @@ export class AuthService {
 
   public logout(): void {
     this.removeToken();
-    window.location.href = `${environment.identityServerUrl}/bff/logout`;
+    window.location.href = `${environment.apiUrl}/bff/logout`;
   }
 
   public isAuthenticated(): boolean {
@@ -57,6 +57,6 @@ export class AuthService {
 
   public login(): void {
     // Redirect to IdentityServer login
-    window.location.href = `${environment.identityServerUrl}/bff/login`;
+    window.location.href = `${environment.apiUrl}/bff/login`;
   }
 }

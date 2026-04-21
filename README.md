@@ -7,7 +7,7 @@ Expose your local applications to the world — safely.
 PlainBridge is a **microservice-based** end‑to‑end sample/product that demonstrates how to build a modern, cloud‑ready tunneling platform with .NET Aspire. It packages an identity service, backend APIs, a public routing server, a client agent, and an Angular web app into a single distributed application you can run locally with one command.
 
 Why this repository is worth your time
-- Built with .NET 9 and .NET Aspire 9.x (new, opinionated distributed app model in the .NET ecosystem)
+- Built with .NET 10 and .NET Aspire 10.x (new, opinionated distributed app model in the .NET ecosystem)
 - Shows best‑practice architecture for modular .NET solutions: clean layering, shared building blocks, and test projects
 - Real integrations: Redis (HybridCache), RabbitMQ, Serilog, OpenAPI, Duende BFF + Duende IdentityServer, optional Elasticsearch/OpenTelemetry
 - Orchestrated developer experience: Aspire AppHost boots all projects + infra and gives you a dashboard
@@ -89,7 +89,7 @@ Selected flows
 
 
 ## Prerequisites
-- .NET SDK 9.0+
+- .NET SDK 10.0+
 - Node.js 20+ (for the Angular UI during development)
 - Docker Desktop (for Redis, RabbitMQ, optional Elasticsearch, Aspire dashboard)
 - Windows/Mac/Linux; dev certs trusted locally

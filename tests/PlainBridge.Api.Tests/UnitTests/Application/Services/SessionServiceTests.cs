@@ -51,14 +51,14 @@ public class SessionServiceTests : IClassFixture<ApiApplcationUnitTestRunFixture
     public async Task GetCurrentUserAsync_WithValidSubClaim_ReturnsUserDto()
     {
         // Arrange
-        var userId = "123";
-        var claims = new List<Claim> { new Claim("sub", userId) };
+        var userId = 123;
+        var claims = new List<Claim> { new Claim("sub", userId.ToString()) };
         var identity = new ClaimsIdentity(claims, "TestAuth");
         var principal = new ClaimsPrincipal(identity);
         var context = new DefaultHttpContext { User = principal };
         _mockIHttpContextAccessor.Setup(x => x.HttpContext).Returns(context);
 
-        var expectedUser = new UserDto(Guid.Empty, userId, "TestUser", "", "", "", "");
+        var expectedUser = new UserDto(Guid.Empty, userId, userId.ToString(), "TestUser", "", "", "", "");
         _mockIMediator.Setup(x => x.Send(It.IsAny<GetUserByExternalIdQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedUser);
 
@@ -67,7 +67,7 @@ public class SessionServiceTests : IClassFixture<ApiApplcationUnitTestRunFixture
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(userId, result.ExternalId);
+        Assert.Equal(userId.ToString(), result.ExternalId);
         Assert.Equal("TestUser", result.UserName);
     }
 

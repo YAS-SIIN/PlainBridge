@@ -21,7 +21,6 @@ export class SignInOidcComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger
     // Get the token from query parameters
     this.route.queryParams.subscribe(params => {
       const token = params['access_token'];

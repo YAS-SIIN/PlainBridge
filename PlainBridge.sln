@@ -54,6 +54,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Client.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainBridge.Tests", "tests\PlainBridge.Tests\PlainBridge.Tests.csproj", "{A8B82388-5338-47A1-9CF7-D8028C48ECC7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlainBridge.IdentityServerNew", "PlainBridge.IdentityServerNew", "{95A7D565-DC9B-4CAE-B3E7-3880E720D507}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -167,6 +169,7 @@ Global
 		{DB0B2DAA-29A7-9106-8203-FE5C0437C450} = {F78BFF6E-5711-4394-8C2E-2BF79B2E899E}
 		{DD842B8E-BDE2-487C-9462-A43FBB33A764} = {F78BFF6E-5711-4394-8C2E-2BF79B2E899E}
 		{A8B82388-5338-47A1-9CF7-D8028C48ECC7} = {F78BFF6E-5711-4394-8C2E-2BF79B2E899E}
+		{95A7D565-DC9B-4CAE-B3E7-3880E720D507} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4E8B8F9B-822C-426B-B920-DFA6BA23C3D1}

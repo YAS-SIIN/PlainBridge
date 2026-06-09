@@ -34,7 +34,6 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    debugger
     this.profileForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
       family: ['', [Validators.required, Validators.maxLength(100)]],

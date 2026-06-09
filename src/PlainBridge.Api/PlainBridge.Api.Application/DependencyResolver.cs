@@ -1,7 +1,9 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
+
 using PlainBridge.Api.Application.Services.Session;
-using PlainBridge.Api.Application.Services.Token; 
+using PlainBridge.Api.Application.Services.Token;
+using PlainBridge.Api.Infrastructure;
 using PlainBridge.SharedApplication.Extensions;
 
 namespace PlainBridge.Api.Application;
@@ -14,17 +16,14 @@ public static class DependencyResolver
 
         // Add services to the container 
 
-         
         //services.AddScoped<IUserService, UserService>();
         services.AddScoped<ISessionService, SessionService>();
         services.AddScoped<ITokenService, TokenService>();
 
-         
+
         services.AddMediator(typeof(DependencyResolver).Assembly);
-
-
+        services.AddApiInfrastructureProjectServices();
 
         return services;
     }
-
 }

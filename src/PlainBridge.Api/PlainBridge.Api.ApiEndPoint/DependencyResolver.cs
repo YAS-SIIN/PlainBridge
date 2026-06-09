@@ -11,8 +11,6 @@ using Microsoft.IdentityModel.Tokens;
 using PlainBridge.Api.ApiEndPoint.Abstractions;
 using PlainBridge.Api.ApiEndPoint.ErrorHandling;
 using PlainBridge.Api.Application;
-using PlainBridge.Api.Application.Services.Token;
-using PlainBridge.Api.Infrastructure;
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.Api.Infrastructure.Persistence.Cache;
 using Serilog; 
@@ -55,13 +53,10 @@ public static class DependencyResolver
         services.AddAuthorization();
 
         services.AddApiApplicationProjectServices();
-        services.AddApiInfrastructureProjectServices();
 
         services.AddAuthentication(appSettings.Value);
         services.AddExceptionHandler<ErrorHandler>();
-
          
-
         services.AddEndpoints();
 
         services.AddBff()

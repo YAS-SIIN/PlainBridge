@@ -1,7 +1,8 @@
 ﻿
 using Microsoft.Extensions.Logging;
+
 using RabbitMQ.Client;
- 
+
 
 namespace PlainBridge.Api.Infrastructure.ExternalServices.Messaging;
 
@@ -16,28 +17,31 @@ public class RabbitMQEventBus(ILogger<RabbitMQEventBus> _logger, IConnection _co
         var queueName = $"api_to_server_external_bus";
         var routingKey = "api_to_server";
 
-        await channel.ExchangeDeclareAsync(exchange: exchangeName,
+        await channel.ExchangeDeclareAsync(
+            exchange: exchangeName,
             type: "direct",
-            durable: false,
+            durable: true,
             autoDelete: false,
-            arguments: null, 
+            arguments: null,
             cancellationToken: cancellationToken);
 
-        await channel.QueueDeclareAsync(queue: queueName,
-                 durable: false,
-                 exclusive: false,
-                 autoDelete: false,
-                 arguments: null, 
-                 cancellationToken: cancellationToken);
+        // make queue durable
+        await channel.QueueDeclareAsync(
+            queue: queueName,
+            durable: true,
+            exclusive: false,
+            autoDelete: false,
+            arguments: null,
+            cancellationToken: cancellationToken);
 
         await channel.QueueBindAsync(queue: queueName,
             exchange: exchangeName,
             routingKey: routingKey,
-            arguments: null, 
+            arguments: null,
             cancellationToken: cancellationToken);
 
         var body = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(@event);
-         
+
         var properties = new BasicProperties
         {
             Headers = new Dictionary<string, object?>
@@ -45,7 +49,7 @@ public class RabbitMQEventBus(ILogger<RabbitMQEventBus> _logger, IConnection _co
                 { "IntUrl", "internalUrl" },
                 { "Host", "projectHost" }
             }
-        }; 
+        };
 
         // Specify the type argument explicitly to resolve CS0411
         //await channel.BasicPublishAsync<BasicProperties>(

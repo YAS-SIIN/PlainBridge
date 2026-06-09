@@ -101,12 +101,10 @@ export class ServerApplicationFormComponent implements OnInit {
       this.serverApplicationService.createApplication(serverApplication)
     ).subscribe({
       next: () => {
-        debugger
         this.router.navigate(['/server-applications']);
         this.loading = false;
       },
       error: () => {
-        debugger
         this.loading = false;
       }
     });
@@ -119,12 +117,10 @@ export class ServerApplicationFormComponent implements OnInit {
       this.serverApplicationService.updateApplication(id, serverApplication)
     ).subscribe({ 
       next: () => {
-        debugger
         this.router.navigate(['/server-applications']);
         this.loading = false;
       },
       error: () => {
-        debugger
         this.loading = false;
       }
     });

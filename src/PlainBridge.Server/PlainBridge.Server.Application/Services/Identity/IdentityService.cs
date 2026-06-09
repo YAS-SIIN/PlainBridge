@@ -25,6 +25,7 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
                 }
         }, cancellationToken);
         if (disco.IsError)
+            
             throw new ApplicationException("Discovery not found");
 
         // request token

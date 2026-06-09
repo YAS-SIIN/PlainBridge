@@ -34,7 +34,6 @@ export class ApiResponseService {
 
     return response$.pipe(
       map((result: ResultDto<T>) => {
-        debugger
         if (result.resultCode === ResultCodeEnum.Success) {
           // Show success toast using resultDescription from API
           if (config.showSuccessToast && !config.suppressToast) {
@@ -58,7 +57,6 @@ export class ApiResponseService {
         }
       }),
       catchError((error) => {
-        debugger
         const errorBody = error.error as ResultDto<string>;
         // Handle HTTP errors or other exceptions
         const errorMessage = config.errorMessage || error.message || 'An unexpected error occurred';

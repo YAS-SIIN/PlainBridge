@@ -20,7 +20,7 @@ public class ApiExternalBusService(ILogger<ApiExternalBusService> _logger, IConn
 
         var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
         await channel.QueueDeclareAsync(queue: queueName,
-            durable: false,
+            durable: true,
             exclusive: false,
             autoDelete: false,
             arguments: null, 

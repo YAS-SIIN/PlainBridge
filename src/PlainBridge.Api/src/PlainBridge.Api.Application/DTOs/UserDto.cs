@@ -1,4 +1,4 @@
-﻿using PlainBridge.SharedApplication.DTOs;
+﻿using PlainBridge.Shared.Application.DTOs;
  
 namespace PlainBridge.Api.Application.DTOs;
 

@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>df3632f3-ab0c-4239-b2ac-4225f5244c7c</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Elastic.Clients.Elasticsearch" Version="13.3.0" />
+    <PackageReference Include="Aspire.RabbitMQ.Client.v7" Version="9.5.2" />
+    <PackageReference Include="Aspire.StackExchange.Redis.DistributedCaching" Version="13.4.3" />
+    <PackageReference Include="Elastic.Serilog.Sinks" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="10.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="10.6.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+    <PackageReference Include="Serilog" Version="4.3.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\PlainBridge.ServiceDefaults\PlainBridge.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\PlainBridge.Server.Application\PlainBridge.Server.Application.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\PlainBridge.SharedApplication\PlainBridge.SharedApplication.csproj" />
+    <ProjectReference Include="..\..\..\PlainBridge.Shared\src\PlainBridge.Shared.Application\PlainBridge.Shared.Application.csproj" />
     <ProjectReference Include="..\PlainBridge.Api.Domain\PlainBridge.Api.Domain.csproj" />
   </ItemGroup>
 

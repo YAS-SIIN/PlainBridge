@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PlainBridge.IdentityServer.EndPoint/PlainBridge.IdentityServer.EndPoint.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PlainBridge.IdentityServer.Tests/PlainBridge.IdentityServer.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PlainBridge.Web.UI/PlainBridge.Web.UI.esproj">
+      <Build />
+      <Deploy />
+    </Project> 
+  </Folder>
+  <Folder Name="/tests/">
+  </Folder>
+</Solution>

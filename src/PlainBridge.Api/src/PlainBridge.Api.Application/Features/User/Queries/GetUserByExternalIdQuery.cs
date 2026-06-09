@@ -1,7 +1,7 @@
 ﻿
 using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Infrastructure.DTOs; 
-using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.Shared.Application.Mediator;
 using System.ComponentModel.DataAnnotations; 
 
 namespace PlainBridge.Api.Application.Features.User.Queries;

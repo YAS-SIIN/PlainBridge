@@ -1,4 +1,4 @@
-﻿using PlainBridge.SharedApplication.DTOs;
+﻿using PlainBridge.Shared.Application.DTOs;
 
 using System.ComponentModel.DataAnnotations;
 

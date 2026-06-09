@@ -5,11 +5,11 @@ using PlainBridge.Api.ApiEndPoint.Abstractions;
 using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.UseCases.ServerApplication.Commands;
 using PlainBridge.Api.Application.UseCases.ServerApplication.Queries;
-using PlainBridge.SharedApplication.DTOs;
-using PlainBridge.SharedApplication.Enums;
-using PlainBridge.SharedApplication.Exceptions;
-using PlainBridge.SharedApplication.Extensions;
-using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.Shared.Application.DTOs;
+using PlainBridge.Shared.Application.Enums;
+using PlainBridge.Shared.Application.Exceptions;
+using PlainBridge.Shared.Application.Extensions;
+using PlainBridge.Shared.Application.Mediator;
 
 namespace PlainBridge.Api.ApiEndPoint.Endpoints;
 

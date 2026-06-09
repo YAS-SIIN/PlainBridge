@@ -1,7 +1,7 @@
 ﻿
 
 using PlainBridge.Api.Application.UseCases;
-using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.Shared.Application.Mediator;
 using System.ComponentModel.DataAnnotations;
 
 namespace PlainBridge.Api.Application.Features.User.Commands;

@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging; 
 using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
-using PlainBridge.SharedApplication.DTOs;
-using PlainBridge.SharedApplication.Enums;
-using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.Shared.Application.DTOs;
+using PlainBridge.Shared.Application.Enums;
+using PlainBridge.Shared.Application.Mediator;
 
 namespace PlainBridge.Api.Application.UseCases.ServerApplication.Queries;
 

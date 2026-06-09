@@ -6,7 +6,7 @@ using Duende.IdentityModel.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PlainBridge.Api.Infrastructure.DTOs;
-using PlainBridge.SharedApplication.DTOs;
+using PlainBridge.Shared.Application.DTOs;
 
 using System.Text;
 using System.Text.Json;

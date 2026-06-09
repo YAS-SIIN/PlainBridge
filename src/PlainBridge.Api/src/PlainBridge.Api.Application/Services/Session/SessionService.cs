@@ -8,8 +8,8 @@ using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Application.Features.User.Queries;
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.Api.Infrastructure.Persistence.Cache;
-using PlainBridge.SharedApplication.DTOs;
-using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.Shared.Application.DTOs;
+using PlainBridge.Shared.Application.Mediator;
 using System.Text.Json;
 
 namespace PlainBridge.Api.Application.Services.Session;

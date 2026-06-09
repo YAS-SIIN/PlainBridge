@@ -2,7 +2,7 @@
 
 using PlainBridge.Api.Application.DTOs;
 using PlainBridge.Api.Infrastructure.DTOs;
-using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.Shared.Application.Mediator;
 
 namespace PlainBridge.Api.Application.Features.User.Queries;
 

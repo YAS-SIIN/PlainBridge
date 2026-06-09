@@ -4,13 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using PlainBridge.Api.ApiEndPoint.Abstractions; 
 using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.UseCases.HostApplication.Commands;
-using PlainBridge.Api.Application.UseCases.HostApplication.Queries;
-using PlainBridge.Server.Application.Services.HostApplication;
-using PlainBridge.SharedApplication.DTOs;
-using PlainBridge.SharedApplication.Enums;
-using PlainBridge.SharedApplication.Exceptions;
-using PlainBridge.SharedApplication.Extensions;
-using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.Api.Application.UseCases.HostApplication.Queries; 
+using PlainBridge.Shared.Application.DTOs;
+using PlainBridge.Shared.Application.Enums;
+using PlainBridge.Shared.Application.Exceptions;
+using PlainBridge.Shared.Application.Extensions;
+using PlainBridge.Shared.Application.Mediator;
 
 namespace PlainBridge.Api.ApiEndPoint.Endpoints;
 

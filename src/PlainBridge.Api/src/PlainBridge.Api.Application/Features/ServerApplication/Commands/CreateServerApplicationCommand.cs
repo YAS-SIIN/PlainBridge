@@ -1,9 +1,9 @@
 ﻿
 
 using System.ComponentModel.DataAnnotations;
-using PlainBridge.SharedApplication.DTOs;
-using PlainBridge.SharedApplication.Enums;
-using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.Shared.Application.DTOs;
+using PlainBridge.Shared.Application.Enums;
+using PlainBridge.Shared.Application.Mediator;
 
 namespace PlainBridge.Api.Application.UseCases.ServerApplication.Commands;
 

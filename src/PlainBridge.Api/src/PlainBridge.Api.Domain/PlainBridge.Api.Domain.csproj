@@ -13,8 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\PlainBridge.SharedApplication\PlainBridge.SharedApplication.csproj" />
-    <ProjectReference Include="..\..\PlainBridge.SharedDomain\PlainBridge.SharedDomain.csproj" />
+    <ProjectReference Include="..\..\..\PlainBridge.Shared\src\PlainBridge.Shared.Domain\PlainBridge.Shared.Domain.csproj" />
   </ItemGroup>
 
 </Project>

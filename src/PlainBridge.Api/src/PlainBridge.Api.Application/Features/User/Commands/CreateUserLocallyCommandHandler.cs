@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
-using PlainBridge.SharedApplication.Exceptions;
-using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.Shared.Application.Exceptions;
+using PlainBridge.Shared.Application.Mediator;
 using System;
 using System.Collections.Generic;
 using System.Linq;

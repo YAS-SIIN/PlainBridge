@@ -29,31 +29,40 @@ High‑level components
 
 ```text path=null start=null
 PlainBridge/
+├─ PlainBridge.sln                        # Root solution for Visual Studio
+├─ PlainBridge.slnx                       # Root solution for .NET SDK / VS Code
 ├─ src/
 │  ├─ PlainBridge.AppHost/                # .NET Aspire AppHost (orchestrates everything)
 │  ├─ PlainBridge.ServiceDefaults/        # Shared packages, logging, OTEL, service discovery, etc.
 │  ├─ PlainBridge.Api/
-│  │  ├─ PlainBridge.Api.Domain/          # Domain types
-│  │  ├─ PlainBridge.Api.Application/     # App services, handlers
-│  │  ├─ PlainBridge.Api.Infrastructure/  # Persistence/integration (Redis, RabbitMQ, etc.)
-│  │  └─ PlainBridge.Api.ApiEndPoint/     # ASP.NET Core endpoint (BFF + APIs)
+│  │  ├─ src/PlainBridge.Api.Domain/      # Domain types
+│  │  ├─ src/PlainBridge.Api.Application/ # App services, handlers
+│  │  ├─ src/PlainBridge.Api.Infrastructure/ # Persistence/integration (Redis, RabbitMQ, etc.)
+│  │  ├─ src/PlainBridge.Api.ApiEndPoint/ # ASP.NET Core endpoint (BFF + APIs)
+│  │  └─ tests/PlainBridge.Api.Tests/
 │  ├─ PlainBridge.Server/
-│  │  ├─ PlainBridge.Server.Application/  # Routing, buses, WebSocket, cache
-│  │  └─ PlainBridge.Server.ApiEndPoint/  # Public-facing ASP.NET Core endpoint
+│  │  ├─ src/PlainBridge.Server.Application/ # Routing, buses, WebSocket, cache
+│  │  ├─ src/PlainBridge.Server.ApiEndPoint/ # Public-facing ASP.NET Core endpoint
+│  │  └─ tests/PlainBridge.Server.Tests/
 │  ├─ PlainBridge.Client/
-│  │  ├─ PlainBridge.Client.Application/  # Client agent app services
-│  │  └─ PlainBridge.Client.ApiEndPoint/  # Client endpoint (BFF, login flow)
+│  │  ├─ src/PlainBridge.Client.Application/ # Client agent app services
+│  │  ├─ src/PlainBridge.Client.ApiEndPoint/ # Client endpoint (BFF, login flow)
+│  │  └─ tests/PlainBridge.Client.Tests/
 │  ├─ PlainBridge.IdentityServer/
-│  │  └─ PlainBridge.IdentityServer.EndPoint/ # Duende IdentityServer
-│  ├─ PlainBridge.SharedApplication/      # Shared mediator, DTOs, abstractions
-│  ├─ PlainBridge.SharedDomain/           # Shared domain primitives
+│  │  ├─ src/PlainBridge.IdentityServer.EndPoint/ # Duende IdentityServer
+│  │  └─ tests/PlainBridge.IdentityServer.Tests/
+│  ├─ PlainBridge.Shared/
+│  │  ├─ src/PlainBridge.SharedApplication/ # Shared mediator, DTOs, abstractions
+│  │  └─ src/PlainBridge.SharedDomain/      # Shared domain primitives
 │  └─ PlainBridge.Web/
-│     └─ PlainBridge.Web.UI/              # Angular front-end (esproj)
+│     └─ src/PlainBridge.Web.UI/           # Angular front-end (esproj)
 ├─ infra/
 │  ├─ docker-compose.yaml                 # Compose env that AppHost can target
 │  └─ .env                                # Ports and image names for compose
-└─ tests/                                 # API/Server/Client test projects
+└─ tests/PlainBridge.Tests/               # Shared test project
 ```
+
+Each component folder also contains its own solution file for focused development.
 
 
 ## Architecture in detail (Aspire best practices)
@@ -81,7 +90,7 @@ Core patterns and libraries
   - Serilog console sink for development; optional Elasticsearch sink in non‑Dev; OpenAPI in Dev; Aspire Dashboard + OTEL wiring in compose
 - Clean layering and shared building blocks
   - API split into Domain/Application/Infrastructure/Endpoint
-  - SharedApplication contains a lightweight Mediator implementation and cross‑cutting abstractions
+  - The shared application layer contains a lightweight mediator implementation and cross‑cutting abstractions
 
 Selected flows
 - Sign-in: Users authenticate against IdentityServer. API/Client use BFF with OpenID Connect for session and token handling.
@@ -101,7 +110,7 @@ dotnet dev-certs https --trust
 
 
 ## Getting started (recommended: .NET Aspire)
-Run everything with a single command using AppHost:
+Open the repository with PlainBridge.slnx (recommended) or PlainBridge.sln in Visual Studio or VS Code, then run everything with a single command using AppHost:
 ```powershell path=null start=null
 # from the repository root
 dotnet run --project src/PlainBridge.AppHost/PlainBridge.AppHost.csproj
@@ -172,7 +181,7 @@ Test results.
 ## Development tips
 - OpenAPI UIs are enabled in Development for API/Client endpoints
 - Serilog console templates make logs compact; Elasticsearch sink is enabled outside Development
-- The custom Mediator in SharedApplication is a good read for understanding request/handler pipelines
+- The custom mediator implementation in the shared application project is a good read for understanding request/handler pipelines
 
 
 ## Security and production notes

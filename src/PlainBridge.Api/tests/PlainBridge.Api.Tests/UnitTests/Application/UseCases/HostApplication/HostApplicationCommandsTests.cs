@@ -7,9 +7,9 @@ using PlainBridge.Api.Application.UseCases.HostApplication.Commands;
 using PlainBridge.Api.Domain.HostAggregate.ValueObjects;
 using PlainBridge.Api.Infrastructure.ExternalServices.Messaging;
 using PlainBridge.Api.Tests.UnitTests.Application.Utils;
-using PlainBridge.SharedApplication.DTOs;
-using PlainBridge.SharedApplication.Exceptions;
-using PlainBridge.SharedDomain.Base.Enums;
+using PlainBridge.Shared.Application.DTOs;
+using PlainBridge.Shared.Application.Exceptions;
+using PlainBridge.Shared.Domain.Base.Enums;
 
 namespace PlainBridge.Api.Tests.UnitTests.Application.UseCases.HostApplication;
 

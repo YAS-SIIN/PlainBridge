@@ -1,0 +1,35 @@
+﻿ 
+using Microsoft.Extensions.Caching.Hybrid; 
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using PlainBridge.Server.Application.DTOs;
+using PlainBridge.Server.Application.Management.WebSocket; 
+using PlainBridge.Shared.Application.DTOs;
+
+namespace PlainBridge.Server.Application.Management.Cache;
+
+public class CacheManagement(ILogger<CacheManagement> _logger, HybridCache _hybridCache) : ICacheManagement
+{ 
+    public async Task<HostApplicationDto?> SetGetHostApplicationAsync(string host, HostApplicationDto value = default!, CancellationToken cancellationToken = default!) => await _hybridCache.GetOrCreateAsync(
+            $"hostApplication:{host}",
+            async ct => await Task.FromResult(value), 
+            cancellationToken: cancellationToken);
+
+    public async Task<ServerApplicationDto?> SetGetServerApplicationAsync(string appId, ServerApplicationDto value = default!, CancellationToken cancellationToken = default! ) => await
+        _hybridCache.GetOrCreateAsync($"serverApplication:appId:{appId}",
+            async ct => await Task.FromResult(value), 
+            cancellationToken: cancellationToken);
+
+    public async Task<ServerApplicationDto?> SetGetServerApplicationAsync(string username, int port, ServerApplicationDto value = default!, CancellationToken cancellationToken = default!) => await
+        _hybridCache.GetOrCreateAsync($"serverApplication:username:{username}:port:{port}",
+            async ct => await Task.FromResult(value), 
+            cancellationToken: cancellationToken);
+
+    public async Task<IWebSocketManagement> SetGetWebSocketAsync(string host, IWebSocketManagement value = default!, CancellationToken cancellationToken = default!) => await
+        _hybridCache.GetOrCreateAsync($"webSocket:{host}",
+            async ct => await Task.FromResult(value),
+            cancellationToken: cancellationToken);
+
+    public async Task RemoveWebSocketAsync(string host, CancellationToken cancellationToken = default!) => await _hybridCache.RemoveAsync($"webSocket:{host}", cancellationToken);
+
+}

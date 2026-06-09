@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using PlainBridge.Api.Application.UseCases.HostApplication.Queries;
 using PlainBridge.Api.Tests.UnitTests.Application.Utils;
-using PlainBridge.SharedApplication.Exceptions;
+using PlainBridge.Shared.Application.Exceptions;
 
 namespace PlainBridge.Api.Tests.UnitTests.Application.UseCases.HostApplication;
 

@@ -31,7 +31,7 @@ public class HostApplicationTests
         Assert.Equal("domain", app.Domain.HostDomainName);
         Assert.Equal("http://internal", app.InternalUrl.InternalUrlValue);
         Assert.Equal(1, app.UserId);
-        Assert.Equal(PlainBridge.SharedDomain.Base.Enums.RowStateEnum.DeActive, app.State);
+        Assert.Equal(PlainBridge.Shared.Domain.Base.Enums.RowStateEnum.DeActive, app.State);
         Assert.NotEqual(Guid.Empty, app.AppId.ViewId);
     }
 
@@ -54,10 +54,10 @@ public class HostApplicationTests
         var app = HostApplication.Create("name","d","http://i",1,"desc");
 
         app.Activate();
-        Assert.Equal(PlainBridge.SharedDomain.Base.Enums.RowStateEnum.Active, app.State);
+        Assert.Equal(PlainBridge.Shared.Domain.Base.Enums.RowStateEnum.Active, app.State);
 
         app.Deactivate();
-        Assert.Equal(PlainBridge.SharedDomain.Base.Enums.RowStateEnum.DeActive, app.State);
+        Assert.Equal(PlainBridge.Shared.Domain.Base.Enums.RowStateEnum.DeActive, app.State);
     }
 }
 

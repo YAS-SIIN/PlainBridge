@@ -24,10 +24,4 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\PlainBridge.Api\PlainBridge.Api.Application\PlainBridge.Api.Application.csproj" />
-    <ProjectReference Include="..\PlainBridge.Api\PlainBridge.Api.Infrastructure\PlainBridge.Api.Infrastructure.csproj" />
-    <ProjectReference Include="..\PlainBridge.Server\PlainBridge.Server.Application\PlainBridge.Server.Application.csproj" />
-  </ItemGroup>
-
 </Project>

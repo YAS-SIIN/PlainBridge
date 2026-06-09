@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.Shared.Application.Mediator;
 
 namespace PlainBridge.Api.Application.UseCases.HostApplication.Commands;
 

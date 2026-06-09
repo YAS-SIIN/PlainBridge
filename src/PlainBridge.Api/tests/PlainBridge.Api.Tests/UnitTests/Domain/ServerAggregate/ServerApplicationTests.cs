@@ -59,10 +59,10 @@ public class ServerApplicationTests
             "desc");
 
         app.Activate();
-        Assert.Equal(PlainBridge.SharedDomain.Base.Enums.RowStateEnum.Active, app.State);
+        Assert.Equal(PlainBridge.Shared.Domain.Base.Enums.RowStateEnum.Active, app.State);
 
         app.Deactivate();
-        Assert.Equal(PlainBridge.SharedDomain.Base.Enums.RowStateEnum.DeActive, app.State);
+        Assert.Equal(PlainBridge.Shared.Domain.Base.Enums.RowStateEnum.DeActive, app.State);
     }
 }
 

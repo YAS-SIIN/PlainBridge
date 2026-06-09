@@ -1,4 +1,4 @@
-using PlainBridge.SharedDomain.Base.ValueObjects;
+using PlainBridge.Shared.Domain.Base.ValueObjects;
 using Xunit;
 
 namespace PlainBridge.Api.Tests.UnitTests.Domain.Shared.ValueObjects;

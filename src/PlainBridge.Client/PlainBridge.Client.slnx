@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PlainBridge.Client.ApiEndPoint/PlainBridge.Client.ApiEndPoint.csproj" />
+    <Project Path="src/PlainBridge.Client.Application/PlainBridge.Client.Application.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PlainBridge.Client.Tests/PlainBridge.Client.Tests.csproj" />
+  </Folder>
+</Solution>

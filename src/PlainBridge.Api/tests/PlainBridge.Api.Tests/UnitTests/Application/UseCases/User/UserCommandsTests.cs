@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using PlainBridge.SharedApplication.DTOs;
-using PlainBridge.SharedApplication.Enums;
-using PlainBridge.SharedApplication.Exceptions;
+using PlainBridge.Shared.Application.DTOs;
+using PlainBridge.Shared.Application.Enums;
+using PlainBridge.Shared.Application.Exceptions;
 using PlainBridge.Api.Application.Features.User.Commands;
 using PlainBridge.Api.Infrastructure.ExternalServices.Identity;
 using PlainBridge.Api.Infrastructure.DTOs;

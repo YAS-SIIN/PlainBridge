@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using PlainBridge.Api.Application.Features.User.Queries;
 using PlainBridge.Api.Tests.UnitTests.Application.Utils;
-using PlainBridge.SharedApplication.Exceptions;
+using PlainBridge.Shared.Application.Exceptions;
 
 namespace PlainBridge.Api.Tests.UnitTests.Application.UseCases.User;
 

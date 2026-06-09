@@ -8,8 +8,8 @@ using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.Services.Token; 
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.Api.Infrastructure.Persistence.Cache;
-using PlainBridge.SharedApplication.Exceptions;
-using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.Shared.Application.Exceptions;
+using PlainBridge.Shared.Application.Mediator;
 
 namespace PlainBridge.Api.ApiEndPoint.Endpoints;
 

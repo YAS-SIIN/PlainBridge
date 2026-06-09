@@ -1,5 +1,5 @@
 ﻿
-using PlainBridge.SharedDomain.Base.ValueObjects;
+using PlainBridge.Shared.Domain.Base.ValueObjects;
 
 namespace PlainBridge.Api.Domain.ServerAggregate.ValueObjects;
 

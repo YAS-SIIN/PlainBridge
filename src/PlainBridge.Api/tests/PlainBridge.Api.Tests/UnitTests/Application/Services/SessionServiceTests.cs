@@ -12,7 +12,8 @@ using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.Api.Infrastructure.Persistence.Cache;
 using PlainBridge.Api.Tests.UnitTests.Application.Utils;
-using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.Shared.Application.DTOs;
+using PlainBridge.Shared.Application.Mediator;
 
 namespace PlainBridge.Api.Tests.UnitTests.Application.Services;
 

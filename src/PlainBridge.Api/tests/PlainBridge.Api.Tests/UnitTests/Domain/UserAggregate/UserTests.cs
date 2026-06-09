@@ -115,7 +115,7 @@ public class UserTests
         Assert.Equal("user@example.com", u.Email);
         Assert.Equal("name", u.Name);
         Assert.Equal("family", u.Family);
-        Assert.Equal(PlainBridge.SharedDomain.Base.Enums.RowStateEnum.Active, u.State);
+        Assert.Equal(PlainBridge.Shared.Domain.Base.Enums.RowStateEnum.Active, u.State);
         Assert.NotEqual(Guid.Empty, u.AppId.ViewId);
     }
 
@@ -135,9 +135,9 @@ public class UserTests
     {
         var u = User.Create("ext","user","user@example.com","+989121234567","name","family", null);
         u.Deactivate();
-        Assert.Equal(PlainBridge.SharedDomain.Base.Enums.RowStateEnum.DeActive, u.State);
+        Assert.Equal(PlainBridge.Shared.Domain.Base.Enums.RowStateEnum.DeActive, u.State);
         u.Activate();
-        Assert.Equal(PlainBridge.SharedDomain.Base.Enums.RowStateEnum.Active, u.State);
+        Assert.Equal(PlainBridge.Shared.Domain.Base.Enums.RowStateEnum.Active, u.State);
     }
 }
 

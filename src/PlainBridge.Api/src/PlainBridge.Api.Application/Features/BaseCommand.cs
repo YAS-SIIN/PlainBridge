@@ -1,6 +1,6 @@
 ﻿
 
-using PlainBridge.SharedApplication.Enums;
+using PlainBridge.Shared.Application.Enums;
 
 namespace PlainBridge.Api.Application.UseCases;
 

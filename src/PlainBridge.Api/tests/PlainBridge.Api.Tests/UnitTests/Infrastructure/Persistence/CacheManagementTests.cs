@@ -2,7 +2,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 using Moq;
 using PlainBridge.Api.Infrastructure.Persistence.Cache;
 using PlainBridge.Api.Tests.UnitTests.Infrastructure.Utils;
-using PlainBridge.SharedApplication.DTOs;
+using PlainBridge.Shared.Application.DTOs;
 
 namespace PlainBridge.Api.Tests.UnitTests.Infrastructure.Persistence;
 

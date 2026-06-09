@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.Api.Infrastructure.ExternalServices.Identity;
 using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
-using PlainBridge.SharedApplication.Enums;
-using PlainBridge.SharedApplication.Exceptions;
-using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.Shared.Application.Enums;
+using PlainBridge.Shared.Application.Exceptions;
+using PlainBridge.Shared.Application.Mediator;
 
 namespace PlainBridge.Api.Application.Features.User.Commands;
 

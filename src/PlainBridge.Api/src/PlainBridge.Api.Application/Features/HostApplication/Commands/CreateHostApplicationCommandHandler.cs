@@ -5,8 +5,8 @@ using Microsoft.Extensions.Logging;
 using PlainBridge.Api.Domain.HostAggregate.ValueObjects;
 using PlainBridge.Api.Infrastructure.ExternalServices.Messaging;
 using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
-using PlainBridge.SharedApplication.Exceptions;
-using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.Shared.Application.Exceptions;
+using PlainBridge.Shared.Application.Mediator;
 
 namespace PlainBridge.Api.Application.UseCases.HostApplication.Commands;
 

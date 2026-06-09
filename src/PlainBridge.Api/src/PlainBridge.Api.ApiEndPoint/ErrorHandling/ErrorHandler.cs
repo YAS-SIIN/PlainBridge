@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
  
-using PlainBridge.SharedApplication.DTOs;
-using PlainBridge.SharedApplication.Enums;
-using PlainBridge.SharedApplication.Exceptions;
-using PlainBridge.SharedApplication.Extensions;
+using PlainBridge.Shared.Application.DTOs;
+using PlainBridge.Shared.Application.Enums;
+using PlainBridge.Shared.Application.Exceptions;
+using PlainBridge.Shared.Application.Extensions;
 
 namespace PlainBridge.Api.ApiEndPoint.ErrorHandling;
 

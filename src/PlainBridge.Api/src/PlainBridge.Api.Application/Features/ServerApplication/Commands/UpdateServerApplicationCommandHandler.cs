@@ -5,9 +5,9 @@ using PlainBridge.Api.Domain.HostAggregate;
 using PlainBridge.Api.Domain.ServerAggregate;
 using PlainBridge.Api.Infrastructure.ExternalServices.Messaging;
 using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
-using PlainBridge.SharedApplication.DTOs;
-using PlainBridge.SharedApplication.Exceptions;
-using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.Shared.Application.DTOs;
+using PlainBridge.Shared.Application.Exceptions;
+using PlainBridge.Shared.Application.Mediator;
 
 namespace PlainBridge.Api.Application.UseCases.ServerApplication.Commands;
 

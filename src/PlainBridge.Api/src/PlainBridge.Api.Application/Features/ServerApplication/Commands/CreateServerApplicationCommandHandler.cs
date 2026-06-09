@@ -5,11 +5,11 @@ using Microsoft.Extensions.Logging;
 using PlainBridge.Api.Domain.ServerAggregate;
 using PlainBridge.Api.Infrastructure.ExternalServices.Messaging;
 using PlainBridge.Api.Infrastructure.Persistence.Data.Context;
-using PlainBridge.SharedApplication.DTOs;
-using PlainBridge.SharedApplication.Enums;
-using PlainBridge.SharedApplication.Exceptions;
-using PlainBridge.SharedApplication.Mediator;
-using PlainBridge.SharedDomain.Base.ValueObjects;
+using PlainBridge.Shared.Application.DTOs;
+using PlainBridge.Shared.Application.Enums;
+using PlainBridge.Shared.Application.Exceptions;
+using PlainBridge.Shared.Application.Mediator;
+using PlainBridge.Shared.Domain.Base.ValueObjects;
 
 namespace PlainBridge.Api.Application.UseCases.ServerApplication.Commands;
 

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PlainBridge.Api.Domain.ServerAggregate.Enums;
 using PlainBridge.Api.Domain.ServerAggregate.ValueObjects;
 using PlainBridge.Api.Domain.UserAggregate;
-using PlainBridge.SharedDomain.Base;
-using PlainBridge.SharedDomain.Base.Enums;
-using PlainBridge.SharedDomain.Base.ValueObjects;
+using PlainBridge.Shared.Domain.Base;
+using PlainBridge.Shared.Domain.Base.Enums;
+using PlainBridge.Shared.Domain.Base.ValueObjects;
 
 namespace PlainBridge.Api.Domain.ServerAggregate;
 

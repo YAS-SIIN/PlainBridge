@@ -23,10 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PlainBridge.Client\PlainBridge.Client.ApiEndPoint\PlainBridge.Client.ApiEndPoint.csproj" />
-    <ProjectReference Include="..\PlainBridge.IdentityServer\PlainBridge.IdentityServer.EndPoint\PlainBridge.IdentityServer.EndPoint.csproj" />
-    <ProjectReference Include="..\PlainBridge.Api\PlainBridge.Api.ApiEndPoint\PlainBridge.Api.ApiEndPoint.csproj" />
-    <ProjectReference Include="..\PlainBridge.Server\PlainBridge.Server.ApiEndPoint\PlainBridge.Server.ApiEndPoint.csproj" />
+    <ProjectReference Include="..\PlainBridge.Api\src\PlainBridge.Api.ApiEndPoint\PlainBridge.Api.ApiEndPoint.csproj" />
+    <ProjectReference Include="..\PlainBridge.Client\src\PlainBridge.Client.ApiEndPoint\PlainBridge.Client.ApiEndPoint.csproj" />
+    <ProjectReference Include="..\PlainBridge.IdentityServer\src\PlainBridge.IdentityServer.EndPoint\PlainBridge.IdentityServer.EndPoint.csproj" />
+    <ProjectReference Include="..\PlainBridge.Server\src\PlainBridge.Server.ApiEndPoint\PlainBridge.Server.ApiEndPoint.csproj" />
   </ItemGroup>
 
 </Project>

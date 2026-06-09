@@ -6,8 +6,8 @@ using Moq;
 using PlainBridge.Api.Application.UseCases.ServerApplication.Commands;
 using PlainBridge.Api.Infrastructure.ExternalServices.Messaging;
 using PlainBridge.Api.Tests.UnitTests.Application.Utils;
-using PlainBridge.SharedApplication.Exceptions;
-using PlainBridge.SharedDomain.Base.Enums;
+using PlainBridge.Shared.Application.Exceptions;
+using PlainBridge.Shared.Domain.Base.Enums;
 
 namespace PlainBridge.Api.Tests.UnitTests.Application.UseCases.ServerApplication;
 
@@ -45,7 +45,7 @@ public class ServerApplicationCommandsTests : IClassFixture<ApiApplcationUnitTes
     [MemberData(nameof(ServerApplicationCommandsData.SetDataFor_CreateServerApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded), MemberType = typeof(ServerApplicationCommandsData))]
     public async Task CreateServerApplicationCommandHandler_WhenEveryThingIsOk_ShouldBeSucceeded(CreateServerApplicationCommand dto)
     {
-        if (dto.ServerApplicationType == SharedApplication.Enums.ServerApplicationTypeEnum.UsePort)
+        if (dto.ServerApplicationType == Shared.Application.Enums.ServerApplicationTypeEnum.UsePort)
         {
             var serverApplication = await _fixture.MemoryMainDbContext.ServerApplications.FirstOrDefaultAsync();
             dto.ServerApplicationAppId = serverApplication!.AppId.ViewId.ToString();

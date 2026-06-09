@@ -1,5 +1,5 @@
 ﻿using PlainBridge.Api.Application.UseCases.ServerApplication.Commands;
-using PlainBridge.SharedApplication.DTOs;
+using PlainBridge.Shared.Application.DTOs;
 
 namespace PlainBridge.Api.Tests.UnitTests.Application.UseCases.ServerApplication;
 
@@ -12,14 +12,14 @@ public static class ServerApplicationCommandsData
             Name = "NewApp1",
             InternalPort = 4001,
             UserId = 1,
-            ServerApplicationType = SharedApplication.Enums.ServerApplicationTypeEnum.SharePort
+            ServerApplicationType = Shared.Application.Enums.ServerApplicationTypeEnum.SharePort
         }};
         yield return new object[] { new CreateServerApplicationCommand
         {
             Name = "NewApp2",
             InternalPort = 4002,
             UserId = 1,
-            ServerApplicationType = SharedApplication.Enums.ServerApplicationTypeEnum.UsePort,
+            ServerApplicationType = Shared.Application.Enums.ServerApplicationTypeEnum.UsePort,
             ServerApplicationAppId = Guid.NewGuid().ToString()
         }};
     }
@@ -31,7 +31,7 @@ public static class ServerApplicationCommandsData
             Name = "NewApp",
             InternalPort = 99999,
             UserId = 1,
-            ServerApplicationType = SharedApplication.Enums.ServerApplicationTypeEnum.SharePort
+            ServerApplicationType = Shared.Application.Enums.ServerApplicationTypeEnum.SharePort
         }};
     }
 
@@ -42,7 +42,7 @@ public static class ServerApplicationCommandsData
             Name = "NewApp",
             InternalPort = 4000,
             UserId = 1,
-            ServerApplicationType = SharedApplication.Enums.ServerApplicationTypeEnum.UsePort,
+            ServerApplicationType = Shared.Application.Enums.ServerApplicationTypeEnum.UsePort,
         }};
     }
 
@@ -54,7 +54,7 @@ public static class ServerApplicationCommandsData
             Name = "NewApp",
             InternalPort = 4000,
             UserId = 2,
-            ServerApplicationType = SharedApplication.Enums.ServerApplicationTypeEnum.SharePort,
+            ServerApplicationType = Shared.Application.Enums.ServerApplicationTypeEnum.SharePort,
             ServerApplicationAppId = Guid.NewGuid().ToString()
         }};
     }

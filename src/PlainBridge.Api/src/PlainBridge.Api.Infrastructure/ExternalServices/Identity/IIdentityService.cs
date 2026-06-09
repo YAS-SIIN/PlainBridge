@@ -1,5 +1,5 @@
 ﻿using PlainBridge.Api.Infrastructure.DTOs;
-using PlainBridge.SharedApplication.DTOs;
+using PlainBridge.Shared.Application.DTOs;
 
 namespace PlainBridge.Api.Infrastructure.ExternalServices.Identity;
 

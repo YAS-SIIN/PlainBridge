@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PlainBridge.Api.Application.Services.Session;
 using PlainBridge.Api.Application.Services.Token;
 using PlainBridge.Api.Infrastructure;
-using PlainBridge.SharedApplication.Extensions;
+using PlainBridge.Shared.Application.Extensions;
 
 namespace PlainBridge.Api.Application;
 

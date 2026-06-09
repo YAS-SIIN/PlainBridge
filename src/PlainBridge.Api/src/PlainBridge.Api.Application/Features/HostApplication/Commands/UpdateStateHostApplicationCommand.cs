@@ -1,6 +1,6 @@
 ﻿
 
-using PlainBridge.SharedApplication.Mediator;
+using PlainBridge.Shared.Application.Mediator;
 
 namespace PlainBridge.Api.Application.UseCases.HostApplication.Commands;
 

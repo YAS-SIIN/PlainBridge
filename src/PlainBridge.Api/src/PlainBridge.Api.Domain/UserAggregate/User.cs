@@ -5,9 +5,9 @@ using PlainBridge.Api.Domain.HostAggregate;
 using PlainBridge.Api.Domain.ServerAggregate;
 using PlainBridge.Api.Domain.ServerAggregate.ValueObjects;
 using PlainBridge.Api.Domain.UserAggregate.ValueObjects;
-using PlainBridge.SharedDomain.Base;
-using PlainBridge.SharedDomain.Base.Enums;
-using PlainBridge.SharedDomain.Base.ValueObjects;
+using PlainBridge.Shared.Domain.Base;
+using PlainBridge.Shared.Domain.Base.Enums;
+using PlainBridge.Shared.Domain.Base.ValueObjects;
 using System.ComponentModel.DataAnnotations;
 
 namespace PlainBridge.Api.Domain.UserAggregate;

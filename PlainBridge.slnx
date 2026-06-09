@@ -5,8 +5,8 @@
   </Folder>
   <Folder Name="/src/PlainBridge.Shared/" />
   <Folder Name="/src/PlainBridge.Shared/src/">
-    <Project Path="src/PlainBridge.Shared/src/PlainBridge.SharedApplication/PlainBridge.SharedApplication.csproj" Id="904a1732-c96b-48ab-9b0c-9032005c2156" />
-    <Project Path="src/PlainBridge.Shared/src/PlainBridge.SharedDomain/PlainBridge.SharedDomain.csproj" Id="711898d2-acef-4b5a-b53b-3683212d480e" />
+    <Project Path="src/PlainBridge.Shared/src/PlainBridge.Shared.Application/PlainBridge.Shared.Application.csproj" Id="904a1732-c96b-48ab-9b0c-9032005c2156" />
+    <Project Path="src/PlainBridge.Shared/src/PlainBridge.Shared.Domain/PlainBridge.Shared.Domain.csproj" Id="711898d2-acef-4b5a-b53b-3683212d480e" />
   </Folder>
   <Folder Name="/src/PlainBridge.Api/">
     <File Path="PlainBridge.Api.slnx" />
@@ -22,10 +22,39 @@
   </Folder>
   <Folder Name="/src/PlainBridge.Client/">
   </Folder>
+  <Folder Name="/src/PlainBridge.Client/src/">
+    <Project Path="src/PlainBridge.Client/src/PlainBridge.Client.ApiEndPoint/PlainBridge.Client.ApiEndPoint.csproj" />
+    <Project Path="src/PlainBridge.Client/src/PlainBridge.Client.Application/PlainBridge.Client.Application.csproj" />
+  </Folder>
+  <Folder Name="/src/PlainBridge.Client/tests/">
+    <Project Path="src/PlainBridge.Client/tests/PlainBridge.Client.Tests/PlainBridge.Client.Tests.csproj" />
+  </Folder>
   <Folder Name="/src/PlainBridge.IdentityServer/">
   </Folder>
-  <Folder Name="/src/PlainBridge.Server/">
+  <Folder Name="/src/PlainBridge.IdentityServer/src/">
+    <Project Path="src/PlainBridge.IdentityServer/src/PlainBridge.IdentityServer.EndPoint/PlainBridge.IdentityServer.EndPoint.csproj" />
   </Folder>
+
+  <Folder Name="/src/PlainBridge.IdentityServer/tests/">
+    <Project Path="src/PlainBridge.IdentityServer/tests/PlainBridge.IdentityServer.Tests/PlainBridge.IdentityServer.Tests.csproj" />
+  </Folder>
+
+  <Folder Name="/src/PlainBridge.Server/">
+    <Project Path="src/PlainBridge.Server/src/PlainBridge.Server.ApiEndPoint/PlainBridge.Server.ApiEndPoint.csproj" />
+    <Project Path="src/PlainBridge.Server/src/PlainBridge.Server.Application/PlainBridge.Server.Application.csproj" />
+  </Folder>
+  <Folder Name="/src/PlainBridge.Server/tests/">
+    <Project Path="src/PlainBridge.Server/tests/PlainBridge.Server.Tests/PlainBridge.Server.Tests.csproj" />
+  </Folder>
+
+  <Folder Name="/src/PlainBridge.Web/" />
+  <Folder Name="/src/PlainBridge.Web/src/">
+    <Project Path="src/PlainBridge.Web/src/PlainBridge.Web.UI/PlainBridge.Web.UI.esproj">
+      <Build />
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/src/PlainBridge.Web/tests/" />
   <Folder Name="/tests/">
     <Project Path="tests/PlainBridge.Tests/PlainBridge.Tests.csproj" />
   </Folder>

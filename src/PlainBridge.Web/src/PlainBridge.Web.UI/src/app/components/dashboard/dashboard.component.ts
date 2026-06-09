@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HostApplicationService } from '../../services/host-application.service';
 import { ServerApplicationService } from '../../services/server-application.service';
-import { UserService } from '../../services/user.service';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -13,24 +13,23 @@ export class DashboardComponent implements OnInit {
   hostApplicationsCount = 0;
   serverApplicationsCount = 0;
   usersCount = 0;
-  loading = true;
+  loading = false;
 
   constructor(
     private hostApplicationService: HostApplicationService,
-    private serverApplicationService: ServerApplicationService,
-    private userService: UserService
+    private serverApplicationService: ServerApplicationService
   ) { }
 
   ngOnInit(): void {
     this.loadDashboardData();
   }
 
-  private loadDashboardData(): void {
-    this.loading = true;
+  private loadDashboardData() {
+    // this.loading = true;
 
     // Load host applications count
     this.hostApplicationService.getAllApplications().subscribe({
-      next: (result) => {
+      next: (result) => { 
         if (result.resultCode === 0) {
           this.hostApplicationsCount = result.data.length;
         }
@@ -51,6 +50,7 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
+        debugger;
         console.error('Error loading server applications:', error);
         this.loading = false;
       }

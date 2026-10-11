@@ -1,0 +1,28 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.6.1">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AspireUseCliBundle>true</AspireUseCliBundle>
+    <UserSecretsId>cb820622-e3d1-4015-a964-29e31ade5eb7</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting" Version="13.6.1" />
+    <PackageReference Include="Aspire.Hosting.Docker" Version="13.6.1" />
+    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.6.1" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="13.6.1" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="13.6.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\PlainBridge.Api\src\PlainBridge.Api.ApiEndPoint\PlainBridge.Api.ApiEndPoint.csproj" />
+    <ProjectReference Include="..\..\PlainBridge.Client\src\PlainBridge.Client.ApiEndPoint\PlainBridge.Client.ApiEndPoint.csproj" />
+    <ProjectReference Include="..\..\PlainBridge.IdentityServer\src\PlainBridge.IdentityServer.EndPoint\PlainBridge.IdentityServer.EndPoint.csproj" />
+    <ProjectReference Include="..\..\PlainBridge.Server\src\PlainBridge.Server.ApiEndPoint\PlainBridge.Server.ApiEndPoint.csproj" />
+  </ItemGroup>
+
+</Project>

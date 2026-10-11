@@ -35,7 +35,7 @@ public class AppHostIntegrationTestRunFixture : IAsyncLifetime
         Environment.SetEnvironmentVariable("IDS_PROJECT_PORT", "5053");
         Environment.SetEnvironmentVariable("CLIENT_PROJECT_PORT", "5055");
 
-        _distributedApplicationTestingBuilder = await DistributedApplicationTestingBuilder.CreateAsync<Projects.PlainBridge_AppHost>();
+        _distributedApplicationTestingBuilder = await DistributedApplicationTestingBuilder.CreateAsync<Projects.PlainBridge_AppHost_AppHost>();
         _distributedApplicationTestingBuilder.Services.AddLogging(logging => logging
            .AddConsole() // Outputs logs to console
            .AddFilter("Default", LogLevel.Information)

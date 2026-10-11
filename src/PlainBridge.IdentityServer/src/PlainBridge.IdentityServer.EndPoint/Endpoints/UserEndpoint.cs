@@ -1,10 +1,7 @@
-﻿using Duende.Bff;
-using Duende.IdentityModel;
+﻿ 
 
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PlainBridge.IdentityServer.EndPoint.Application.Services.User;
-using PlainBridge.IdentityServer.EndPoint.Domain.Entities;
 using PlainBridge.IdentityServer.EndPoint.DTOs;
 using PlainBridge.Shared.Application.DTOs;
 using PlainBridge.Shared.Application.Enums;

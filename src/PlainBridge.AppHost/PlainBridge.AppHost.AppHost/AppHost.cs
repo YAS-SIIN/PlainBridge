@@ -1,10 +1,14 @@
 using Aspire.Hosting.Docker.Resources.ComposeNodes;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+
 using PlainBridge.AppHost.DTOs;
+
 using Serilog;
-using System.Globalization; 
+
+using System.Globalization;
 
 
 var simpleLogger = new LoggerConfiguration()
@@ -29,7 +33,6 @@ try
 
     var rabbitmq = builder.AddRabbitMQ("messaging")
         .WithManagementPlugin();
-    IResourceBuilder<ElasticsearchResource> elasticsearch = default!;
 
     var identityServerEndpoint = builder.AddProject<Projects.PlainBridge_IdentityServer_EndPoint>("identityserver-endpoint")
         .WithUrl($"https://localhost:{appSettings.Value.PlainBridgeIdsPort.ToString()}")
@@ -82,29 +85,29 @@ try
 
 
 
-    if (!builder.Environment.IsDevelopment())
-    {
-        elasticsearch = builder.AddElasticsearch("elasticsearch");
+    //if (!builder.Environment.IsDevelopment())
+    //{
+    //    elasticsearch = builder.AddElasticsearch("elasticsearch");
 
-        identityServerEndpoint
-        .WithReference(elasticsearch)
-        .WaitFor(elasticsearch);
+    //    identityServerEndpoint
+    //    .WithReference(elasticsearch)
+    //    .WaitFor(elasticsearch);
 
-        apiEndpoint
-        .WithReference(elasticsearch)
-        .WaitFor(elasticsearch);
+    //    apiEndpoint
+    //    .WithReference(elasticsearch)
+    //    .WaitFor(elasticsearch);
 
-        serverEndpoint
-        .WithReference(elasticsearch)
-        .WaitFor(elasticsearch);
+    //    serverEndpoint
+    //    .WithReference(elasticsearch)
+    //    .WaitFor(elasticsearch);
 
-        clientEndpoint
-        .WithReference(elasticsearch)
-        .WaitFor(elasticsearch);
+    //    clientEndpoint
+    //    .WithReference(elasticsearch)
+    //    .WaitFor(elasticsearch);
 
-        clientEndpoint.WithComputeEnvironment(dc);
+    //    clientEndpoint.WithComputeEnvironment(dc);
 
-    }
+    //}
 
     identityServerEndpoint.WithComputeEnvironment(dc);
     cache.WithComputeEnvironment(dc);
@@ -130,4 +133,3 @@ finally
 {
     simpleLogger.Information("Shut down complete");
 }
- 

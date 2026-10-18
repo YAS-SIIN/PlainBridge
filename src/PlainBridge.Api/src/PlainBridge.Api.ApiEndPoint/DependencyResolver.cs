@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using Duende.Bff;
 using Duende.Bff.Yarp;
 using Duende.IdentityModel; 
@@ -13,7 +13,6 @@ using PlainBridge.Api.ApiEndPoint.ErrorHandling;
 using PlainBridge.Api.Application;
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.Api.Infrastructure.Persistence.Cache;
-using Serilog; 
 
 namespace PlainBridge.Api.ApiEndPoint;
 
@@ -158,7 +157,6 @@ public static class DependencyResolver
     {
 
         app.UseExceptionHandler();
-        app.UseSerilogRequestLogging();
 
         if (app.Environment.IsDevelopment())
         {

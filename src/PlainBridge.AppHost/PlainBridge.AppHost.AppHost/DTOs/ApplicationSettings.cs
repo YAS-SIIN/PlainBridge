@@ -9,6 +9,7 @@ public class ApplicationSettings
     public int PlainBridgeIdsPort { get; set; } = 5053;
     public int PlainBridgeWebPort { get; set; } = 5054;
     public int PlainBridgeClientPort { get; set; } = 5055;
+    public string ElasticSearchPassword { get; set; } = "";
 
 
 }

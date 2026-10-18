@@ -1,0 +1,56 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 75
+    spike_limit_percentage: 20
+  batch:
+    timeout: 1s
+    send_batch_size: 256
+
+exporters:
+  elasticsearch:
+    endpoints: ["${env:ELASTICSEARCH_URL:-http://elasticsearch:9200}"]
+    user: "${env:ELASTICSEARCH_USERNAME:-elastic}"
+    password: "${env:ELASTICSEARCH_PASSWORD}"
+    tls:
+      insecure: true
+    mapping:
+      mode: "otel"
+    logs_index: "plainbridge-logs"
+
+  otlp/aspire:
+    endpoint: "${env:ASPIRE_ENDPOINT}"
+    tls:
+      insecure: true
+
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+service:
+  extensions: [health_check]
+  pipelines:
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [elasticsearch, otlp/aspire]
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlp/aspire]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlp/aspire]
+  telemetry:
+    logs:
+      level: info
+

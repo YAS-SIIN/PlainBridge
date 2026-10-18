@@ -1,81 +1,44 @@
 
-using System.Globalization;
-//using Aspire.Elastic.Clients.Elasticsearch;
-using Elastic.Serilog.Sinks;
-using Microsoft.AspNetCore.TestHost;
 using PlainBridge.Client.ApiEndPoint;
 using PlainBridge.Client.Application.DTOs;
-using Serilog;
-
-var simpleLogger = new LoggerConfiguration()
-    .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
-    .CreateBootstrapLogger();
-
-simpleLogger.Information("Starting up");
-
 try
 {
-    var builder = WebApplication.CreateBuilder(args);
 
-    builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
+	var builder = WebApplication.CreateBuilder(args);
 
-    builder.AddServiceDefaults();
+	builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
 
-    builder.AddRabbitMQClient(connectionName: "messaging");
-    //builder.Services.AddElasticsearchClient(connectionName: "elasticsearch");
+	builder.AddServiceDefaults();
 
-    builder.Host.UseSerilog((ctx, services, lc) =>
-    {
-        lc.ReadFrom.Services(services)
-          .WriteTo.Console(
-              outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
-              formatProvider: CultureInfo.InvariantCulture);
+	builder.AddRabbitMQClient(connectionName: "messaging");
 
-        if (!ctx.HostingEnvironment.IsDevelopment())
-        {
-            //var esClient = services.GetRequiredService<ElasticsearchClient>();
-            //var elasticConfig = new ElasticsearchSinkOptions(esClient.Transport) { BootstrapMethod = Elastic.Ingest.Elasticsearch.BootstrapMethod.Failure };
+	builder.Services.AddClientProjectServices();
 
-            //lc.WriteTo.Elasticsearch(elasticConfig);
-        }
-    }, preserveStaticLogger: true);
+	builder.WebHost.ConfigureKestrel(options =>
+	{
+		options.ListenAnyIP(int.Parse(Environment.GetEnvironmentVariable("CLIENT_PROJECT_PORT") ?? "5055"), listenOptions =>
+		{
+			listenOptions.UseHttps(); // HTTP/3 requires HTTPS
+			listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
+		});
+	});
 
+	var app = builder.Build();
 
-    builder.Services.AddClientProjectServices();
-     
+	app.MapDefaultEndpoints();
 
-  
-        builder.WebHost.ConfigureKestrel(options =>
-        {
-            options.ListenAnyIP(int.Parse(Environment.GetEnvironmentVariable("CLIENT_PROJECT_PORT") ?? "5055"), listenOptions =>
-            {
-                listenOptions.UseHttps(); // HTTP/3 requires HTTPS
-                listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
-            });
-        }); 
+	// Configure the HTTP request pipeline.
+	if (app.Environment.IsDevelopment())
+	{
+		app.MapOpenApi();
+	}
 
+	app.AddUsers();
 
-
-    var app = builder.Build();
-
-    app.MapDefaultEndpoints();
-
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-        app.MapOpenApi();
-    }
-
-    app.AddUsers();
-
-    await app.RunAsync();
+	await app.RunAsync();
 
 }
-catch (Exception ex) when (ex is not HostAbortedException)
+catch (Exception ex)
 {
-    simpleLogger.Fatal(ex, "Unhandled exception");
-}
-finally
-{
-    simpleLogger.Information("Shut down complete");
+    Console.WriteLine("Exception");
 }

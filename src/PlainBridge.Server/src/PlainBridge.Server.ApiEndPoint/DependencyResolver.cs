@@ -1,12 +1,10 @@
-﻿
+
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Options;
 using PlainBridge.Server.ApiEndPoint.ErrorHandling;
 using PlainBridge.Server.ApiEndPoint.Middleware;
 using PlainBridge.Server.Application.DTOs;
 using PlainBridge.Server.Application;
-
-using Serilog;
 
 namespace PlainBridge.Server.ApiEndPoint;
 
@@ -52,7 +50,6 @@ public static class DependencyResolver
     {
 
         app.UseExceptionHandler();
-        app.UseSerilogRequestLogging();
 
         app.MapDefaultEndpoints();
 

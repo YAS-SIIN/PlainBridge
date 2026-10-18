@@ -6,20 +6,11 @@ using Microsoft.Extensions.Options;
 
 using PlainBridge.AppHost.DTOs;
 
-using Serilog;
-
 using System.Globalization;
-
-
-var simpleLogger = new LoggerConfiguration()
-    .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
-    .CreateBootstrapLogger();
-
-simpleLogger.Information("Starting up");
-
-
 try
 {
+
+
     var builder = DistributedApplication.CreateBuilder(args);
 
     builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
@@ -29,14 +20,18 @@ try
     var dc = builder.AddDockerComposeEnvironment("plain-bridge");
 
     var cache = builder.AddRedis("cache")
-        .WithRedisInsight();
+        .WithRedisInsight()
+        .WithComputeEnvironment(dc);
 
     var rabbitmq = builder.AddRabbitMQ("messaging")
-        .WithManagementPlugin();
+        .WithManagementPlugin()
+        .WithComputeEnvironment(dc);
+
 
     var identityServerEndpoint = builder.AddProject<Projects.PlainBridge_IdentityServer_EndPoint>("identityserver-endpoint")
         .WithUrl($"https://localhost:{appSettings.Value.PlainBridgeIdsPort.ToString()}")
-        .WithEnvironment("IDS_PROJECT_PORT", appSettings.Value.PlainBridgeIdsPort.ToString());
+        .WithEnvironment("IDS_PROJECT_PORT", appSettings.Value.PlainBridgeIdsPort.ToString())
+        .WithComputeEnvironment(dc);
 
     var apiEndpoint = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-endpoint")
         .WithUrl($"https://localhost:{appSettings.Value.PlainBridgeApiPort.ToString()}")
@@ -46,7 +41,8 @@ try
         .WaitFor(cache)
         .WaitFor(rabbitmq)
         .WaitFor(identityServerEndpoint)
-        .WithEnvironment("API_PROJECT_PORT", appSettings.Value.PlainBridgeApiPort.ToString());
+        .WithEnvironment("API_PROJECT_PORT", appSettings.Value.PlainBridgeApiPort.ToString())
+        .WithComputeEnvironment(dc);
 
     var serverEndpoint = builder.AddProject<Projects.PlainBridge_Server_ApiEndPoint>("server-endpoint")
         .WithUrl($"https://localhost:{appSettings.Value.PlainBridgeServerPort.ToString()}")
@@ -56,7 +52,8 @@ try
         .WaitFor(cache)
         .WaitFor(rabbitmq)
         .WaitFor(apiEndpoint)
-        .WithEnvironment("SERVER_PROJECT_PORT", appSettings.Value.PlainBridgeServerPort.ToString());
+        .WithEnvironment("SERVER_PROJECT_PORT", appSettings.Value.PlainBridgeServerPort.ToString())
+        .WithComputeEnvironment(dc);
 
 
     var angularWebUi = builder.AddJavaScriptApp("angular-webui", "../PlainBridge.Web/src/PlainBridge.Web.UI")
@@ -68,7 +65,8 @@ try
         .WaitFor(identityServerEndpoint)
         .WaitFor(apiEndpoint)
         .WithExternalHttpEndpoints()
-        .PublishAsDockerFile();
+        .PublishAsDockerFile()
+        .WithComputeEnvironment(dc);
 
 
     // Fix: Convert int to string before interpolating into WithUrl to avoid CS0315
@@ -80,41 +78,25 @@ try
         .WaitFor(cache)
         .WaitFor(rabbitmq)
         .WaitFor(serverEndpoint)
-        .WithEnvironment("CLIENT_PROJECT_PORT", appSettings.Value.PlainBridgeClientPort.ToString());
+        .WithEnvironment("CLIENT_PROJECT_PORT", appSettings.Value.PlainBridgeClientPort.ToString())
+        .WithComputeEnvironment(dc);
 
 
+    var elasticsearchPassword = builder.AddParameter("elasticsearch-password", value: appSettings.Value.ElasticSearchPassword, secret: true);
+    
+    var elasticsearch = builder.AddElasticsearch("elasticsearch", password: elasticsearchPassword, 5090)
+        .WithDataVolume()
+        .WithLifetime(ContainerLifetime.Persistent)
+        .WithComputeEnvironment(dc);
 
-
-    //if (!builder.Environment.IsDevelopment())
-    //{
-    //    elasticsearch = builder.AddElasticsearch("elasticsearch");
-
-    //    identityServerEndpoint
-    //    .WithReference(elasticsearch)
-    //    .WaitFor(elasticsearch);
-
-    //    apiEndpoint
-    //    .WithReference(elasticsearch)
-    //    .WaitFor(elasticsearch);
-
-    //    serverEndpoint
-    //    .WithReference(elasticsearch)
-    //    .WaitFor(elasticsearch);
-
-    //    clientEndpoint
-    //    .WithReference(elasticsearch)
-    //    .WaitFor(elasticsearch);
-
-    //    clientEndpoint.WithComputeEnvironment(dc);
-
-    //}
-
-    identityServerEndpoint.WithComputeEnvironment(dc);
-    cache.WithComputeEnvironment(dc);
-    rabbitmq.WithComputeEnvironment(dc);
-    apiEndpoint.WithComputeEnvironment(dc);
-    serverEndpoint.WithComputeEnvironment(dc);
-    clientEndpoint.WithComputeEnvironment(dc);
+    var collector = builder.AddOpenTelemetryCollector("otel-collector")
+        .WithConfig("otel-collector-config.yaml")
+        .WithEnvironment("ELASTICSEARCH_URL", elasticsearch.GetEndpoint("http"))
+        .WithEnvironment("ELASTICSEARCH_USERNAME", "elastic")
+        .WithEnvironment("ELASTICSEARCH_PASSWORD", elasticsearchPassword)
+        .WithReference(elasticsearch)
+        .WaitFor(elasticsearch)
+        .WithAppForwarding();
 
     //builder.AddDockerfile("PlainBridge-AppHost", "relative/context/path")
     //    .WithReference(apiEndpoint)
@@ -125,11 +107,7 @@ try
     await builder.Build().RunAsync();
 
 }
-catch (Exception ex) when (ex is not HostAbortedException)
+catch (Exception ex)
 {
-    simpleLogger.Fatal(ex, "Unhandled exception");
-}
-finally
-{
-    simpleLogger.Information("Shut down complete");
+    Console.WriteLine("Exception");
 }

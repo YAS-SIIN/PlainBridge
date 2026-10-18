@@ -1,50 +1,18 @@
 
-using System.Globalization;
-using Elastic.Clients.Elasticsearch;
-using Elastic.Ingest.Elasticsearch;
-using Elastic.Serilog.Sinks;
 using PlainBridge.Api.ApiEndPoint;
 using PlainBridge.Api.Infrastructure.DTOs;
-using Serilog; 
-
-
-var simpleLogger = new LoggerConfiguration()
-    .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
-    .CreateBootstrapLogger();
-
-simpleLogger.Information("Starting up");
-
-
 try
-{ 
+{
+
     var builder = WebApplication.CreateBuilder(args);
-     
+
     builder.AddServiceDefaults();
 
     builder.AddRedisClient(connectionName: "cache");
     builder.AddRedisDistributedCache(connectionName: "cache");
     builder.AddRabbitMQClient(connectionName: "messaging");
-    builder.AddElasticsearchClient(connectionName: "elasticsearch");
-
-    builder.Host.UseSerilog((ctx, services, lc) =>
-    {
-        lc.ReadFrom.Services(services)
-          .WriteTo.Console(
-              outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
-              formatProvider: CultureInfo.InvariantCulture);
-
-        if (!ctx.HostingEnvironment.IsDevelopment())
-        {
-            var esClient = services.GetRequiredService<ElasticsearchClient>();
-            var elasticConfig = new ElasticsearchSinkOptions(esClient.Transport) { BootstrapMethod = BootstrapMethod.Failure };
-
-            lc.WriteTo.Elasticsearch(elasticConfig);
-        }
-    }, preserveStaticLogger: true);
-
 
     builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
-
 
     builder.Services.AddApiProjectServices();
 
@@ -59,22 +27,17 @@ try
                 listenOptions.UseHttps(); // HTTP/3 requires HTTPS
                 listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
             });
-        }); 
+        });
     }
 
     var app = builder.Build();
-     
-      
+
     app.AddUsers();
 
     await app.RunAsync();
-     
+
 }
-catch (Exception ex) when (ex is not HostAbortedException)
+catch (Exception ex)
 {
-    simpleLogger.Fatal(ex, "Unhandled exception");
-}
-finally
-{
-    simpleLogger.Information("Shut down complete"); 
+    Console.WriteLine("Exception");
 }

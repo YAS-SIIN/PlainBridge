@@ -4,7 +4,7 @@
 PlainBridge is a distributed reverse-tunneling platform built on .NET 10 and Aspire. It exposes local HTTP, WebSocket, and raw TCP services to public internet domains via a centralized routing server, messaging bus, and client agents.
 
 ### Core Services & Responsibilities
-- `PlainBridge.AppHost`: Local orchestration via .NET Aspire (`AppHost.cs`), provisioning Redis, RabbitMQ, and services.
+- `PlainBridge.AppHost`: Local orchestration via .NET Aspire (`AppHost.cs`), provisioning Redis, RabbitMQ, Elasticsearch, OpenTelemetry Collector, and services.
 - `PlainBridge.IdentityServer`: Duende IdentityServer (OIDC/OAuth2) with in-memory ASP.NET Core Identity.
 - `PlainBridge.Api`: Control plane managing `HostApplication`, `ServerApplication`, and `User` entities; provides BFF and token exchange endpoints.
 - `PlainBridge.Server`: Public entry gateway; proxies incoming public HTTP/WebSocket traffic to clients via RabbitMQ.
@@ -16,18 +16,21 @@ PlainBridge is a distributed reverse-tunneling platform built on .NET 10 and Asp
 - **Backend:** .NET 10, C# 13/14, ASP.NET Core Minimal APIs, Duende IdentityServer 7.x, Duende BFF.
 - **Messaging:** RabbitMQ 4.1 via `RabbitMQ.Client` 7.x async APIs (direct exchanges and dedicated queues).
 - **Caching:** Redis 7.4 via `Microsoft.Extensions.Caching.Hybrid` (HybridCache L1 memory + L2 Redis).
+- **Observability:** Pure OpenTelemetry .NET SDK with standard `ILogger` / `Microsoft.Extensions.Logging` (Serilog completely removed); logs, traces, and metrics exported via OTLP; OpenTelemetry Collector stores logs in Elasticsearch (`plainbridge-logs`) and multiplexes telemetry to Aspire Dashboard.
 - **Frontend:** Angular 22, RxJS 7.8, Angular Material, TypeScript 5.7+ (`PlainBridge.Web.UI`).
 - **Patterns:** Clean Architecture in API (Domain -> Application -> Infrastructure -> ApiEndPoint), CQRS via custom reflection Mediator, BFF (Backend for Frontend), Request-Reply correlation over RabbitMQ via `TaskCompletionSource`.
 
 ## 3. Key Project Paths & Boundaries
 - `src/PlainBridge.AppHost/PlainBridge.AppHost.AppHost/AppHost.cs`: Aspire entry point.
+- `src/PlainBridge.AppHost/PlainBridge.AppHost.AppHost/otel-collector-config.yaml`: OpenTelemetry Collector configuration.
+- `src/PlainBridge.AppHost/PlainBridge.AppHost.ServiceDefaults/Extensions.cs`: Shared service defaults, OpenTelemetry logging, metrics, tracing, health checks.
 - `src/PlainBridge.IdentityServer/src/PlainBridge.IdentityServer.EndPoint/`: IdentityServer configuration (`Config.cs`, `Program.cs`).
 - `src/PlainBridge.Api/src/`: Clean architecture layers for API control plane.
 - `src/PlainBridge.Server/src/`: Server gateway (`Middleware/HttpRequestProxyMiddleware.cs`, `Services/WebSocket/WebSocketService.cs`).
 - `src/PlainBridge.Client/src/`: Client agent (`Handler/HttpRequest/HttpRequestHandler.cs`, `Helpers/Http/HttpHelper.cs`).
 - `src/PlainBridge.Shared/src/`: Cross-cutting contracts and Mediator implementation (`Mediator/Mediator.cs`).
 - `src/PlainBridge.Web/src/PlainBridge.Web.UI/`: Angular application (`src/app/features/`, `src/app/services/`).
-- `infra/`: `docker-compose.yaml` and `.env` for containerized infrastructure.
+- `infra/`: Infrastructure assets and dev certificates (`devcert.pfx`).
 - `tests/PlainBridge.Tests/`: Cross-service Aspire integration tests.
 
 ## 4. Build, Run & Test Commands
@@ -37,9 +40,6 @@ dotnet build PlainBridge.slnx
 
 # Run all services + infrastructure via Aspire
 dotnet run --project src/PlainBridge.AppHost/PlainBridge.AppHost.AppHost/PlainBridge.AppHost.AppHost.csproj
-
-# Run only infrastructure containers (Redis & RabbitMQ)
-docker compose --env-file infra/.env -f infra/docker-compose.yaml up -d cache messaging
 
 # Run .NET Tests
 dotnet test tests/PlainBridge.Tests/PlainBridge.Tests.csproj
@@ -54,9 +54,7 @@ npm start
 ```
 
 ## 5. Configuration, Ports & Environment
-*Note: Discrepancies exist across configuration files. Verify active values before binding.*
 - **Aspire AppHost (`appsettings.json`):** API: `5051`, Server: `5052`, Identity: `5053`, Web: `5054`, Client: `5055`.
-- **Docker Compose (`infra/.env`):** API: `5001`, Server: `5002`, Identity: `5003`, Web: `5004`, Client: `5005`.
 - **Angular (`environment.ts`):** `apiUrl: https://localhost:5051`, `identityServerUrl: https://localhost:5053`.
 
 ## 6. Communication Contracts & Messaging Workflows

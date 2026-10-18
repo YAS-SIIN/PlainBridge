@@ -12,10 +12,17 @@
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting" Version="13.6.1" />
     <PackageReference Include="Aspire.Hosting.Docker" Version="13.6.1" />
+    <PackageReference Include="Aspire.Hosting.Elasticsearch" Version="13.3.0" />
     <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.6.1" />
     <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="13.6.1" />
     <PackageReference Include="Aspire.Hosting.Redis" Version="13.6.1" />
-    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.OpenTelemetryCollector" Version="13.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="otel-collector-config.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

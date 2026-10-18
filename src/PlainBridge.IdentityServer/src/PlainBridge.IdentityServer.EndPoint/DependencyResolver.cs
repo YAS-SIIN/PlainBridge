@@ -1,4 +1,4 @@
-﻿using Duende.IdentityServer;
+using Duende.IdentityServer;
 using Duende.IdentityServer.Licensing;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +8,6 @@ using PlainBridge.IdentityServer.EndPoint.Domain.Entities;
 using PlainBridge.IdentityServer.EndPoint.DTOs;
 using PlainBridge.IdentityServer.EndPoint.ErrorHandling;
 using PlainBridge.IdentityServer.EndPoint.Infrastructure.Data;
-using Serilog;
 using System.Globalization;
 using System.Text;
 
@@ -88,7 +87,6 @@ public static class DependencyResolver
     {
 
         app.UseExceptionHandler();
-        app.UseSerilogRequestLogging();
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();

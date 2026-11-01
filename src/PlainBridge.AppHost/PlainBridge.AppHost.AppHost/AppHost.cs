@@ -82,28 +82,23 @@ try
         .WithComputeEnvironment(dc);
 
 
-    var elasticsearchPassword = builder.AddParameter("elasticsearch-password", value: appSettings.Value.ElasticSearchPassword, secret: true);
+    //var elasticsearchPassword = builder.AddParameter("elasticsearch-password", value: appSettings.Value.ElasticSearchPassword, secret: true);
     
-    var elasticsearch = builder.AddElasticsearch("elasticsearch", password: elasticsearchPassword)
-        .WithDataVolume()
-        .WithLifetime(ContainerLifetime.Persistent)
-        .WithComputeEnvironment(dc);
+    //var elasticsearch = builder.AddElasticsearch("elasticsearch", password: elasticsearchPassword)
+    //    .WithDataVolume()
+    //    .WithLifetime(ContainerLifetime.Persistent)
+    //    .WithComputeEnvironment(dc);
 
-    var collector = builder.AddOpenTelemetryCollector("otel-collector")
-        .WithConfig("otel-collector-config.yaml")
-        .WithEnvironment("ELASTICSEARCH_URL", elasticsearch.GetEndpoint("http"))
-        .WithEnvironment("ELASTICSEARCH_USERNAME", "elastic")
-        .WithEnvironment("ELASTICSEARCH_PASSWORD", elasticsearchPassword)
-        .WithReference(elasticsearch)
-        .WaitFor(elasticsearch)
-        .WithAppForwarding()
-        .WithComputeEnvironment(dc);
-
-    //builder.AddDockerfile("PlainBridge-AppHost", "relative/context/path")
-    //    .WithReference(apiEndpoint)
-    //    .WithReference(identityServerEndpoint)
-    //    .WithReference(serverEndpoint)
-    //    .WithReference(angularWebUi);
+    //var collector = builder.AddOpenTelemetryCollector("otel-collector")
+    //    .WithConfig("otel-collector-config.yaml")
+    //    .WithEnvironment("ELASTICSEARCH_URL", elasticsearch.GetEndpoint("http"))
+    //    .WithEnvironment("ELASTICSEARCH_USERNAME", "elastic")
+    //    .WithEnvironment("ELASTICSEARCH_PASSWORD", elasticsearchPassword)
+    //    .WithReference(elasticsearch)
+    //    .WaitFor(elasticsearch)
+    //    .WithAppForwarding()
+    //    .WithComputeEnvironment(dc);
+     
 
     await builder.Build().RunAsync();
 

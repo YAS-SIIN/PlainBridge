@@ -58,7 +58,9 @@ namespace PlainBridge.IdentityServer.EndPoint.Pages.Device
 
         public async Task<IActionResult> OnPost()
         {
-            var request = await _interaction.GetAuthorizationContextAsync(Input.UserCode ?? throw new ArgumentNullException(nameof(Input.UserCode)));
+            var ct = HttpContext.RequestAborted;
+
+            var request = await _interaction.GetAuthorizationContextAsync(Input.UserCode ?? throw new ArgumentNullException(nameof(Input.UserCode)), ct);
             if (request == null) return RedirectToPage("/Home/Error/Index");
 
             ConsentResponse? grantedConsent = null;
@@ -68,11 +70,11 @@ namespace PlainBridge.IdentityServer.EndPoint.Pages.Device
             {
                 grantedConsent = new ConsentResponse
                 {
-                    Error = AuthorizationError.AccessDenied
+                    Error = InteractionError.AccessDenied
                 };
 
                 // emit event
-                await _events.RaiseAsync(new ConsentDeniedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues));
+                await _events.RaiseAsync(new ConsentDeniedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues), ct);
                 Telemetry.Metrics.ConsentDenied(request.Client.ClientId, request.ValidatedResources.ParsedScopes.Select(s => s.ParsedName));
             }
             // user clicked 'yes' - validate the data
@@ -95,7 +97,7 @@ namespace PlainBridge.IdentityServer.EndPoint.Pages.Device
                     };
 
                     // emit event
-                    await _events.RaiseAsync(new ConsentGrantedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues, grantedConsent.ScopesValuesConsented, grantedConsent.RememberConsent));
+                    await _events.RaiseAsync(new ConsentGrantedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues, grantedConsent.ScopesValuesConsented, grantedConsent.RememberConsent), ct);
                     Telemetry.Metrics.ConsentGranted(request.Client.ClientId, grantedConsent.ScopesValuesConsented, grantedConsent.RememberConsent);
                     var denied = request.ValidatedResources.ParsedScopes.Select(s => s.ParsedName).Except(grantedConsent.ScopesValuesConsented);
                     Telemetry.Metrics.ConsentDenied(request.Client.ClientId, denied);
@@ -113,7 +115,7 @@ namespace PlainBridge.IdentityServer.EndPoint.Pages.Device
             if (grantedConsent != null)
             {
                 // communicate outcome of consent back to identityserver
-                await _interaction.HandleRequestAsync(Input.UserCode, grantedConsent);
+                await _interaction.HandleRequestAsync(Input.UserCode, grantedConsent, ct);
 
                 // indicate that's it ok to redirect back to authorization endpoint
                 return RedirectToPage("/Device/Success");
@@ -130,7 +132,7 @@ namespace PlainBridge.IdentityServer.EndPoint.Pages.Device
 
         private async Task<bool> SetViewModelAsync(string userCode)
         {
-            var request = await _interaction.GetAuthorizationContextAsync(userCode);
+            var request = await _interaction.GetAuthorizationContextAsync(userCode, HttpContext.RequestAborted);
             if (request != null)
             {
                 View = CreateConsentViewModel(request);

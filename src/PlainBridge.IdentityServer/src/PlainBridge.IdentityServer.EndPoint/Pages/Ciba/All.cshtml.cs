@@ -15,6 +15,6 @@ namespace PlainBridge.IdentityServer.EndPoint.Pages.Ciba
 
         public AllModel(IBackchannelAuthenticationInteractionService backchannelAuthenticationInteractionService) => _backchannelAuthenticationInteraction = backchannelAuthenticationInteractionService;
 
-        public async Task OnGet() => Logins = await _backchannelAuthenticationInteraction.GetPendingLoginRequestsForCurrentUserAsync();
+        public async Task OnGet() => Logins = await _backchannelAuthenticationInteraction.GetPendingLoginRequestsForCurrentUserAsync(HttpContext.RequestAborted);
     }
 }

@@ -49,8 +49,9 @@ namespace PlainBridge.IdentityServer.EndPoint.Pages.Ciba
 
         public async Task<IActionResult> OnPost()
         {
+            var ct = HttpContext.RequestAborted;
             // validate return url is still valid
-            var request = await _interaction.GetLoginRequestByInternalIdAsync(Input.Id ?? throw new ArgumentNullException(nameof(Input.Id)));
+            var request = await _interaction.GetLoginRequestByInternalIdAsync(Input.Id ?? throw new ArgumentNullException(nameof(Input.Id)), ct);
             if (request == null || request.Subject.GetSubjectId() != User.GetSubjectId())
             {
                 _logger.InvalidId(Input.Id);
@@ -65,7 +66,7 @@ namespace PlainBridge.IdentityServer.EndPoint.Pages.Ciba
                 result = new CompleteBackchannelLoginRequest(Input.Id);
 
                 // emit event
-                await _events.RaiseAsync(new ConsentDeniedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues));
+                await _events.RaiseAsync(new ConsentDeniedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues), ct);
                 Telemetry.Metrics.ConsentDenied(request.Client.ClientId, request.ValidatedResources.ParsedScopes.Select(s => s.ParsedName));
             }
             // user clicked 'yes' - validate the data
@@ -87,7 +88,7 @@ namespace PlainBridge.IdentityServer.EndPoint.Pages.Ciba
                     };
 
                     // emit event
-                    await _events.RaiseAsync(new ConsentGrantedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues, result.ScopesValuesConsented, false));
+                    await _events.RaiseAsync(new ConsentGrantedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues, result.ScopesValuesConsented, false), ct);
                     Telemetry.Metrics.ConsentGranted(request.Client.ClientId, result.ScopesValuesConsented, false);
                     var denied = request.ValidatedResources.ParsedScopes.Select(s => s.ParsedName).Except(result.ScopesValuesConsented);
                     Telemetry.Metrics.ConsentDenied(request.Client.ClientId, denied);
@@ -105,7 +106,7 @@ namespace PlainBridge.IdentityServer.EndPoint.Pages.Ciba
             if (result != null)
             {
                 // communicate outcome of consent back to identityserver
-                await _interaction.CompleteLoginRequestAsync(result);
+                await _interaction.CompleteLoginRequestAsync(result, ct);
 
                 return RedirectToPage("/Ciba/All");
             }
@@ -122,7 +123,7 @@ namespace PlainBridge.IdentityServer.EndPoint.Pages.Ciba
         {
             ArgumentNullException.ThrowIfNull(id);
 
-            var request = await _interaction.GetLoginRequestByInternalIdAsync(id);
+            var request = await _interaction.GetLoginRequestByInternalIdAsync(id, HttpContext.RequestAborted);
             if (request != null && request.Subject.GetSubjectId() == User.GetSubjectId())
             {
                 View = CreateConsentViewModel(request);

@@ -100,9 +100,11 @@ namespace PlainBridge.IdentityServer.EndPoint.Pages.ExternalLogin
             // retrieve return URL
             var returnUrl = result.Properties.Items["returnUrl"] ?? "~/";
 
+
+            var ct = HttpContext.RequestAborted;
             // check if external login is in the context of an OIDC request
-            var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
-            await _events.RaiseAsync(new UserLoginSuccessEvent(provider, providerUserId, user.SubjectId, user.Username, true, context?.Client.ClientId));
+            var context = await _interaction.GetAuthorizationContextAsync(returnUrl, ct);
+            await _events.RaiseAsync(new UserLoginSuccessEvent(provider, providerUserId, user.SubjectId, user.Username, true, context?.Client.ClientId), ct);
             Telemetry.Metrics.UserLogin(context?.Client.ClientId, provider!);
 
             if (context != null)

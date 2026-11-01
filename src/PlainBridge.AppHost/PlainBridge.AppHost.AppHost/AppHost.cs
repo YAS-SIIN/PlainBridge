@@ -29,11 +29,13 @@ try
 
 
     var identityServerEndpoint = builder.AddProject<Projects.PlainBridge_IdentityServer_EndPoint>("identityserver-endpoint")
+        .WithIconName("ShieldKeyhole")
         .WithUrl($"https://localhost:{appSettings.Value.PlainBridgeIdsPort.ToString()}")
         .WithEnvironment("IDS_PROJECT_PORT", appSettings.Value.PlainBridgeIdsPort.ToString())
         .WithComputeEnvironment(dc);
 
     var apiEndpoint = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-endpoint")
+        .WithIconName("Link")
         .WithUrl($"https://localhost:{appSettings.Value.PlainBridgeApiPort.ToString()}")
         .WithReference(rabbitmq)
         .WithReference(cache)
@@ -45,6 +47,7 @@ try
         .WithComputeEnvironment(dc);
 
     var serverEndpoint = builder.AddProject<Projects.PlainBridge_Server_ApiEndPoint>("server-endpoint")
+        .WithIconName("server")
         .WithUrl($"https://localhost:{appSettings.Value.PlainBridgeServerPort.ToString()}")
         .WithReference(cache)
         .WithReference(rabbitmq)
@@ -57,10 +60,8 @@ try
 
 
     var angularProjectPath = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../PlainBridge.Web/src/PlainBridge.Web.UI"));
-
-    var angularWebUi = builder.AddJavaScriptApp(
-            "angular-webui",
-            angularProjectPath)
+    var angularWebUi = builder.AddJavaScriptApp("angular-webui", angularProjectPath)
+        .WithIconName("globe")
         .WithRunScript("start")
         .WithHttpEndpoint(port: appSettings.Value.PlainBridgeWebPort, env: "PORT")
         .WithNpm(install: false)
@@ -75,6 +76,7 @@ try
 
     // Fix: Convert int to string before interpolating into WithUrl to avoid CS0315
     var clientEndpoint = builder.AddProject<Projects.PlainBridge_Client_ApiEndPoint>("client-endpoint")
+        .WithIconName("layout-dashboard")
         .WithUrl($"https://localhost:{appSettings.Value.PlainBridgeClientPort.ToString()}")
         .WithReference(cache)
         .WithReference(rabbitmq)
@@ -86,8 +88,8 @@ try
         .WithComputeEnvironment(dc);
 
 
-    //var elasticsearchPassword = builder.AddParameter("elasticsearch-password", value: appSettings.Value.ElasticSearchPassword, secret: true);
-    
+    var elasticsearchPassword = builder.AddParameter("elasticsearch-password", value: appSettings.Value.ElasticSearchPassword, secret: true);
+
     //var elasticsearch = builder.AddElasticsearch("elasticsearch", password: elasticsearchPassword)
     //    .WithDataVolume()
     //    .WithLifetime(ContainerLifetime.Persistent)
@@ -102,7 +104,7 @@ try
     //    .WaitFor(elasticsearch)
     //    .WithAppForwarding()
     //    .WithComputeEnvironment(dc);
-     
+
 
     await builder.Build().RunAsync();
 

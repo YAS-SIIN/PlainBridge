@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.RabbitMQ.Client" Version="13.6.1" />
+    <PackageReference Include="Aspire.RabbitMQ.Client" Version="13.6.4" />
     <PackageReference Include="Duende.BFF" Version="4.3.1" />
     <PackageReference Include="Duende.BFF.Yarp" Version="4.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />

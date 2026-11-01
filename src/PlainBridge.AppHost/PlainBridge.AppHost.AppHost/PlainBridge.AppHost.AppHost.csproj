@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.6.1">
+﻿<Project Sdk="Aspire.AppHost.Sdk/13.6.4">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -10,13 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting" Version="13.6.1" />
-    <PackageReference Include="Aspire.Hosting.Docker" Version="13.6.1" />
+    <PackageReference Include="Aspire.Hosting" Version="13.6.4" />
+    <PackageReference Include="Aspire.Hosting.Docker" Version="13.6.4" />
     <PackageReference Include="Aspire.Hosting.Elasticsearch" Version="13.3.0" />
-    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.6.1" />
-    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="13.6.1" />
-    <PackageReference Include="Aspire.Hosting.Redis" Version="13.6.1" />
-    <PackageReference Include="CommunityToolkit.Aspire.Hosting.OpenTelemetryCollector" Version="13.6.0" />
+    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.6.4" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="13.6.4" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="13.6.4" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.OpenTelemetryCollector" Version="13.6.1" />
   </ItemGroup>
 
   <ItemGroup>

@@ -17,8 +17,8 @@ processors:
 
 exporters:
   elasticsearch:
-    endpoints: ["${env:ELASTICSEARCH_URL:-http://elasticsearch:9200}"]
-    user: "${env:ELASTICSEARCH_USERNAME:-elastic}"
+    endpoints: ["${env:ELASTICSEARCH_URL}"]
+    user: "${env:ELASTICSEARCH_USERNAME}"
     password: "${env:ELASTICSEARCH_PASSWORD}"
     tls:
       insecure: true
@@ -28,6 +28,8 @@ exporters:
 
   otlp/aspire:
     endpoint: "${env:ASPIRE_ENDPOINT}"
+    headers:
+      x-otlp-api-key: "${env:ASPIRE_API_KEY}"
     tls:
       insecure: true
 
@@ -41,15 +43,15 @@ service:
     logs:
       receivers: [otlp]
       processors: [memory_limiter, batch]
-      exporters: [elasticsearch, otlp/aspire]
+      exporters: [otlp/aspire, elasticsearch]
     traces:
       receivers: [otlp]
       processors: [memory_limiter, batch]
-      exporters: [otlp/aspire]
+      exporters: [otlp/aspire, elasticsearch]
     metrics:
       receivers: [otlp]
       processors: [memory_limiter, batch]
-      exporters: [otlp/aspire]
+      exporters: [otlp/aspire, elasticsearch]
   telemetry:
     logs:
       level: info

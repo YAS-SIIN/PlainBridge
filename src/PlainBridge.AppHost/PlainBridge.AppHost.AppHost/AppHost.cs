@@ -84,7 +84,7 @@ try
 
     var elasticsearchPassword = builder.AddParameter("elasticsearch-password", value: appSettings.Value.ElasticSearchPassword, secret: true);
     
-    var elasticsearch = builder.AddElasticsearch("elasticsearch", password: elasticsearchPassword, 5090)
+    var elasticsearch = builder.AddElasticsearch("elasticsearch", password: elasticsearchPassword)
         .WithDataVolume()
         .WithLifetime(ContainerLifetime.Persistent)
         .WithComputeEnvironment(dc);
@@ -96,7 +96,8 @@ try
         .WithEnvironment("ELASTICSEARCH_PASSWORD", elasticsearchPassword)
         .WithReference(elasticsearch)
         .WaitFor(elasticsearch)
-        .WithAppForwarding();
+        .WithAppForwarding()
+        .WithComputeEnvironment(dc);
 
     //builder.AddDockerfile("PlainBridge-AppHost", "relative/context/path")
     //    .WithReference(apiEndpoint)
@@ -110,4 +111,5 @@ try
 catch (Exception ex)
 {
     Console.WriteLine("Exception");
+    throw;
 }

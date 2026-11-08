@@ -29,7 +29,6 @@ High‑level components
 
 ```text path=null start=null
 PlainBridge/
-├─ PlainBridge.sln                        # Root solution for Visual Studio
 ├─ PlainBridge.slnx                       # Root solution for .NET SDK / VS Code
 ├─ src/
 │  ├─ PlainBridge.AppHost/                # .NET Aspire AppHost (orchestrates everything)

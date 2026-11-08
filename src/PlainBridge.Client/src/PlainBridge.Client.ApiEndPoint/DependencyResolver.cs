@@ -1,37 +1,30 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Net.WebSockets;
-using Duende.Bff.Yarp;
-using Duende.IdentityModel;
-using Microsoft.AspNetCore.Authentication.Cookies; 
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.Extensions.Options; 
-using PlainBridge.Client.ApiEndPoint.Endpoints;
 using PlainBridge.Client.ApiEndPoint.ErrorHandling;
 using PlainBridge.Client.Application.DTOs;
 using PlainBridge.Client.Application;
 
-using Duende.Bff;
 
 namespace PlainBridge.Client.ApiEndPoint;
 
 public static class DependencyResolver
 {
-    public static IServiceCollection AddClientProjectServices(this IServiceCollection services)
-    {
-        var appSettings = services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSettings>>();
+    public static IServiceCollection AddClientProjectServices(this IServiceCollection services, IConfiguration configuration)
+    { 
+        var appSettings = configuration.GetSection("ApplicationSettings").Get<ApplicationSettings>() ?? throw new InvalidOperationException("ApplicationSettings configuration is missing.");
 
         services.AddHybridCache(options =>
         {
             // Maximum size of cached items
-            options.MaximumPayloadBytes = appSettings.Value.HybridCacheMaximumPayloadBytes;
-            options.MaximumKeyLength = appSettings.Value.HybridCacheMaximumKeyLength;
+            options.MaximumPayloadBytes = appSettings.HybridCacheMaximumPayloadBytes;
+            options.MaximumKeyLength = appSettings.HybridCacheMaximumKeyLength;
 
             // Default timeouts
             options.DefaultEntryOptions = new HybridCacheEntryOptions
             {
-                Expiration = TimeSpan.Parse(appSettings.Value.HybridDistributedCacheExpirationTime),
-                LocalCacheExpiration = TimeSpan.Parse(appSettings.Value.HybridMemoryCacheExpirationTime)
+                Expiration = TimeSpan.Parse(appSettings.HybridDistributedCacheExpirationTime),
+                LocalCacheExpiration = TimeSpan.Parse(appSettings.HybridMemoryCacheExpirationTime)
             };
         });
 
@@ -42,7 +35,7 @@ public static class DependencyResolver
         {
             var webSocket = new ClientWebSocket();
             webSocket.Options.KeepAliveInterval = TimeSpan.FromSeconds(30);
-            webSocket.Options.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+            //webSocket.Options.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
             return webSocket;
         });
 
@@ -50,17 +43,12 @@ public static class DependencyResolver
         services.AddProblemDetails();
         services.AddClientApplicationProjectServices();
 
-        services.AddAuthorization();
-        services.AddAuthentication(appSettings.Value);
-
-
         services.Configure<ForwardedHeadersOptions>(options =>
         {
             options.ForwardedHeaders = ForwardedHeaders.XForwardedFor |
                 ForwardedHeaders.XForwardedProto;
             // Only loopback proxies are allowed by default.
-            // Clear that restriction because forwarders are enabled by explicit
-            // configuration.
+            // Clear that restriction because forwarders are enabled by explicit configuration.
             options.KnownNetworks.Clear();
             options.KnownProxies.Clear();
         });
@@ -69,91 +57,31 @@ public static class DependencyResolver
 
         return services;
     }
-
-
-    public static IServiceCollection AddAuthentication(this IServiceCollection services, ApplicationSettings appSettings)
-    {
-        var serviceProvider = services.BuildServiceProvider();
-        var hybridCache = serviceProvider.GetRequiredService<HybridCache>();
-
-        services
-             .AddBff()
-            .AddRemoteApis();
-        // This is crucial - prevents the JWT handler from mapping 'sub' claim to ClaimTypes.NameIdentifier
-        JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
-
-        services.AddAuthentication(options =>
-        {
-            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = "oidc";
-            options.DefaultSignOutScheme = "oidc";
-        })
-        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-          .AddOpenIdConnect("oidc", options =>
-          {
-              options.RequireHttpsMetadata = false;
-              options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-              options.Authority = new Uri(appSettings.PlainBridgeIdsUrl).ToString();
-              options.ClientId = appSettings.PlainBridgeIdsClientId;
-              options.ClientSecret = appSettings.PlainBridgeIdsClientSecret;
-              options.ResponseType = OidcConstants.ResponseTypes.Code;
-              options.Scope.Clear();
-              options.Scope.Add("openid");
-              options.Scope.Add("profile");
-              options.Scope.Add("email");
-              options.SaveTokens = true;
-
-              options.GetClaimsFromUserInfoEndpoint = true;
-
-          });
-
-        return services;
-    }
-
+     
     public static WebApplication AddUsers(this WebApplication app)
     {
 
         app.UseExceptionHandler();
 
         app.UseForwardedHeaders();
-
-        // Configure the HTTP request pipeline.
-        if (!app.Environment.IsDevelopment())
-        {
-            app.UseExceptionHandler("/Error");
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            app.UseHsts();
-        }
-
-
+         
         app.UseRouting();
 
+        // Configure the HTTP request pipeline. 
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
         }
         else
         {
-            app.UseExceptionHandler("/Error");
+            //app.UseExceptionHandler("/Error");
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
 
-        app.MapGroup("")
-            .MapLoginEndpoint();
-
-
         app.UseHttpsRedirection();
 
-        app.UseStaticFiles();
-
-        app.UseDefaultFiles();
-        app.UseStaticFiles();
-
         app.MapDefaultEndpoints();
-        app.UseAuthentication();
-        app.UseAuthorization();
-        app.UseBff();
 
         return app;
     }

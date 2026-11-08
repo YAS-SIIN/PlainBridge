@@ -30,29 +30,37 @@ public static class Config
             new Client
             {
                 ClientId = "client",
-                ClientName = "Client Credentials Client",
-
+                ClientName = "PlainBridge Native Client",
+            
                 AllowedGrantTypes = GrantTypes.Code,
-                ClientSecrets = { new Secret("secret".Sha256()) },
-
-                // where to redirect to after login
-                RedirectUris = { $"{applcationSettings.PlainBridgeClientUrl}/callback" },
+            
+                // Public client: no client secret
+                RequireClientSecret = false,
+            
+                // Authorization Code + PKCE
                 RequirePkce = true,
-
-                AllowOfflineAccess = true,
-
-                RefreshTokenUsage = TokenUsage.ReUse,
-                RefreshTokenExpiration = TokenExpiration.Sliding,
-                SlidingRefreshTokenLifetime = 30 * 24 * 60 * 60,
-
-                AllowedScopes = {
+            
+                RedirectUris =
+                {
+                    "http://127.0.0.1:5005/callback"
+                },
+            
+                AllowedScopes =
+                {
                     _mainScope,
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
                     IdentityServerConstants.StandardScopes.Email,
                     IdentityServerConstants.StandardScopes.Phone,
-                    IdentityServerConstants.StandardScopes.Address
-                }
+                    IdentityServerConstants.StandardScopes.Address,
+                    IdentityServerConstants.StandardScopes.OfflineAccess
+                },
+            
+                AllowOfflineAccess = true,
+            
+                RefreshTokenUsage = TokenUsage.ReUse,
+                RefreshTokenExpiration = TokenExpiration.Sliding,
+                SlidingRefreshTokenLifetime = 30 * 24 * 60 * 60
             },
 
             new Client

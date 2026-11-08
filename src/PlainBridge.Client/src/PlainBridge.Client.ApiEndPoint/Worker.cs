@@ -1,6 +1,7 @@
 ﻿using System.Text.Json; 
 using PlainBridge.Client.Application.Handler.HttpRequest;
 using PlainBridge.Client.Application.Handler.WebSocket;
+using PlainBridge.Client.Application.Services.Authentication;
 using PlainBridge.Client.Application.Services.ClientBus;
 using PlainBridge.Client.Application.Services.ServerBus;
 using PlainBridge.Client.Application.Services.Signal;
@@ -8,13 +9,14 @@ using PlainBridge.Shared.Application.DTOs;
 
 namespace PlainBridge.Client.ApiEndPoint;
 
-public class Worker(ILogger<Worker> _logger, ISignalService _signalService, IHttpRequestHandler _httpRequestHandler, IWebSocketHandler _webSocketHandler, IClientBusService _clientBusService, IServerBusService _serverBusService) : BackgroundService
+public class Worker(ILogger<Worker> _logger, ISignalService _signalService, IHttpRequestHandler _httpRequestHandler, IWebSocketHandler _webSocketHandler, IClientBusService _clientBusService, IServerBusService _serverBusService, IAuthenticationService _authenticationService) : BackgroundService
 {
  
-    protected override Task ExecuteAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Starting service ...");
 
+        var profile = await _authenticationService.LoginAsync(cancellationToken);
         var _ = Task.Run(async () =>
         {
             var fileName = "profile";
@@ -33,6 +35,6 @@ public class Worker(ILogger<Worker> _logger, ISignalService _signalService, IHtt
             await Task.Delay(Timeout.Infinite, cancellationToken);
         });
 
-        return Task.CompletedTask;
+        await Task.CompletedTask;
     }
 }

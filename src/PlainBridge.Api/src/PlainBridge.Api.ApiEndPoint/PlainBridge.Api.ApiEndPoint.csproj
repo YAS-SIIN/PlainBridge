@@ -14,8 +14,8 @@
     <PackageReference Include="Aspire.RabbitMQ.Client.v7" Version="9.5.2" />
     <PackageReference Include="Aspire.StackExchange.Redis" Version="13.6.4" />
     <PackageReference Include="Aspire.StackExchange.Redis.DistributedCaching" Version="13.6.4" />
-    <PackageReference Include="Duende.BFF" Version="4.3.2" />
-    <PackageReference Include="Duende.BFF.Yarp" Version="4.3.2" />
+    <PackageReference Include="Duende.BFF" Version="4.3.3" />
+    <PackageReference Include="Duende.BFF.Yarp" Version="4.3.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.14" />
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="10.11.0" />

@@ -1,11 +1,13 @@
 ﻿
 
 using Microsoft.Extensions.DependencyInjection;
+
 using PlainBridge.Client.Application.Handler.HttpRequest;
 using PlainBridge.Client.Application.Handler.WebSocket;
 using PlainBridge.Client.Application.Helpers.Http;
 using PlainBridge.Client.Application.Management.Cache;
 using PlainBridge.Client.Application.Management.WebSocket;
+using PlainBridge.Client.Application.Services.Authentication;
 using PlainBridge.Client.Application.Services.ClientBus;
 using PlainBridge.Client.Application.Services.ServerBus;
 using PlainBridge.Client.Application.Services.SharePortSocket;
@@ -31,6 +33,7 @@ public static class DependencyResolver
         services.AddSingleton<IUsePortSocketService, UsePortSocketService>();
         services.AddSingleton<IClientBusService, ClientBusService>();
         services.AddSingleton<ISignalService, SignalService>();
+        services.AddSingleton<IAuthenticationService, AuthenticationService>();
 
 
         return services;

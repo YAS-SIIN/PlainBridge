@@ -1,5 +1,6 @@
 using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
+
 using PlainBridge.IdentityServer.EndPoint.DTOs;
 
 namespace PlainBridge.IdentityServer.EndPoint;
@@ -35,10 +36,14 @@ public static class Config
                 ClientSecrets = { new Secret("secret".Sha256()) },
 
                 // where to redirect to after login
-                RedirectUris = { $"{applcationSettings.PlainBridgeClientUrl}/signin-oidc" },
+                RedirectUris = { $"{applcationSettings.PlainBridgeClientUrl}/callback" },
+                RequirePkce = true,
 
-                // where to redirect to after logout
-                PostLogoutRedirectUris = { $"{applcationSettings.PlainBridgeClientUrl}/signout-callback-oidc" },
+                AllowOfflineAccess = true,
+
+                RefreshTokenUsage = TokenUsage.ReUse,
+                RefreshTokenExpiration = TokenExpiration.Sliding,
+                SlidingRefreshTokenLifetime = 30 * 24 * 60 * 60,
 
                 AllowedScopes = {
                     _mainScope,
@@ -49,7 +54,7 @@ public static class Config
                     IdentityServerConstants.StandardScopes.Address
                 }
             },
-             
+
             new Client
             {
                 ClientId = "back",
@@ -70,7 +75,7 @@ public static class Config
                     IdentityServerConstants.StandardScopes.Address,
                     IdentityServerConstants.StandardScopes.OfflineAccess,
                 }
-                 
+
             },
 
             // BFF client for Backend for Frontend pattern

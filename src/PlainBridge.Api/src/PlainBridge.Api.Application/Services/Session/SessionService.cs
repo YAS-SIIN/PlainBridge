@@ -65,17 +65,17 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
 
         _logger.LogInformation("Getting token for user: {UserId}", userId.Value);
         var token = await _cacheManagement.SetGetSubTokenAsync(userId.Value);
-        var baseUri = new Uri(_applicationSettings.Value.PlainBridgeIdsUrl!);
-        var uri = new Uri(baseUri, "connect/userinfo");
+
         var userInfoRequest = new UserInfoRequest
         {
-            Address = uri.ToString(),
+            Address = "connect/userinfo",
             Token = token
         };
 
         _logger.LogInformation("Requesting user info from: {Address}", userInfoRequest.Address);
-        var httpClientx = _httpClientFactory.CreateClient("Default"); 
-        var userInfoResponse = await httpClientx.GetUserInfoAsync(userInfoRequest);
+        var httpClient = _httpClientFactory.CreateClient("IdentityServer");
+
+        var userInfoResponse = await httpClient.GetUserInfoAsync(userInfoRequest,  cancellationToken);
         var result = await userInfoResponse.HttpResponse.Content.ReadAsStringAsync();
 
         _logger.LogInformation("User info received and deserializing.");
@@ -86,21 +86,22 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
     {
         _logger.LogInformation("Getting current user profile from HttpContext.");
 
-        var httpClient = _httpClientFactory.CreateClient("Default");
+        var httpClient = _httpClientFactory.CreateClient("IdentityServer");
 
         var tokenp = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
         tokenp = tokenp.ToString().Replace("Bearer ", "");
         var sub = await _cacheManagement.SetGetTokenPSubAsync(tokenp);
         var refreshToken = await _cacheManagement.SetGetTokenPRefreshTokenAsync(tokenp);
-        var baseUri = new Uri(_applicationSettings.Value.PlainBridgeIdsUrl!);
-        var uri = new Uri(baseUri, "connect/token");
-        var response = await httpClient.RequestRefreshTokenAsync(new RefreshTokenRequest
-        {
-            Address = uri.ToString(),
-            ClientId = "bff",
-            ClientSecret = _applicationSettings.Value.PlainBridgeIdsClientSecret,
-            RefreshToken = refreshToken
-        });
+       
+        var response = await httpClient.RequestRefreshTokenAsync(
+                new RefreshTokenRequest
+                {
+                    Address = "connect/token",
+                    ClientId = "bff",
+                    ClientSecret = _applicationSettings.Value.PlainBridgeIdsClientSecret,
+                    RefreshToken = refreshToken
+                },cancellationToken);
+
         var token = response.AccessToken;
         if (string.IsNullOrEmpty(token))
             throw new ApplicationException("Failed to refresh token");

@@ -11,31 +11,23 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
 {
     public async Task<TokenResponse> GetTokenAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Getting token");
-        var client = _httpClientFactory.CreateClient("Api");
+        var client = _httpClientFactory.CreateClient("IdentityServer");
 
-        // discover endpoints from metadata
-        var uri = new Uri(_applicationSettings.Value.PlainBridgeIdsUrl!);
-        var disco = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
-        {
-            Address = uri.ToString(),
-            Policy =
-                {
-                    RequireHttps = _applicationSettings.Value.PlainBridgeUseHttp == false
-                }
-        }, cancellationToken);
-        if (disco.IsError)
-            
-            throw new ApplicationException("Discovery not found");
+        var tokenResponse = await client.RequestClientCredentialsTokenAsync(
+            new ClientCredentialsTokenRequest
+            {
+                Address = "connect/token",
+                ClientId = _applicationSettings.Value.PlainBridgeIdsClientId,
+                ClientSecret = _applicationSettings.Value.PlainBridgeIdsClientSecret,
+                Scope = _applicationSettings.Value.PlainBridgeIdsScope
+            },
+            cancellationToken);
 
-        // request token
-        var tokenResponse = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
+        if (tokenResponse.IsError)
         {
-            Address = disco.TokenEndpoint,
-            ClientId = _applicationSettings.Value.PlainBridgeIdsClientId,
-            ClientSecret = _applicationSettings.Value.PlainBridgeIdsClientSecret,
-            Scope = _applicationSettings.Value.PlainBridgeIdsScope
-        });
+            _logger.LogError("IdentityServer token request failed: {Error}", tokenResponse.Error);
+            throw new ApplicationException($"Token request failed: {tokenResponse.Error}");
+        }
 
         return tokenResponse;
     }

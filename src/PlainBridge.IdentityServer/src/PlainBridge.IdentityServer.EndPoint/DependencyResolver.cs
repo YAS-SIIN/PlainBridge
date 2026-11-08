@@ -15,10 +15,11 @@ namespace PlainBridge.IdentityServer.EndPoint;
 
 public static class DependencyResolver
 {
-    public static IServiceCollection AddIDSProjectServices(this IServiceCollection services)
+    public static IServiceCollection AddIDSProjectServices(this IServiceCollection services, IConfiguration configuration)
     {
 
-        var appSettings = services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSettings>>();
+        var appSettings = configuration.GetSection("ApplicationSettings").Get<ApplicationSettings>()
+            ?? throw new InvalidOperationException("ApplicationSettings configuration is missing.");
 
         services.AddRazorPages();
         services.AddIDSProjectDatabase();
@@ -37,7 +38,7 @@ public static class DependencyResolver
         // in-memory, code config
         isBuilder.AddInMemoryIdentityResources(Config.IdentityResources);
         isBuilder.AddInMemoryApiScopes(Config.ApiScopes);
-        isBuilder.AddInMemoryClients(Config.Clients(appSettings.Value));
+        isBuilder.AddInMemoryClients(Config.Clients(appSettings));
 
         // Use developer signing credentials in Development to avoid file system key store writes
 

@@ -66,7 +66,7 @@ public static class Config
             new Client
             {
                 ClientId = "back",
-                ClientSecrets = { new Secret("secret".Sha256()) },
+                ClientSecrets = { new Secret(applcationSettings.PlainBridgeIdsClientSecret!.Sha256()) },
 
            
                 // no interactive user, use the clientid/secret for authentication
@@ -90,7 +90,7 @@ public static class Config
             new Client
             {
                 ClientId = "bff",
-                ClientSecrets = { new Secret("secret".Sha256()) },
+                ClientSecrets = { new Secret(applcationSettings.PlainBridgeIdsClientSecret!.Sha256()) },
 
                 AllowedGrantTypes = GrantTypes.Code,
 

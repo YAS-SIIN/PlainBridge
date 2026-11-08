@@ -10,22 +10,8 @@ try
 
     builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
 
-    builder.Services.AddIDSProjectServices();
-
-    // Configure Kestrel to support HTTP/3 only when not running in a container
-    var inContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
-    if (!inContainer)
-    {
-        builder.WebHost.ConfigureKestrel(options =>
-        {
-            options.ListenAnyIP(int.Parse(Environment.GetEnvironmentVariable("IDS_PROJECT_PORT") ?? "5053"), listenOptions =>
-            {
-                listenOptions.UseHttps(); // HTTP/3 requires HTTPS
-                listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
-            });
-        });
-    }
-
+    builder.Services.AddIDSProjectServices(builder.Configuration);
+     
     var app = builder.Build();
 
     app.MapGroup("api/")

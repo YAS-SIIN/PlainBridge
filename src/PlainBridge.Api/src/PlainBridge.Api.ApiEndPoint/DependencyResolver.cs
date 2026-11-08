@@ -1,27 +1,31 @@
-using System.IdentityModel.Tokens.Jwt;
 using Duende.Bff;
 using Duende.Bff.Yarp;
 using Duende.IdentityModel; 
+
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+
 using PlainBridge.Api.ApiEndPoint.Abstractions;
 using PlainBridge.Api.ApiEndPoint.ErrorHandling;
 using PlainBridge.Api.Application;
 using PlainBridge.Api.Infrastructure.DTOs;
 using PlainBridge.Api.Infrastructure.Persistence.Cache;
 
+using System.IdentityModel.Tokens.Jwt;
+
 namespace PlainBridge.Api.ApiEndPoint;
 
 public static class DependencyResolver
 {
-    public static IServiceCollection AddApiProjectServices(this IServiceCollection services)
-    {
-
-        var appSettings = services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSettings>>();
+    public static IServiceCollection AddApiProjectServices(this IServiceCollection services, IConfiguration configuration)
+    { 
+        var appSettings = configuration.GetSection("ApplicationSettings").Get<ApplicationSettings>()
+            ?? throw new InvalidOperationException("ApplicationSettings configuration is missing.");
 
         services.AddCors(options =>
         {
@@ -34,13 +38,13 @@ public static class DependencyResolver
 
         services.AddHybridCache(options =>
         {
-            options.MaximumPayloadBytes = appSettings.Value.HybridCacheMaximumPayloadBytes;
-            options.MaximumKeyLength = appSettings.Value.HybridCacheMaximumKeyLength;
+            options.MaximumPayloadBytes = appSettings.HybridCacheMaximumPayloadBytes;
+            options.MaximumKeyLength = appSettings.HybridCacheMaximumKeyLength;
             options.DefaultEntryOptions = new HybridCacheEntryOptions
             {
                 Flags = HybridCacheEntryFlags.None, 
-                Expiration = TimeSpan.Parse(appSettings.Value.HybridDistributedCacheExpirationTime),
-                LocalCacheExpiration = TimeSpan.Parse(appSettings.Value.HybridMemoryCacheExpirationTime)
+                Expiration = TimeSpan.Parse(appSettings.HybridDistributedCacheExpirationTime),
+                LocalCacheExpiration = TimeSpan.Parse(appSettings.HybridMemoryCacheExpirationTime)
             };
         });
 
@@ -53,7 +57,7 @@ public static class DependencyResolver
 
         services.AddApiApplicationProjectServices();
 
-        services.AddAuthentication(appSettings.Value);
+        services.AddAuthentication(appSettings);
         services.AddExceptionHandler<ErrorHandler>();
          
         services.AddEndpoints();
@@ -139,6 +143,7 @@ public static class DependencyResolver
             options.ClientId = "bff";
             options.ClientSecret = appSettings.PlainBridgeIdsClientSecret;
             options.ResponseType = OidcConstants.ResponseTypes.Code;
+            options.CallbackPath = "/signin-oidc";
             options.Scope.Clear();
             options.Scope.Add("PlainBridge");
             options.Scope.Add("openid");
@@ -155,6 +160,10 @@ public static class DependencyResolver
 
     public static WebApplication AddUsers(this WebApplication app)
     {
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost 
+        });
 
         app.UseExceptionHandler();
 

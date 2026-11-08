@@ -20,24 +20,29 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
 
     private async Task<HttpClient> InitializeHttpClientAsync(CancellationToken cancellationToken)
     {
-        var httpClient = _httpClientFactory.CreateClient("Api");
-        var disco = await httpClient.GetDiscoveryDocumentAsync(new Uri(_applicationSettings.Value.PlainBridgeIdsUrl).ToString(), cancellationToken);
-        if (disco.IsError)
-            throw new ApplicationException("Failed to get discivery document");
+        var httpClient = _httpClientFactory.CreateClient("IdentityServer");
 
-        var tokenResponse = await httpClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
-        {
-            Address = disco.TokenEndpoint,
-            ClientId = _applicationSettings.Value.PlainBridgeIdsClientId,
-            ClientSecret = _applicationSettings.Value.PlainBridgeIdsClientSecret,
-            Scope = _applicationSettings.Value.PlainBridgeIdsScope
-        }, cancellationToken);
+        var tokenResponse = await httpClient.RequestClientCredentialsTokenAsync(
+          new ClientCredentialsTokenRequest
+          {
+              Address = "connect/token",
+              ClientId = _applicationSettings.Value.PlainBridgeIdsClientId,
+              ClientSecret = _applicationSettings.Value.PlainBridgeIdsClientSecret,
+              Scope = _applicationSettings.Value.PlainBridgeIdsScope
+          },
+          cancellationToken);
 
         if (tokenResponse.IsError)
-            throw new ApplicationException("Failed to get token from identity server");
+        {
+            _logger.LogError(
+                "IdentityServer token request failed: {Error}",
+                tokenResponse.Error);
 
-        httpClient.SetBearerToken(tokenResponse!.AccessToken!);
+            throw new ApplicationException(
+                $"Failed to get token from IdentityServer: {tokenResponse.Error}");
+        }
 
+        httpClient.SetBearerToken(tokenResponse.AccessToken!);
         return httpClient;
     }
 
@@ -57,10 +62,9 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
         };
 
         var content = new StringContent(JsonSerializer.Serialize(jsonObject), Encoding.UTF8, "application/json");
-        var uri = new Uri($"{_applicationSettings.Value.PlainBridgeIdsUrl}/api/User");
 
         HttpResponseMessage? response;
-        response = await httpClient.PostAsync(uri.ToString(), content);
+        response = await httpClient.PostAsync("api/User", content, cancellationToken);
 
         var responseString = await response.Content.ReadAsStringAsync(cancellationToken);
 
@@ -85,12 +89,11 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
             changeUserPassword.NewPassword
         };
 
-        var content = new StringContent(JsonSerializer.Serialize(jsonObject), Encoding.UTF8, "application/json");
-        var uri = new Uri($"{_applicationSettings.Value.PlainBridgeIdsUrl}/api/User/ChangePassword");
+        var content = new StringContent(JsonSerializer.Serialize(jsonObject), Encoding.UTF8, "application/json"); 
 
         HttpResponseMessage? response;
 
-        response = await httpClient.PatchAsync(uri.ToString(), content);
+        response = await httpClient.PatchAsync("api/User/ChangePassword", content, cancellationToken);
         var responseString = await response.Content.ReadAsStringAsync(cancellationToken);
 
         var userChangePasswordResult = JsonSerializer.Deserialize<ResultDto<string>>(responseString, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }) ?? new ResultDto<string>();
@@ -113,12 +116,11 @@ public class IdentityService(ILogger<IdentityService> _logger, IHttpClientFactor
             user.Family
         };
 
-        var content = new StringContent(JsonSerializer.Serialize(jsonObject), Encoding.UTF8, "application/json");
-        var uri = new Uri($"{_applicationSettings.Value.PlainBridgeIdsUrl}/api/User");
+        var content = new StringContent(JsonSerializer.Serialize(jsonObject), Encoding.UTF8, "application/json"); 
 
         HttpResponseMessage? response;
 
-        response = await httpClient.PatchAsync(uri.ToString(), content);
+        response = await httpClient.PatchAsync("api/User", content, cancellationToken);
         var responseString = await response.Content.ReadAsStringAsync(cancellationToken);
 
         var userUpdatingResult = JsonSerializer.Deserialize<ResultDto<string>>(responseString, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }) ?? new ResultDto<string>();

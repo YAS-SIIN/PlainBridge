@@ -1,12 +1,14 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { environment } from '../../environments/environment';
+import { AppConfigService } from './app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private readonly appConfig = inject(AppConfigService);
+
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
@@ -48,7 +50,9 @@ export class AuthService {
 
   public logout(): void {
     this.removeToken();
-    window.location.href = `${environment.apiUrl}/bff/logout`;
+
+    const logoutUrl = `${this.appConfig.settings.apiUrl}/bff/logout`;
+    window.location.href = logoutUrl;
   }
 
   public isAuthenticated(): boolean {
@@ -56,7 +60,10 @@ export class AuthService {
   }
 
   public login(): void {
-    // Redirect to IdentityServer login
-    window.location.href = `${environment.apiUrl}/bff/login`;
+    debugger;
+
+    const settings = this.appConfig.settings;
+    const loginUrl = `${settings.apiUrl}/bff/login`;
+    window.location.href = loginUrl;
   }
 }

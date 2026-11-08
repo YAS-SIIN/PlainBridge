@@ -1,14 +1,17 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
 import { ResultDto, UserDto, ChangeUserPasswordDto, CreateUserDto } from '../models';
+import { AppConfigService } from './app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private readonly apiUrl = `${environment.apiUrl}/api/User`;
+  
+  private readonly appConfig = inject(AppConfigService);
+  private readonly apiUrl = `${this.appConfig.settings.apiUrl}/api/User`; 
+ 
 
   constructor(private http: HttpClient) {}
 

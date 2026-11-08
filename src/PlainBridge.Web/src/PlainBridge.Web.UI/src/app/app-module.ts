@@ -1,4 +1,4 @@
-import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { inject, NgModule, provideAppInitializer, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
@@ -31,6 +31,7 @@ import { AuthInterceptorProvider } from './interceptors/auth.interceptor';
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
+import { AppConfigService } from './services/app-config.service';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,9 @@ import { App } from './app';
     MatTooltipModule
   ],
   providers: [
+    provideAppInitializer(() => {
+      return inject(AppConfigService).load();
+    }),
     provideBrowserGlobalErrorListeners(),
     AuthInterceptorProvider
   ],

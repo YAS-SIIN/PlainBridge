@@ -12,7 +12,8 @@ public static class DependencyResolver
 {
     public static IServiceCollection AddClientProjectServices(this IServiceCollection services, IConfiguration configuration)
     { 
-        var appSettings = configuration.GetSection("ApplicationSettings").Get<ApplicationSettings>() ?? throw new InvalidOperationException("ApplicationSettings configuration is missing.");
+        var appSettings = configuration.GetSection("ApplicationSettings").Get<ApplicationSettings>() 
+            ?? throw new InvalidOperationException("ApplicationSettings configuration is missing.");
 
         services.AddHybridCache(options =>
         {

@@ -22,7 +22,7 @@ public class AuthenticationService : IAuthenticationService
             Authority = _applicationSettings.Value.PlainBridgeIdsUrl,
             ClientId = "client",
             Scope = "openid profile email PlainBridge offline_access",
-            RedirectUri = "http://127.0.0.1:5005/callback",
+            RedirectUri = "https://api-endpoint-plainbridge.dev.localhost:7498/callback",
             Browser = new LocalBrowser(5005)
         };
 

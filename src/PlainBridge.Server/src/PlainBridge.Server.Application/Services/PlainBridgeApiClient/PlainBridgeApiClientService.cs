@@ -27,8 +27,7 @@ public class PlainBridgeApiClientService(ILogger<PlainBridgeApiClientService> _l
 
         var apiClient = _httpClientFactory.CreateClient("Api");
         apiClient.SetBearerToken(token.AccessToken!);
-        var uri = new Uri($"{_applicationSettings.Value.PlainBridgeApiAddress}/HostApplication"); // Fixed the Uri creation
-        var response = await apiClient.GetAsync(uri, cancellationToken); // Added cancellationToken to GetAsync
+        var response = await apiClient.GetAsync("HostApplication", cancellationToken);
         if (!response.IsSuccessStatusCode)
             return Enumerable.Empty<HostApplicationDto>().ToList();
 
@@ -55,8 +54,7 @@ public class PlainBridgeApiClientService(ILogger<PlainBridgeApiClientService> _l
 
         var apiClient = _httpClientFactory.CreateClient("Api");
         apiClient.SetBearerToken(token.AccessToken!);
-        var uri = new Uri($"{_applicationSettings.Value.PlainBridgeApiAddress}/ServerApplication"); // Fixed the Uri creation
-        var response = await apiClient.GetAsync(uri, cancellationToken); // Added cancellationToken to GetAsync
+        var response = await apiClient.GetAsync("ServerApplication", cancellationToken);
         if (!response.IsSuccessStatusCode)
             return Enumerable.Empty<ServerApplicationDto>().ToList(); 
 

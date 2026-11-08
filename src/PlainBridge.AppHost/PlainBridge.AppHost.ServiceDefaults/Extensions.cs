@@ -110,9 +110,14 @@ public static class Extensions
 
     public static IServiceCollection AddHttpServices(this IServiceCollection services)
     {
-        services.AddHttpClient("Api", a =>
+        services.AddHttpClient("IdentityServer", client =>
         {
-            a.DefaultRequestVersion = HttpVersion.Version30;
+            client.BaseAddress = new Uri("https+http://identityserver-endpoint");
+        });
+
+        services.AddHttpClient("Api", client =>
+        {
+            client.BaseAddress = new Uri("https+http://api-endpoint");
         });
 
         return services;

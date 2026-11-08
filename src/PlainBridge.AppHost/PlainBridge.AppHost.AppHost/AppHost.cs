@@ -1,12 +1,8 @@
-using Aspire.Hosting.Docker.Resources.ComposeNodes;
-
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 using PlainBridge.AppHost.DTOs;
-
-using System.Globalization;
+ 
 try
 {
 
@@ -15,7 +11,7 @@ try
 
     builder.Services.AddOptions<ApplicationSettings>().Bind(builder.Configuration.GetSection("ApplicationSettings"));
 
-    var appSettings = builder.Services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSettings>>();
+    //var appSettings = builder.Services.BuildServiceProvider().GetRequiredService<IOptions<ApplicationSettings>>();
 
     var dc = builder.AddDockerComposeEnvironment("plain-bridge");
 
@@ -30,32 +26,30 @@ try
 
     var identityServerEndpoint = builder.AddProject<Projects.PlainBridge_IdentityServer_EndPoint>("identityserver-endpoint")
         .WithIconName("ShieldKeyhole")
-        .WithUrl($"https://localhost:{appSettings.Value.PlainBridgeIdsPort.ToString()}")
-        .WithEnvironment("IDS_PROJECT_PORT", appSettings.Value.PlainBridgeIdsPort.ToString())
         .WithComputeEnvironment(dc);
 
     var apiEndpoint = builder.AddProject<Projects.PlainBridge_Api_ApiEndPoint>("api-endpoint")
         .WithIconName("Link")
-        .WithUrl($"https://localhost:{appSettings.Value.PlainBridgeApiPort.ToString()}")
         .WithReference(rabbitmq)
         .WithReference(cache)
         .WithReference(identityServerEndpoint)
         .WaitFor(cache)
         .WaitFor(rabbitmq)
         .WaitFor(identityServerEndpoint)
-        .WithEnvironment("API_PROJECT_PORT", appSettings.Value.PlainBridgeApiPort.ToString())
         .WithComputeEnvironment(dc);
 
     var serverEndpoint = builder.AddProject<Projects.PlainBridge_Server_ApiEndPoint>("server-endpoint")
         .WithIconName("server")
-        .WithUrl($"https://localhost:{appSettings.Value.PlainBridgeServerPort.ToString()}")
         .WithReference(cache)
         .WithReference(rabbitmq)
         .WithReference(apiEndpoint)
+        .WithReference(apiEndpoint)
+        .WithReference(identityServerEndpoint)
         .WaitFor(cache)
         .WaitFor(rabbitmq)
         .WaitFor(apiEndpoint)
-        .WithEnvironment("SERVER_PROJECT_PORT", appSettings.Value.PlainBridgeServerPort.ToString())
+        .WaitFor(identityServerEndpoint)
+        .WaitFor(apiEndpoint)
         .WithComputeEnvironment(dc);
 
 
@@ -63,7 +57,7 @@ try
     var angularWebUi = builder.AddJavaScriptApp("angular-webui", angularProjectPath)
         .WithIconName("globe")
         .WithRunScript("start")
-        .WithHttpEndpoint(port: appSettings.Value.PlainBridgeWebPort, env: "PORT")
+        .WithHttpEndpoint(env: "PORT")
         .WithNpm(install: false)
         .WithReference(apiEndpoint)
         .WithReference(identityServerEndpoint)
@@ -77,18 +71,16 @@ try
     // Fix: Convert int to string before interpolating into WithUrl to avoid CS0315
     var clientEndpoint = builder.AddProject<Projects.PlainBridge_Client_ApiEndPoint>("client-endpoint")
         .WithIconName("layout-dashboard")
-        .WithUrl($"https://localhost:{appSettings.Value.PlainBridgeClientPort.ToString()}")
         .WithReference(cache)
         .WithReference(rabbitmq)
         .WithReference(serverEndpoint)
         .WaitFor(cache)
         .WaitFor(rabbitmq)
         .WaitFor(serverEndpoint)
-        .WithEnvironment("CLIENT_PROJECT_PORT", appSettings.Value.PlainBridgeClientPort.ToString())
         .WithComputeEnvironment(dc);
 
 
-    var elasticsearchPassword = builder.AddParameter("elasticsearch-password", value: appSettings.Value.ElasticSearchPassword, secret: true);
+    //var elasticsearchPassword = builder.AddParameter("elasticsearch-password", value: appSettings.Value.ElasticSearchPassword, secret: true);
 
     //var elasticsearch = builder.AddElasticsearch("elasticsearch", password: elasticsearchPassword)
     //    .WithDataVolume()

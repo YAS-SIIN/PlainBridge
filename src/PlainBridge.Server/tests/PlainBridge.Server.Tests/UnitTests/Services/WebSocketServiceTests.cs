@@ -24,8 +24,6 @@ public class WebSocketServiceTests
         var appSettings = Options.Create(new ApplicationSettings
         {
             DefaultDomain = ".example.com",
-            PlainBridgeApiAddress = "http://api.local",
-            PlainBridgeIdsUrl = "http://ids.local",
             PlainBridgeIdsClientId = "client",
             PlainBridgeIdsClientSecret = "secret",
             PlainBridgeIdsScope = "scope",

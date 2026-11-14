@@ -21,7 +21,7 @@ public static class DependencyResolver
         services.AddScoped<ITokenService, TokenService>();
 
 
-        services.AddMediator(typeof(DependencyResolver).Assembly);
+        //services.AddMediator(typeof(DependencyResolver).Assembly);
         services.AddApiInfrastructureProjectServices();
 
         return services;

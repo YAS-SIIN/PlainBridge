@@ -31,9 +31,11 @@ public static class DependencyResolver
             options.Events.RaiseInformationEvents = true;
             options.Events.RaiseFailureEvents = true;
             options.Events.RaiseSuccessEvents = true;
+            options.IssuerUri = "https://identityserver-endpoint-plainbridge.dev.localhost:7079";
         })
             .AddTestUsers(TestUsers.Users)
-            .AddLicenseSummary();
+            .AddLicenseSummary()
+            .AddAppAuthRedirectUriValidator(); ;
 
         // in-memory, code config
         isBuilder.AddInMemoryIdentityResources(Config.IdentityResources);

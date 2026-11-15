@@ -12,12 +12,10 @@ public class ClientBusServiceTests
     private readonly Mock<ILogger<ClientBusService>> _mockLogger = new();
     private readonly Mock<IConnection> _mockConnection = new();
     private readonly Mock<IChannel> _mockChannel = new();
-
     private readonly Mock<Application.Management.Cache.ICacheManagement> _mockCache = new();
     private readonly Mock<Application.Services.UsePortSocket.IUsePortSocketService> _mockUsePort = new();
     private readonly Mock<Application.Services.SharePortSocket.ISharePortSocketService> _mockSharePort = new();
     private readonly CancellationToken _cancellationToken = CancellationToken.None;
-
     private readonly IClientBusService _clientBusService;
 
     public ClientBusServiceTests()

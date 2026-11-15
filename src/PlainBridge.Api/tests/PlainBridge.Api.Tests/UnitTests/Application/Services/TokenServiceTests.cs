@@ -1,12 +1,18 @@
-﻿using System.Composition;
+﻿using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Logging;
+
+using Moq;
+
+using PlainBridge.Api.Application.Services.Session;
+using PlainBridge.Api.Application.Services.Token;
+using PlainBridge.Api.Tests.UnitTests.Application.Utils;
+
+using StackExchange.Redis;
+
+using System.Composition;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.Extensions.Caching.Hybrid;
-using Moq;
-using PlainBridge.Api.Application.Services.Token;
-using PlainBridge.Api.Tests.UnitTests.Application.Utils;
-using StackExchange.Redis;
 
 namespace PlainBridge.Api.Tests.UnitTests.Application.Services;
 
@@ -15,13 +21,15 @@ public class TokenServiceTests : IClassFixture<ApiApplcationUnitTestRunFixture>
 {
     private readonly ApiApplcationUnitTestRunFixture _fixture;
     private readonly ITokenService _tokenService;
+    private readonly Mock<ILogger<TokenService>> _mockTokenService;
     private readonly Mock<HybridCache> _mockDb;
 
     public TokenServiceTests(ApiApplcationUnitTestRunFixture fixture)
     {
         _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
+        _mockTokenService = new Mock<ILogger<TokenService>>();
         _mockDb = new Mock<HybridCache>();
-        _tokenService = new TokenService(_mockDb.Object);
+        _tokenService = new TokenService(_mockTokenService.Object, _mockDb.Object);
          
     }
 

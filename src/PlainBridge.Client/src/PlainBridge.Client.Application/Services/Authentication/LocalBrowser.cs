@@ -7,22 +7,13 @@ namespace PlainBridge.Client.Application.Services.Authentication;
 
 public sealed class LocalBrowser : IBrowser
 {
-    private readonly int _port;
-
-    public LocalBrowser(int port)
-    {
-        _port = port;
-    }
-
-    public async Task<BrowserResult> InvokeAsync(
-        BrowserOptions options,
-        CancellationToken cancellationToken = default)
+    public int Port { get; } = GetAvailablePort();
+    public string RedirectUri => $"http://127.0.0.1:{Port}/callback/";
+    public async Task<BrowserResult> InvokeAsync(BrowserOptions options, CancellationToken cancellationToken = default)
     {
         using var listener = new HttpListener();
 
-        var redirectUri = $"http://127.0.0.1:{_port}/";
-
-        listener.Prefixes.Add(redirectUri);
+        listener.Prefixes.Add(RedirectUri);
         listener.Start();
 
         try
@@ -33,8 +24,7 @@ public sealed class LocalBrowser : IBrowser
                 UseShellExecute = true
             });
 
-            var context = await listener.GetContextAsync()
-                .WaitAsync(cancellationToken);
+            var context = await listener.GetContextAsync().WaitAsync(cancellationToken);
 
             var response = context.Response;
 
@@ -54,9 +44,7 @@ public sealed class LocalBrowser : IBrowser
             response.ContentType = "text/html";
             response.ContentLength64 = buffer.Length;
 
-            await response.OutputStream.WriteAsync(
-                buffer,
-                cancellationToken);
+            await response.OutputStream.WriteAsync(buffer, cancellationToken);
 
             response.Close();
 
@@ -74,5 +62,13 @@ public sealed class LocalBrowser : IBrowser
                 Error = ex.Message
             };
         }
+    }
+    private static int GetAvailablePort()
+    {
+        using var socket = new System.Net.Sockets.TcpListener(IPAddress.Loopback, 0);
+
+        socket.Start();
+
+        return ((IPEndPoint)socket.LocalEndpoint).Port;
     }
 }

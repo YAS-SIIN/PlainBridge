@@ -70,10 +70,12 @@ try
 
     // Fix: Convert int to string before interpolating into WithUrl to avoid CS0315
     var clientEndpoint = builder.AddProject<Projects.PlainBridge_Client_ApiEndPoint>("client-endpoint")
-        .WithIconName("layout-dashboard")
+        .WithIconName("GlobeDesktop")
         .WithReference(cache)
         .WithReference(rabbitmq)
         .WithReference(serverEndpoint)
+        .WithReference(identityServerEndpoint)
+        .WaitFor(identityServerEndpoint)
         .WaitFor(cache)
         .WaitFor(rabbitmq)
         .WaitFor(serverEndpoint)

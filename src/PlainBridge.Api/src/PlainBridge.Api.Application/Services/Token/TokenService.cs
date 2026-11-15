@@ -1,18 +1,20 @@
 ﻿
+using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens; 
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.IdentityModel.Tokens;
 
 namespace PlainBridge.Api.Application.Services.Token;
 
-public class TokenService(HybridCache _hybridCache) : ITokenService
+public class TokenService(ILogger<TokenService> _logger, HybridCache _hybridCache) : ITokenService
 {
      
     public JwtSecurityToken ParseToken(string token)
     {
         var handler = new JwtSecurityTokenHandler();
+
         var jwtSecurityToken = handler.ReadJwtToken(token);
 
         return jwtSecurityToken;

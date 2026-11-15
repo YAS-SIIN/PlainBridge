@@ -63,7 +63,8 @@ public static class DependencyResolver
         services.AddEndpoints();
 
         services.AddBff()
-              .AddRemoteApis();
+                .AddServerSideSessions()
+                .AddRemoteApis();
         JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
         services.AddHttpContextAccessor();
@@ -93,9 +94,7 @@ public static class DependencyResolver
 
 
     public static IServiceCollection AddAuthentication(this IServiceCollection services, ApplicationSettings appSettings)
-    {
-        var serviceProvider = services.BuildServiceProvider();
-
+    { 
         // This is crucial - prevents the JWT handler from mapping 'sub' claim to ClaimTypes.NameIdentifier
         JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 

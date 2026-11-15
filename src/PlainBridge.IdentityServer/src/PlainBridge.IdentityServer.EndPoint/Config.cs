@@ -28,40 +28,19 @@ public static class Config
         {
             // m2m client credentials flow client
             new Client
-            {
-                ClientId = "client",
-                ClientName = "PlainBridge Native Client",
-            
-                AllowedGrantTypes = GrantTypes.Code,
-            
-                // Public client: no client secret
-                RequireClientSecret = false,
-            
-                // Authorization Code + PKCE
-                RequirePkce = true,
-            
-                RedirectUris =
                 {
-                    "http://127.0.0.1:5005/callback"
+                    ClientId = "client",
+                    ClientName = "PlainBridge Native Client",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequireClientSecret = false,
+                    RequirePkce = true,
+                    RedirectUris = { "http://127.0.0.1" },
+                    AllowedScopes = { _mainScope, "openid", "profile", "email", "offline_access" },
+                    AllowOfflineAccess = true,
+                    RefreshTokenUsage = TokenUsage.ReUse,
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+                    SlidingRefreshTokenLifetime = 30 * 24 * 60 * 60
                 },
-            
-                AllowedScopes =
-                {
-                    _mainScope,
-                    IdentityServerConstants.StandardScopes.OpenId,
-                    IdentityServerConstants.StandardScopes.Profile,
-                    IdentityServerConstants.StandardScopes.Email,
-                    IdentityServerConstants.StandardScopes.Phone,
-                    IdentityServerConstants.StandardScopes.Address,
-                    IdentityServerConstants.StandardScopes.OfflineAccess
-                },
-            
-                AllowOfflineAccess = true,
-            
-                RefreshTokenUsage = TokenUsage.ReUse,
-                RefreshTokenExpiration = TokenExpiration.Sliding,
-                SlidingRefreshTokenLifetime = 30 * 24 * 60 * 60
-            },
 
             new Client
             {
@@ -95,10 +74,10 @@ public static class Config
                 AllowedGrantTypes = GrantTypes.Code,
 
                 // where to redirect to after login
-                RedirectUris = { $"{applcationSettings.PlainBridgeApiUrl}/signin-oidc" },
+                RedirectUris = { $"{applcationSettings.PlainBridgeApiUrl}/signin-oidc", $"{applcationSettings.PlainBridgeApiUrl2}/signin-oidc"  },
 
                 // where to redirect to after logout
-                PostLogoutRedirectUris = { $"{applcationSettings.PlainBridgeApiUrl}/signout-callback-oidc" },
+                PostLogoutRedirectUris = { $"{applcationSettings.PlainBridgeApiUrl}/signout-callback-oidc", $"{applcationSettings.PlainBridgeApiUrl2}/signout-callback-oidc" },
 
                 AllowedScopes = new List<string>
                 {

@@ -1,36 +1,39 @@
-﻿ 
+﻿
+using Duende.IdentityModel.OidcClient;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using PlainBridge.Client.Application.DTOs;
+using PlainBridge.Shared.Application.DTOs;
+using System.Net.Http.Json;
+using System.Security.Authentication;
 
 namespace PlainBridge.Client.Application.Services.Authentication;
 
-using Duende.IdentityModel.OidcClient;
-
-using Microsoft.Extensions.Options;
-
-using PlainBridge.Client.Application.DTOs;
-using PlainBridge.Shared.Application.DTOs;
-
-using System.Security.Authentication;
-
-public class AuthenticationService : IAuthenticationService
+public class AuthenticationService(ILogger<AuthenticationService> _logger, IOptions<ApplicationSettings> _applicationSettings, IHttpClientFactory _httpClientFactory) : IAuthenticationService
 {
-    private readonly OidcClient _oidcClient;
+    private OidcClient _oidcClient;
 
-    public AuthenticationService(IOptions<ApplicationSettings> _applicationSettings)
-    {
+    public async Task<UserProfileViewDto> LoginAsync(CancellationToken cancellationToken)
+    { 
+        var httpClient = _httpClientFactory.CreateClient("IdentityServer");
+        var response = await httpClient.GetAsync(".well-known/openid-configuration",cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        var discovery = await response.Content.ReadFromJsonAsync<DiscoveryResponse>(cancellationToken: cancellationToken);
+
+        var browser = new LocalBrowser();
+
         var options = new OidcClientOptions
         {
-            Authority = _applicationSettings.Value.PlainBridgeIdsUrl,
+            Authority = discovery.Issuer,
             ClientId = "client",
             Scope = "openid profile email PlainBridge offline_access",
-            RedirectUri = "https://api-endpoint-plainbridge.dev.localhost:7498/callback",
-            Browser = new LocalBrowser(5005)
+            RedirectUri = browser.RedirectUri,
+            Browser = browser
         };
 
         _oidcClient = new OidcClient(options);
-    }
 
-    public async Task<UserProfileViewDto> LoginAsync(CancellationToken cancellationToken)
-    {
         var result = await _oidcClient.LoginAsync(new LoginRequest(), cancellationToken);
 
         if (result.IsError) throw new AuthenticationException(result.Error);
@@ -40,7 +43,7 @@ public class AuthenticationService : IAuthenticationService
 
         return new UserProfileViewDto();
     }
-     
+
     public Task LogoutAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;

@@ -56,6 +56,8 @@ public static class DependencyResolver
 
         services.AddHostedService<Worker>();
 
+        services.AddHttpServices();
+
         return services;
     }
      

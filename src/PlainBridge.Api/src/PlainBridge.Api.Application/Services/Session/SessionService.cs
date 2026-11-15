@@ -66,6 +66,9 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
         _logger.LogInformation("Getting token for user: {UserId}", userId.Value);
         var token = await _cacheManagement.SetGetSubTokenAsync(userId.Value);
 
+        _logger.LogInformation("UserInfo Token Lookup. UserId: {UserId}, TokenFound: {TokenFound}, TokenLength: {TokenLength}", 
+            userId.Value, !string.IsNullOrWhiteSpace(token), token?.Length ?? 0);
+
         var userInfoRequest = new UserInfoRequest
         {
             Address = "connect/userinfo",
@@ -75,11 +78,23 @@ public class SessionService(ILogger<SessionService> _logger, IHttpContextAccesso
         _logger.LogInformation("Requesting user info from: {Address}", userInfoRequest.Address);
         var httpClient = _httpClientFactory.CreateClient("IdentityServer");
 
-        var userInfoResponse = await httpClient.GetUserInfoAsync(userInfoRequest,  cancellationToken);
-        var result = await userInfoResponse.HttpResponse.Content.ReadAsStringAsync();
+        var userInfoResponse = await httpClient.GetUserInfoAsync(userInfoRequest, cancellationToken);
 
-        _logger.LogInformation("User info received and deserializing.");
-        return JsonSerializer.Deserialize<UserProfileViewDto>(result);
+        var response = userInfoResponse.HttpResponse;
+        var content = await response.Content.ReadAsStringAsync(cancellationToken);
+
+
+        if (userInfoResponse.IsError || !response.IsSuccessStatusCode)
+        {
+            _logger.LogError("IdentityServer UserInfo request failed. IsError: {IsError} Error: {Error} StatusCode: {StatusCode} ReasonPhrase: {ReasonPhrase} Response: {Response}",
+                userInfoResponse.IsError, userInfoResponse.Error, response.StatusCode, response.ReasonPhrase, content);
+
+            throw new ApplicationException($"IdentityServer UserInfo request failed: {response.StatusCode}");
+        }
+
+        _logger.LogInformation("User info received successfully.");
+
+        return JsonSerializer.Deserialize<UserProfileViewDto>(content);
     }
 
     public async Task RefreshTokenAsync(CancellationToken cancellationToken)
